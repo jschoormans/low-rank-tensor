@@ -1,4 +1,3 @@
-addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/Matlab_Collection/nway320 exchange'))
 %% @2Dt (eg diffusion /DCE whatever)000000000000000000
 
 res=64;

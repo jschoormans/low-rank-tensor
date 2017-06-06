@@ -1,4 +1,3 @@
-addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/Matlab_Collection/nway320 exchange'))
 res=64
 nt=100; 
 nTI=40; 
