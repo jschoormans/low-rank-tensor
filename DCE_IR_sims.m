@@ -1,3 +1,4 @@
+% simulation of a DCE - inverison recovery measurement 
 res=64
 nt=100; 
 nTI=40; 
