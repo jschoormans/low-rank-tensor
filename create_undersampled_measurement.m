@@ -1,8 +1,7 @@
 % making undersampled k-space measurement
 % with fully sampled navigator k-space centers 
-% var density sampling for all other lines 
-% function or not?? 
-% TO DO: 
+
+% TO DO: -add var density and more us options
 
 rng(3); % random seed to control phantom generation
 res=128;
@@ -26,7 +25,7 @@ end
 imshow(abs(Q),[0 1])
 xlabel('echo times')
 ylabel('b-values')
-
+clear Q J 
 %% to k space 
 d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(I,2),1),[],1),[],2),1),2);
 figure(2); imshow(abs(d(:,:,1,1)),[])
@@ -44,9 +43,9 @@ mask(ctrcoords,ctrcoords,:,:)=ones(ll,ll,size(d,3),size(d,4));
 figure(3); imshow(mask(:,:,1,1))
 
 %% make undersampled measurement; 
-d_u=mask.*d; 
+du=mask.*d; 
 
-
+clear d I 
 
 
 
