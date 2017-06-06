@@ -1,0 +1,7 @@
+function Bk=soft_thresh(C,Z,mu,beta)
+
+mub=mu/beta;
+thr=abs(C-(Z./beta))>=mub; %threshold
+thr.*(abs(C-(Z./beta))-mub).*(()./(abs(C-)))
+
+end

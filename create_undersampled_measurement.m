@@ -45,7 +45,7 @@ figure(3); imshow(mask(:,:,1,1))
 %% make undersampled measurement; 
 du=mask.*d; 
 
-clear d I 
+clear d 
 
 
 
