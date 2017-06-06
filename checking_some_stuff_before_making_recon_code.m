@@ -83,3 +83,8 @@ figure(12); hold on;
 plot(abs(F1{3}(:,3)),'-*g'); 
 plot(abs(nav_estimate_1(:,3)),'-*b');
 hold off
+
+%% make PSI from navigator function
+nav_estimate= subspace_estimator(nav_parameter_dim1,4);
+figure(99); imshow(nav_estimate);
+
