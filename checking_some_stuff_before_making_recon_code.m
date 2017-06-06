@@ -59,7 +59,7 @@ l2_difference=sqrt(sum(abs(d(:)-kspace_recon(:)).^2))
 l2_only_d=sqrt(sum(abs(d(:)).^2))
 l2_difference/l2_only_d
 
-%% CAN WE MAKE PSI FROM TJHE NAVIGATORS??
+%% CAN WE MAKE PSI FROM THE NAVIGATORS??
 
 nav_parameter_dim1 = squeeze(d(54:74,54:74,:,5));
 nav_parameter_dim2 = squeeze(d(54:74,54:74,5,:));
