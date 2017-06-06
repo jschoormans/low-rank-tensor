@@ -18,14 +18,14 @@ nav_estimate_2= subspace_estimator(nav_parameter_dim2,L4);
 P0=fftshift(fftshift(ifft(ifft(ifftshift(ifftshift(du,1),2),[],1),[],2),1),2); %zero filled recon
 P1_0=reshape(P0,[res*res,size(du,3)*size(du,4)]); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 
-Psi=opWavelet2(res,res,'Daubechies') %wavelet operator 
+Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
 %% ALGO 
 %initialize parameters
 alpha= 0.1;         %penalty parameter >0
 beta=  0.1;         %penalty parameter >0
-lambda=1e-2;        %sparsity parameter
-mu=1e-2             %sparsity parameter
-Lg=500;             % rank of spatial dimension
+lambda=1e-4;        %sparsity parameter
+mu=1e-7             %sparsity parameter
+Lg=100;             %rank of spatial dimension
 niter=5;
 
 %initialize matrices
@@ -38,12 +38,13 @@ B = zeros(size(C));
 Y = zeros(size(G));
 Z = zeros(size(C));
 
-for iter=1:niter   
+clear MSE
+for iter=1:niter
     iter
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi); %15
     Bk=soft_thresh_B(C,Z,mu,beta); %16
-    Gk=conj_grad_G(G,C,Ak,Bk,Y,Z); %17
-    Ck=conj_grad_C(Gk,C,Ak,Bk,Y,Z); %18
+    Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi); %17
+    Ck=conj_grad_C(Gk,C,Ak,Bk,Y,Z,beta,du,Phi); %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
@@ -51,6 +52,7 @@ for iter=1:niter
     
     current_guess=Gk*Ck*Phi';
     MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))
+    figure(9); imshow(abs(reshape(current_guess(:,1),[res res])),[]); drawnow;
 end
 
 

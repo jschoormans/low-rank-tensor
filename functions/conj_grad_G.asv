@@ -16,9 +16,7 @@ id=Psi'*(Ak+Y./alpha); %size (id) = res^2 x Lg (size of G)
 
 zf=fftshift(fftshift(ifft(ifft(ifftshift(ifftshift(du,1),2),[],1),[],2),1),2); %zero filled recon
 zf=reshape(zf,[size(zf,1)*size(zf,2),size(zf,3)*size(zf,4)]);
-G_hat=zf*inv(Phi)*inv(C); % this is where the problem is...
-disp('how to find G_hat???')
-
+G_hat=zf*conj(Phi)*C';
 sum(G_hat(:))
 
 nom=G_hat+(alpha/2).*id;
