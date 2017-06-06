@@ -22,7 +22,7 @@ end
 
 %% START CODE
 for nphantom=1:length(ADC)
-    E(1)=rand; %intensity
+    E(1)=0.4+0.6*rand; %intensity
     E(2)= 0.1+rand*0.2; %length
     E(3)= 0.1+rand*0.2; %width
     E(4)=-0.5+(rand); %x-coord of middle 
