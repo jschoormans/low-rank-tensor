@@ -1,4 +1,4 @@
-function Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi)
+function Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi,P0_1)
 % Gamma_k = Omega(F G C_k Phi)
 % Gamma*_k(d) should go from measured data to estimate of G....
 % Omega : row selection operator??
@@ -7,21 +7,17 @@ function Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi)
 % in paper; conjugate gradient, but this is a linear least squares??? 
 
 
-id=Psi'*(Ak+Y./alpha); %size (id) = res^2 x Lg (size of G) 
+id=(alpha/2).*(Psi'*(Ak+Y./alpha)); %size (id) = res^2 x Lg (size of G) 
 
+% G_hat= 
 
-% find estimate of G_x based on data : adjoint omega with fixed C and Phi
-%P=G C Phi
-%G= P Phi.'
+% how to do the adjoint of Omega??
 
-zf=fftshift(fftshift(ifft(ifft(ifftshift(ifftshift(du,1),2),[],1),[],2),1),2); %zero filled recon
-zf=reshape(zf,[size(zf,1)*size(zf,2),size(zf,3)*size(zf,4)]);
-G_hat=zf*inv(Phi)*inv(C); % this is where the problem is...
 disp('how to find G_hat???')
 
 sum(G_hat(:))
 
-nom=G_hat+(alpha/2).*id;
+nom=G_hat+id;
 
 
 PsiPsi=Psi*(Psi')*ones(size(id)); %% really at a loss here....

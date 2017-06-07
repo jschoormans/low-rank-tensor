@@ -43,7 +43,7 @@ for iter=1:niter
     iter
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi); %15
     Bk=soft_thresh_B(C,Z,mu,beta); %16
-    Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi); %17
+    Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi,P1_0); %17
     Ck=conj_grad_C(Gk,C,Ak,Bk,Y,Z,beta,du,Phi); %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z-beta.*(Bk-Ck);
