@@ -27,7 +27,7 @@ xlabel('echo times')
 ylabel('b-values')
 clear Q J 
 %% to k space 
-d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(I,2),1),[],1),[],2),1),2);
+d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(I,2),1),[],1),[],2),1),2)./sqrt(res*res);
 figure(2); imshow(abs(d(:,:,1,1)),[])
 
 %% make undersampling mask  
