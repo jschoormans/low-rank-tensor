@@ -39,11 +39,15 @@ Y = zeros(size(G));
 Z = zeros(size(C));
 
 clear MSE
+F=Fop(size(P0),size(P1_0));
+
+
 for iter=1:niter
     iter
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi); %15
     Bk=soft_thresh_B(C,Z,mu,beta); %16
-    Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi,P1_0); %17
+%     Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi,P1_0); %17
+    Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F);
     Ck=conj_grad_C(Gk,C,Ak,Bk,Y,Z,beta,du,Phi); %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z-beta.*(Bk-Ck);
