@@ -46,7 +46,7 @@ for iter=1:niter
     Gk=conj_grad_G(G,C,Ak,Bk,Y,Z,alpha,Psi,du,Phi); %17
     Ck=conj_grad_C(Gk,C,Ak,Bk,Y,Z,beta,du,Phi); %18
     Yk=Y+alpha*(Ak-Psi*Gk);
-    Zk=Z+beta.*(Bk-Ck);
+    Zk=Z-beta.*(Bk-Ck);
     
     A=Ak; B=Bk; G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
     
