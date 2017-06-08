@@ -5,8 +5,8 @@ clear all; close all; clc;
 run create_undersampled_measurement.m
 
 % 2: estimate subspaces
-L3=4; %rank of subspace dimension 3
-L4=4; %rank of subspace dimension 3
+L3=4;               %rank of subspace dimension 3
+L4=4;               %rank of subspace dimension 4
 
 nav_parameter_dim1 = squeeze(du(ctrcoords,ctrcoords,:,5));
 nav_estimate_1= subspace_estimator(nav_parameter_dim1,L3);
@@ -40,20 +40,18 @@ niter=5;
 
 %initialize matrices
 Phi=kron(nav_estimate_2,nav_estimate_1);    %from subspaces
-
 Phi=Phi.'; % temporary: 1) why? 2) shd we take complex conjugate?
 
 [G,C,A,B,Y,Z]= init_G0(P1_0,Phi,Lg);                    
 
 MSE=[]; 
-
 for iter=1:niter
     MSE=visualize_convergence(iter,MSE,G,C,Phi,I,tensorsize,70,70)
     
-    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi); %15
-    Bk=soft_thresh_B(C,Z,mu,beta); %16
-    Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du_1,Phi,F);
-    Ck=C; % to do....
+    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
+    Bk=soft_thresh_B(C,Z,mu,beta);                      %16
+    Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du_1,Phi,F);     %17
+    Ck=C; % to do...
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z-beta.*(Bk-Ck);
     

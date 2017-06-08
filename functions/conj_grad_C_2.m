@@ -82,7 +82,6 @@ return
         gip=grad_inner_product();
         gf=grad_F();
         gradk=gl2+gip+gf;
-
     end
 
 

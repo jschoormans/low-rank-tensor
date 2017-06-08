@@ -12,8 +12,8 @@ G0=U(:,1:L1);                           % first Lg vectors from left-dominant  s
 
 C0=G0'*P*Phi';                          % G0^H P10 Psi^H 
 
-A = zeros(size(G));
-B = zeros(size(C));
-Y = zeros(size(G));
-Z = zeros(size(C));
+A = zeros(size(G0));
+B = zeros(size(C0));
+Y = zeros(size(G0));
+Z = zeros(size(C0));
 end
