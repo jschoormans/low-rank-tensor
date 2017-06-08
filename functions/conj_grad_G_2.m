@@ -37,7 +37,7 @@ while(1)
     beta=(gradk(:).'*gradk(:))/(grad(:).'*grad(:)+eps); %Fletcher-Reeves;
     
     % 3 update conjugate direction
-    sk=-grad+ beta*s;
+    sk=-gradk+ beta*s;
     
     % 3b : calculate preobjective
     [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,sk);
@@ -68,7 +68,6 @@ while(1)
 		t0 = t0 / betals;
 	end
 
-    grad=gradk;
     s=sk;
     G=Gk;
     if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) 
