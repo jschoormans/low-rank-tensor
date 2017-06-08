@@ -43,13 +43,7 @@ Phi=kron(nav_estimate_2,nav_estimate_1);    %from subspaces
 
 Phi=Phi.'; % temporary: 1) why? 2) shd we take complex conjugate?
 
-G= init_G0(P1_0,Phi,Lg);                    % first Lg vectors from left-dominant  svd of P10 Psi^H
-C=G'*P1_0*Phi';                        % G0^H P10 Psi^H 
-
-A = zeros(size(G));
-B = zeros(size(C));
-Y = zeros(size(G));
-Z = zeros(size(C));
+[G,C,A,B,Y,Z]= init_G0(P1_0,Phi,Lg);                    
 
 MSE=[]; 
 
