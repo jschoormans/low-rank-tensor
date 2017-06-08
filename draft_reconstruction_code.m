@@ -50,12 +50,12 @@ for iter=1:niter
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-    Gk=conj_grad_G_2(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...
-    Ck=conj_grad_C_2(Gk,C,Bk,Z,beta,du_1,Phi,F);        %18 to do...
+    Gk=conj_grad_G_3(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...
+    Ck=conj_grad_C_3(Gk,C,Bk,Z,beta,du_1,Phi,F);        %18 to do...
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
-    A=Ak; B=Bk; G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
+    G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
 end
 
 

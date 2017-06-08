@@ -1,4 +1,4 @@
-function Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F)
+function G=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F)
 % new attempt
 % minimizes the function
 % argminG ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2
@@ -15,7 +15,8 @@ disp('--- CG algorithm for G ---')
 betals=0.6;
 t0=1 ;
 ls_alpha=1e-2;
-maxlsiter=60;
+maxlsiter=50;
+maxiter=40;
 
 
 iter=0;
@@ -23,11 +24,11 @@ s=0;
 grad=calc_grad(G,C,Phi,du,F,Y,Psi,alpha); 
 
 while(1)
-    
-    [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du);
+    [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,grad);
+    [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(A,Y,PsiG, Psis, FGCPhi, FsCPhi,0,alpha,du);
     
     if iter==0
-    disp(['iter: ',num2str(iter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
+    disp(['iter: ',num2str(iter), '| obj:',num2str(f0),'| obj_l2: ',num2str(obj_l2),'| obj_ip: ',num2str(obj_inner_product),'| obj_F: ',num2str(obj_F)])
     end
     
     % 1 calculate steepest direction
@@ -37,7 +38,10 @@ while(1)
     beta=(gradk(:).'*gradk(:))/(grad(:).'*grad(:)+eps); %Fletcher-Reeves;
     
     % 3 update conjugate direction
-    sk=-grad+ beta*s;
+    sk=-gradk+ beta*s;
+    
+    % 3b : calculate preobjective
+    [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,sk);
     
     % 4 perform a line search :
     t=t0;
@@ -45,16 +49,21 @@ while(1)
     f1=1e99; %only to start...
     while (f1 > f0 - ls_alpha*t*abs(gradk(:)'*sk(:)))^2 & (lsiter<maxlsiter)
         t = t * betals;
-        [f1,obj_l2,obj_inner_product,obj_F]  =   calc_objective(F,G+t*sk,C,Phi,A,Y,Psi,alpha,du);
+        [f1,obj_l2,obj_inner_product,obj_F]  =   calc_objective(A,Y,PsiG, Psis, FGCPhi, FsCPhi,t,alpha,du);
         lsiter=lsiter+1;
     end
     iter=iter+1;
     
+    if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) | iter==maxiter
+        disp('CG convergence reached.../ max line search/ max iters')
+        break
+    end
+    
     % update the position
-    Gk=G+t*sk;
+    G=G+t*sk;
     
     % print some iteration comments
-    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f1),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
+    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj: ',num2str(f1),'| obj_l2: ',num2str(obj_l2),'| obj_ip: ',num2str(obj_inner_product),'| obj_F: ',num2str(obj_F)])
 
     %update parameters for next iteration;
     if lsiter > 2
@@ -65,27 +74,29 @@ while(1)
 		t0 = t0 / betals;
 	end
 
-    grad=gradk;
     s=sk;
-    G=Gk;
-    if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) 
-        disp('CG convergenve reached...')
-        break
-    end
+    grad=gradk;
+
     
 end
 return
 
-    function [PsiG, PsideltaG, FGCPhi, FdeltaGCPhi]preobjective()
-    function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du)
+    function [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,sk); %so we only have to calculate this once per outer iteration
+        PsiG=Psi*G;
+        Psis=Psi*sk;
+        FGCPhi=F*(G*C*Phi);
+        FsCPhi=F*(sk*C*Phi);
+    end
+
+    function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(A,Y,PsiG, Psis, FGCPhi, FsCPhi,t,alpha,du)
         %objective= ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2      
-        obj_l2_inner= du - (F*(G*C*Phi)) ;
+        obj_l2_inner= du - (FGCPhi+t*FsCPhi) ;
         obj_l2_inner=obj_l2_inner.*(abs(du)>0); % make this more efficient
         obj_l2=obj_l2_inner(:)'*obj_l2_inner(:);
         
-        obj_inner_product=trace(Y'*(A-Psi*G)); %additive
+        obj_inner_product=trace(Y'*(A-(PsiG+t*Psis))); %additive
         
-        obj_F=norm((A-Psi*G),'fro')^2 ;        %sub additive
+        obj_F=norm((A-(PsiG+t*Psis)),'fro')^2 ;        %sub additive
         
         obj=obj_l2+obj_inner_product+(alpha/2).*obj_F;
     end
