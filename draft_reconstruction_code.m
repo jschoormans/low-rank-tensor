@@ -31,7 +31,7 @@ Lg=100;             %rank of spatial dimension
 niter=5;
 
 % add noise to test l2 norm gradient (TEMP)
-% P1_0=P1_0+rand(size(P1_0)).*mean(P1_0(:)).*20;
+P1_0=P1_0+rand(size(P1_0)).*mean(P1_0(:)).*20;
 
 %initialize matrices
 Phi=kron(nav_estimate_2,nav_estimate_1);    %from subspaces
@@ -43,18 +43,14 @@ B = zeros(size(C));
 Y = zeros(size(G));
 Z = zeros(size(C));
 
-clear MSE
+MSE=[]; 
 
 for iter=1:niter
-    iter
-    current_guess=G*C*Phi';
-    MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))    
-    figure(9); imshow(abs(reshape(current_guess(:,1),[res res])),[]); drawnow;
-
+    MSE=visualize_convergence(iter,MSE,G,C,Phi',I,size(du),70,70)
+    
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi); %15
     Bk=soft_thresh_B(C,Z,mu,beta); %16
     Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F);
-%     Ck=conj_grad_C(Gk,C,Ak,Bk,Y,Z,beta,du,Phi); %18
     Ck=C; % to do....
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z-beta.*(Bk-Ck);

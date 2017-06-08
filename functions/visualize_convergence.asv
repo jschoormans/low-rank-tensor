@@ -1,0 +1,31 @@
+function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu)
+    x=64; %pixel to track
+    y=64; %pixel to track 
+    current_guess=G*C*Phi;
+    MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2));   
+    
+    cgr=abs(reshape(current_guess,sdu));
+    
+    figure(999);
+    subplot(121);
+    imshow(abs(cgr(:,:,1,1)),[]); drawnow;
+    subplot(322)
+    plot([1:iter],MSE); title(MSE)
+    subplot(324)
+    hold on 
+    plot(squeeze(cgr(x,y,:,1)),'g')
+    plot(squeeze(cgr(x,y,:,1)),'--k')
+    hold off
+    title('dim 3')
+    ylabel('pixel value of x=', num2str(x),' y=',num2str(y))
+    
+    subplot(326)
+    hold on 
+    plot(squeeze(cgr(x,y,:,1)),'g')
+    plot(squeeze(cgr(x,y,:,1)),'--k')
+    hold off
+    title('dim 4')
+    ylabel('pixel value of x=', num2str(x),' y=',num2str(y))
+
+drawnow;
+end
