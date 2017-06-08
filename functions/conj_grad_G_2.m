@@ -1,4 +1,4 @@
-function Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F)
+function G=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F)
 % new attempt
 % minimizes the function
 % argminG ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2
@@ -15,7 +15,8 @@ disp('--- CG algorithm for G ---')
 betals=0.6;
 t0=1 ;
 ls_alpha=1e-2;
-maxlsiter=40;
+maxlsiter=50;
+maxiter=40;
 
 
 iter=0;
@@ -53,8 +54,13 @@ while(1)
     end
     iter=iter+1;
     
+    if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) | iter==maxiter
+        disp('CG convergence reached.../ max line search/ max iters')
+        break
+    end
+    
     % update the position
-    Gk=G+t*sk;
+    G=G+t*sk;
     
     % print some iteration comments
     disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj: ',num2str(f1),'| obj_l2: ',num2str(obj_l2),'| obj_ip: ',num2str(obj_inner_product),'| obj_F: ',num2str(obj_F)])
@@ -69,11 +75,8 @@ while(1)
 	end
 
     s=sk;
-    G=Gk;
-    if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) 
-        disp('CG convergenve reached...')
-        break
-    end
+    grad=gradk;
+
     
 end
 return

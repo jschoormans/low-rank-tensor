@@ -3,7 +3,7 @@ clear all; close all; clc;
 
 % 1: make data (most settings in other .m file for now)
 
-uf=0.2; % undersampling factor (excluding center)
+uf=0.25; % undersampling factor (excluding center)
 noiselevel=0;
 
 run create_undersampled_measurement.m    
@@ -20,8 +20,8 @@ nav_parameter_dim2 = squeeze(du(ctrcoords,ctrcoords,5,:));
 nav_estimate_2= subspace_estimator(nav_parameter_dim2,L4);
 
 % 3: initialize other operators
-tensorsize=size(du)
-unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)]
+tensorsize=size(du);
+unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)];
 
 F=Fop([res,res]);
 Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
@@ -31,12 +31,13 @@ P0=F'*du;
 P1_0=reshape(P0,unfoldedsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 du_1=reshape(du,unfoldedsize);
 
+figure(4); imshow(abs(P0(:,:,1,1)),[])
 %% ALGO 
 %initialize parameters
-alpha= 1e1;         %penalty parameter >0
-beta=  0.1;         %penalty parameter >0
-lambda=1;        %sparsity parameter
-mu=1e-3 ;            %sparsity parameter
+alpha= 2;         %penalty parameter >0
+beta=  2;         %penalty parameter >0
+lambda=5e-1;        %sparsity parameter
+mu=1e-1 ;           %sparsity parameter
 Lg=400;             %rank of spatial dimension
 niter=5;
 
@@ -49,11 +50,10 @@ for iter=1:niter
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-    Gk=conj_grad_G_2(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);     %17
-    Ck=C; %temp
-%     Ck=conj_grad_C_2(Gk,C,Bk,Z,beta,du_1,Phi,F); % to do...
+    Gk=conj_grad_G_2(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...
+    Ck=conj_grad_C_2(Gk,C,Bk,Z,beta,du_1,Phi,F);        %18 to do...
     Yk=Y+alpha*(Ak-Psi*Gk);
-    Zk=Z-beta.*(Bk-Ck);
+    Zk=Z+beta.*(Bk-Ck);
     
     A=Ak; B=Bk; G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
 end
