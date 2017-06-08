@@ -31,17 +31,28 @@ d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(I,2),1),[],1),[],2),1),2)./sqrt(
 figure(2); imshow(abs(d(:,:,1,1)),[])
 
 %% make undersampling mask  
-uf=0.5; % undersampling factor 
 mask=rand(size(d))>(1-uf); %undersampling
 
-% add center
+% add center for subspace estimae
 ctr=10;
-ctrcoords=floor(res/2)-ctr: floor(res/2)+ctr;
+ctrcoords=floor(res/2)-ctr: floor(res/2)+ctr; 
 ll=length(ctrcoords);
-mask(ctrcoords,ctrcoords,:,:)=ones(ll,ll,size(d,3),size(d,4));
+mask(ctrcoords,ctrcoords,5,:)=ones(ll,ll,1,size(d,4));
+mask(ctrcoords,ctrcoords,:,5)=ones(ll,ll,1,size(d,4));
 
-figure(3); imshow(mask(:,:,1,1))
+% for all measurements
+ctrcoordsall=floor(res/2)-3: floor(res/2)+3; 
+mask(ctrcoordsall,ctrcoordsall,:,:)=ones(7,7,size(d,3),size(d,4));
 
+figure(3); Q=[]
+for ii=1:size(I,3)
+    J=[];
+    for jj=1:size(I,4);
+        J=[J,abs(mask(:,:,ii,jj))];
+    end
+    Q=[Q;J];
+end
+imshow(abs(Q),[0 1]); clear Q J 
 %% make undersampled measurement; 
 du=mask.*d; 
 

@@ -2,6 +2,7 @@ function Gk=conj_grad_G_2(G,C,B,Z,beta,du,Phi,F)
 % new attempt
 % minimizes the function
 % argminG ||d - Fu G C Phi ||_2^2  + <Z,B-Z> - (beta/2) ||B -C ||_F ^2
+disp('--- CG algorithm for C ---')
 
 
 %params:
@@ -17,6 +18,7 @@ grad=calc_grad(G,F,du,Phi,C);
 while(1)
     
     [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(F,G,C,Phi,B,Z,du,beta);
+    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
 
     % 1 calculate steepest direction
     gradk=calc_grad(G,F,d,Phi,C);
@@ -36,11 +38,13 @@ while(1)
         [f1]  =   calc_objective(F,G,C+t*sk,Phi,B,Z,du,beta);
         lsiter=lsiter+1;
     end
+    iter=iter+1;
+    
     % update the position
     Ck=C+t*sk;
     
     % print some iteration comments
-    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
+    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f1),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
 
     %update parameters for next iteration;
     if lsiter > 2
@@ -53,7 +57,6 @@ while(1)
     grad=gradk;
     s=sk;
     C=Ck;
-    iter=iter+1;
     if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) 
         disp('CG convergenve reached...')
         break

@@ -9,6 +9,7 @@ function Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F)
 % MORE TESTING
 % OPTIMIZE SPEED WITH PRECALCULATING FFTS AND ADDING SMARTER MASKING IN OBJ
 % FUNTCTION 
+disp('--- CG algorithm for G ---')
 
 %params:
 betals=0.6;
@@ -24,6 +25,7 @@ grad=calc_grad(G,C,Phi,du,F,Y,Psi,alpha);
 while(1)
     
     [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du);
+    disp(['iter: ',num2str(iter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
 
     % 1 calculate steepest direction
     gradk=calc_grad(G,C,Phi,du,F,Y,Psi,alpha);
@@ -43,11 +45,13 @@ while(1)
         [f1,obj_l2,obj_inner_product,obj_F]  =   calc_objective(F,G+t*sk,C,Phi,A,Y,Psi,alpha,du);
         lsiter=lsiter+1;
     end
+    iter=iter+1;
+    
     % update the position
     Gk=G+t*sk;
     
     % print some iteration comments
-    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
+    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f1),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
 
     %update parameters for next iteration;
     if lsiter > 2
@@ -61,7 +65,6 @@ while(1)
     grad=gradk;
     s=sk;
     G=Gk;
-    iter=iter+1;
     if lsiter>=maxlsiter | (norm(s(:)) < 1e-8) 
         disp('CG convergenve reached...')
         break

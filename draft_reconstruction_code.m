@@ -2,6 +2,7 @@
 clear all; close all; clc;
 
 % 1: make data (settings in other .m file for now)
+uf=0.2; % undersampling factor (excluding center)
 run create_undersampled_measurement.m
 
 % 2: estimate subspaces
@@ -30,13 +31,10 @@ du_1=reshape(du,unfoldedsize);
 %initialize parameters
 alpha= 0.1;         %penalty parameter >0
 beta=  0.1;         %penalty parameter >0
-lambda=1e-4;        %sparsity parameter
-mu=1e-3             %sparsity parameter
+lambda=0.01;        %sparsity parameter
+mu=1e-3 ;            %sparsity parameter
 Lg=100;             %rank of spatial dimension
 niter=5;
-
-% add noise to test l2 norm gradient (TEMP)
-% P1_0=P1_0+rand(size(P1_0)).*mean(P1_0(:)).*20;
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    

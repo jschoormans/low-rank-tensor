@@ -4,7 +4,7 @@ CZb=C-(Z./beta); %precalculate to speed up
 
 thr=abs(CZb)>=mub; %threshold
 
-disp('---')
+disp('---soft-thresholding matrix B----')
 disp(['mu/beta: ',num2str(mub)])
 disp(['thresholding ',num2str(100*(sum(~thr(:))./numel(thr))),' percent'])
 
