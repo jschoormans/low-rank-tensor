@@ -15,7 +15,7 @@ disp('--- CG algorithm for G ---')
 betals=0.6;
 t0=1 ;
 ls_alpha=1e-2;
-maxlsiter=60;
+maxlsiter=40;
 
 
 iter=0;
@@ -23,10 +23,13 @@ s=0;
 grad=calc_grad(G,C,Phi,du,F,Y,Psi,alpha); 
 
 while(1)
+    [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,grad);
+    [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(A,Y,PsiG, Psis, FGCPhi, FsCPhi,0,alpha,du);
     
-    [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du);
-    disp(['iter: ',num2str(iter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
-
+    if iter==0
+    disp(['iter: ',num2str(iter), '| obj:',num2str(f0),'| obj_l2: ',num2str(obj_l2),'| obj_ip: ',num2str(obj_inner_product),'| obj_F: ',num2str(obj_F)])
+    end
+    
     % 1 calculate steepest direction
     gradk=calc_grad(G,C,Phi,du,F,Y,Psi,alpha);
     
@@ -36,13 +39,16 @@ while(1)
     % 3 update conjugate direction
     sk=-grad+ beta*s;
     
+    % 3b : calculate preobjective
+    [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,sk);
+    
     % 4 perform a line search :
     t=t0;
     lsiter=0;
     f1=1e99; %only to start...
     while (f1 > f0 - ls_alpha*t*abs(gradk(:)'*sk(:)))^2 & (lsiter<maxlsiter)
         t = t * betals;
-        [f1,obj_l2,obj_inner_product,obj_F]  =   calc_objective(F,G+t*sk,C,Phi,A,Y,Psi,alpha,du);
+        [f1,obj_l2,obj_inner_product,obj_F]  =   calc_objective(A,Y,PsiG, Psis, FGCPhi, FsCPhi,t,alpha,du);
         lsiter=lsiter+1;
     end
     iter=iter+1;
@@ -51,7 +57,7 @@ while(1)
     Gk=G+t*sk;
     
     % print some iteration comments
-    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f1),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
+    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj: ',num2str(f1),'| obj_l2: ',num2str(obj_l2),'| obj_ip: ',num2str(obj_inner_product),'| obj_F: ',num2str(obj_F)])
 
     %update parameters for next iteration;
     if lsiter > 2
@@ -73,16 +79,22 @@ while(1)
 end
 return
 
+    function [PsiG, Psis, FGCPhi, FsCPhi]=preobjective(F,G,C,Phi,Psi,sk); %so we only have to calculate this once per outer iteration
+        PsiG=Psi*G;
+        Psis=Psi*sk;
+        FGCPhi=F*(G*C*Phi);
+        FsCPhi=F*(sk*C*Phi);
+    end
 
-    function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du)
-        %objective= ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2        
-        obj_l2_inner= du - (F*(G*C*Phi)) ;
+    function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(A,Y,PsiG, Psis, FGCPhi, FsCPhi,t,alpha,du)
+        %objective= ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2      
+        obj_l2_inner= du - (FGCPhi+t*FsCPhi) ;
         obj_l2_inner=obj_l2_inner.*(abs(du)>0); % make this more efficient
         obj_l2=obj_l2_inner(:)'*obj_l2_inner(:);
         
-        obj_inner_product=trace(Y'*(A-Psi*G));
+        obj_inner_product=trace(Y'*(A-(PsiG+t*Psis))); %additive
         
-        obj_F=norm((A-Psi*G),'fro')^2 ;
+        obj_F=norm((A-(PsiG+t*Psis)),'fro')^2 ;        %sub additive
         
         obj=obj_l2+obj_inner_product+(alpha/2).*obj_F;
     end
@@ -95,7 +107,6 @@ return
         gradk=gl2+gf;
 
     end
-
 
     function grad=grad_l2(G,C,Phi,du,F)
         grad = 2* (F'*(du * Phi'*C' + F*(G*C*Phi*Phi'*C'))); %new attempt...

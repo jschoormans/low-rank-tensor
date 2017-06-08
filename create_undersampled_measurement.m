@@ -58,6 +58,10 @@ du=mask.*d;
 
 clear d 
 
+%add noise
+if noiselevel>0
+du=du+(randn(size(du)).*mean(du(:)).*noiselevel).*(du~=0);
+end
 
 
 

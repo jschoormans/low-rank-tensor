@@ -1,15 +1,13 @@
 % draft reconstruction code 
 clear all; close all; clc;
 
-% 1: make data (settings in other .m file for now)
-uf=0.2; % undersampling factor (excluding center)
-noiselevel=0.2;
+% 1: make data (most settings in other .m file for now)
 
-run create_undersampled_measurement.m
-% 1a: add noise
-if noiselevel>0
-du=du+(randn(size(du)).*mean(du(:)).*noiselevel).*(du~=0);
-end
+uf=0.2; % undersampling factor (excluding center)
+noiselevel=0;
+
+run create_undersampled_measurement.m    
+
 
 % 2: estimate subspaces
 L3=4;               %rank of subspace dimension 3
@@ -39,7 +37,7 @@ alpha= 1e1;         %penalty parameter >0
 beta=  0.1;         %penalty parameter >0
 lambda=1;        %sparsity parameter
 mu=1e-3 ;            %sparsity parameter
-Lg=101;             %rank of spatial dimension
+Lg=400;             %rank of spatial dimension
 niter=5;
 
 %initialize matrices

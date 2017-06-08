@@ -17,8 +17,11 @@ grad=calc_grad(G,F,du,Phi,C);
 while(1)
     
     [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(F,G,C,Phi,B,Z,du,beta);
+    
+    if iter==0
     disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
-
+    end
+    
     % 1 calculate steepest direction
     gradk=calc_grad(G,F,d,Phi,C);
     
