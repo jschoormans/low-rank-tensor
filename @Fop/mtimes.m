@@ -5,14 +5,10 @@ function res = mtimes(a,b)
 % ifft /fft 
 % reshape back to 1-unfolded tensor
 
-if a.adjoint 
-res=reshape(b,a.tensorsize);
-res=fftshift(fftshift(ifft(ifft(ifftshift(ifftshift(res,1),2),[],1),[],2),1),2); %zero filled recon
-res=res.*sqrt(a.size);
-res=reshape(res,a.unfoldedsize);
-else
-res=reshape(b,a.tensorsize);
-res=fftshift(fftshift(fft(fft(ifftshift(ifftshift(res,1),2),[],1),[],2),1),2); %zero filled recon
-res=res./sqrt(a.size);
-res=reshape(res,a.unfoldedsize);
+if a.adjoint %F'*B where B is a tensor of size (imsize(1),imsize(2),s3,s4);
+res=fftshift(fftshift(ifft(ifft(ifftshift(ifftshift(b,1),2),[],1),[],2),1),2); %zero filled recon
+res=res.*sqrt(a.imsize(1)*a.imsize(1));
+else %F'*B where B is a tensor of size (imsize(1),imsize(2),s3,s4);
+res=fftshift(fftshift(fft(fft(ifftshift(ifftshift(b,1),2),[],1),[],2),1),2); %zero filled recon
+res=res./sqrt(a.imsize(1)*a.imsize(2));
 end

@@ -4,7 +4,6 @@ function Gk=conj_grad_G_2(G,C,B,Z,beta,du,Phi,F)
 % argminG ||d - Fu G C Phi ||_2^2  + <Z,B-Z> - (beta/2) ||B -C ||_F ^2
 disp('--- CG algorithm for C ---')
 
-
 %params:
 betals=0.6;
 t0=1 ;

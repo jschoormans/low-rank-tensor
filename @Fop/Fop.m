@@ -1,8 +1,6 @@
-function  res = Fop(tensorsize,unfoldedsize)
+function  res = Fop(imsize)
 % only for 2D
 res.adjoint = 0;
-res.tensorsize=tensorsize;
-res.unfoldedsize=unfoldedsize;
-res.size=tensorsize(1)*tensorsize(2);
+res.imsize=imsize; 
 res = class(res,'Fop');
 

@@ -3,7 +3,13 @@ clear all; close all; clc;
 
 % 1: make data (settings in other .m file for now)
 uf=0.2; % undersampling factor (excluding center)
+noiselevel=0.2;
+
 run create_undersampled_measurement.m
+% 1a: add noise
+if noiselevel>0
+du=du+(randn(size(du)).*mean(du(:)).*noiselevel).*(du~=0);
+end
 
 % 2: estimate subspaces
 L3=4;               %rank of subspace dimension 3
@@ -19,7 +25,7 @@ nav_estimate_2= subspace_estimator(nav_parameter_dim2,L4);
 tensorsize=size(du)
 unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)]
 
-F=Fop(tensorsize,unfoldedsize);
+F=Fop([res,res]);
 Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
 
 %4 zero-filled recon
@@ -29,11 +35,11 @@ du_1=reshape(du,unfoldedsize);
 
 %% ALGO 
 %initialize parameters
-alpha= 0.1;         %penalty parameter >0
+alpha= 1e1;         %penalty parameter >0
 beta=  0.1;         %penalty parameter >0
-lambda=0.01;        %sparsity parameter
+lambda=1;        %sparsity parameter
 mu=1e-3 ;            %sparsity parameter
-Lg=100;             %rank of spatial dimension
+Lg=101;             %rank of spatial dimension
 niter=5;
 
 %initialize matrices
