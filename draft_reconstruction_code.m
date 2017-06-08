@@ -4,7 +4,7 @@ clear all; close all; clc;
 % 1: make data (most settings in other .m file for now)
 
 uf=0.25; % undersampling factor (excluding center)
-noiselevel=0;
+noiselevel=10;
 
 run create_undersampled_measurement.m    
 
@@ -34,10 +34,10 @@ du_1=reshape(du,unfoldedsize);
 figure(4); imshow(abs(P0(:,:,1,1)),[])
 %% ALGO 
 %initialize parameters
-alpha= 2;         %penalty parameter >0
-beta=  2;         %penalty parameter >0
-lambda=5e-1;        %sparsity parameter
-mu=1e-1 ;           %sparsity parameter
+alpha= 0.5;         %penalty parameter >0
+beta=  0.5;         %penalty parameter >0
+lambda=5e-2;        %sparsity parameter
+mu=1e-2 ;           %sparsity parameter
 Lg=400;             %rank of spatial dimension
 niter=5;
 

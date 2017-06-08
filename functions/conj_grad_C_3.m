@@ -3,7 +3,7 @@ function Ck=conj_grad_C_3(G,C,B,Z,beta,d,Phi,F)
 tol=10;
 maxiter=20;
 
-L=Lambda2(F,G,Phi);
+L=Lambda2(F,G,Phi,abs(d)>0);
 
 b=((L'*d) + (beta/2)*(B+Z./beta));
 X= @(G) (L'*(L*G)) +(beta/2)*G;

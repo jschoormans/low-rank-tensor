@@ -3,7 +3,7 @@ function Gk=conj_grad_G_3(G,C,A,Y,alpha,Psi,d,Phi,F)
 tol=10;
 maxiter=10;
 
-L=Lambda(F,C,Phi);
+L=Lambda(F,C,Phi,abs(d)>0);
 a2PP=(alpha/2)*Psi'*Psi;
 
 b=(L'*d + (alpha/2)*Psi'*(A+Y./alpha));
