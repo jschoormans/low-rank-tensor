@@ -10,9 +10,6 @@ function Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du,Phi,F)
 % OPTIMIZE SPEED WITH PRECALCULATING FFTS AND ADDING SMARTER MASKING IN OBJ
 % FUNTCTION 
 
-% TEMP: 
-Phi=Phi';
-
 %params:
 betals=0.6;
 t0=1 ;
@@ -43,14 +40,14 @@ while(1)
     f1=1e99; %only to start...
     while (f1 > f0 - ls_alpha*t*abs(gradk(:)'*sk(:)))^2 & (lsiter<maxlsiter)
         t = t * betals;
-        [f1]  =   calc_objective(F,G+t*sk,C,Phi,A,Y,Psi,alpha,du);
+        [f1,obj_l2,obj_inner_product,obj_F]  =   calc_objective(F,G+t*sk,C,Phi,A,Y,Psi,alpha,du);
         lsiter=lsiter+1;
     end
     % update the position
     Gk=G+t*sk;
     
     % print some iteration comments
-    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f0)])
+    disp(['iter: ',num2str(iter),'| lsiter: ',num2str(lsiter), '| obj:',num2str(f0),'| obj_l2:',num2str(obj_l2),'| obj_ip:',num2str(obj_inner_product),'| obj:_F',num2str(obj_F)])
 
     %update parameters for next iteration;
     if lsiter > 2
@@ -75,17 +72,14 @@ return
 
 
     function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du)
-        % argminG ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2
-        du=reshape(du,[128^2 100]); %resize to 2D matrix TEMPORARY
-        
+        %objective= ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2        
         obj_l2_inner= du - (F*(G*C*Phi)) ;
         obj_l2_inner=obj_l2_inner.*(abs(du)>0); % make this more efficient
         obj_l2=obj_l2_inner(:)'*obj_l2_inner(:);
         
-%         obj_inner_product=sum(sum(Y.*(A-Psi*G)));
-        obj_inner_product=trace(Y'*(A-Psi*G)); %alternative method 
+        obj_inner_product=trace(Y'*(A-Psi*G));
         
-        obj_F=norm((A-Psi*G),'fro')^2     % which one, why different??
+        obj_F=norm((A-Psi*G),'fro')^2 ;
         
         obj=obj_l2+obj_inner_product+(alpha/2).*obj_F;
     end
@@ -101,8 +95,6 @@ return
 
 
     function grad=grad_l2(G,C,Phi,du,F)
-        du=reshape(du,[128^2 100]); %resize to 2D matrix TEMPORARY 
-%         grad = 2*Phi'*C'*(F'*(F*(G*C*Phi) -du)); %du is a vector --> shd be a tensor'/ 
         grad = 2* (F'*(du * Phi'*C' + F*(G*C*Phi*Phi'*C'))); %new attempt...
     end
 

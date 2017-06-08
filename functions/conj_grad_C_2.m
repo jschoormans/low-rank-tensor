@@ -3,8 +3,6 @@ function Gk=conj_grad_G_2(G,C,Y,B,Z,beta,du,Phi,F)
 % minimizes the function
 % argminG ||d - Fu G C Phi ||_2^2  + <Z,B-Z> - (beta/2) ||B -C ||_F ^2
 
-% TEMP: 
-Phi=Phi';
 
 %params:
 betals=0.6;
@@ -72,9 +70,9 @@ return
         obj_l2_inner=obj_l2_inner.*(abs(du)>0); % make this more efficientS
         obj_l2=obj_l2_inner(:)'*obj_l2_inner(:);
         
-        obj_inner_product=sum(sum(Z.*(B-Z)));
+        obj_inner_product=trace(Z'*(B-Z));
         
-        obj_F=sum(sum(abs(B-C)).^2); %is this correct?
+        obj_F=norm((B-C),'fro')^2 ;
         
         obj=obj_l2+obj_inner_product-(beta/2).*obj_F;
     end
