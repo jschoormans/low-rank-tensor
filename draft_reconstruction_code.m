@@ -39,10 +39,7 @@ niter=5;
 % P1_0=P1_0+rand(size(P1_0)).*mean(P1_0(:)).*20;
 
 %initialize matrices
-Phi=kron(nav_estimate_2,nav_estimate_1);    %from subspaces
-Phi=Phi.'; % temporary: 1) why? 2) shd we take complex conjugate?
-
-[G,C,A,B,Y,Z]= init_G0(P1_0,Phi,Lg);                    
+[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    
 
 MSE=[]; 
 for iter=1:niter
@@ -50,8 +47,9 @@ for iter=1:niter
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-    Gk=conj_grad_G_2(G,C,A,Y,alpha,Psi,du_1,Phi,F);     %17
-    Ck=C; % to do...
+    Gk=conj_grad_G_2(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);     %17
+    Ck=C; %temp
+%     Ck=conj_grad_C_2(Gk,C,Bk,Z,beta,du_1,Phi,F); % to do...
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z-beta.*(Bk-Ck);
     

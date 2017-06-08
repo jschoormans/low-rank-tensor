@@ -86,7 +86,7 @@ return
 
 
     function grad=grad_l2(G,F,d,Phi,C)
-        grad=2*G'*(F'*((d+F*(G*C))*Phi'))); % really dont know...
+        grad=2*G'*(F'*((d+F*(G*C))*Phi')));
     end
 
     function grad = grad_inner_product()
