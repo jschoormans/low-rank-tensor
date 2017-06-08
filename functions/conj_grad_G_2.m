@@ -26,7 +26,7 @@ grad=calc_grad(G,C,Phi,du,F,Y,Psi,alpha);
 
 while(1)
     
-    [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(G,C,A,Y,alpha,Psi,du,Phi);
+    [f0,obj_l2,obj_inner_product,obj_F]= calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du);
 
     % 1 calculate steepest direction
     gradk=calc_grad(G,C,Phi,du,F,Y,Psi,alpha);
@@ -43,7 +43,7 @@ while(1)
     f1=1e99; %only to start...
     while (f1 > f0 - ls_alpha*t*abs(gradk(:)'*sk(:)))^2 & (lsiter<maxlsiter)
         t = t * betals;
-        [f1]  =   calc_objective(G+t*sk,C,A,Y,alpha,Psi,du,Phi);
+        [f1]  =   calc_objective(F,G+t*sk,C,Phi,A,Y,Psi,alpha,du);
         lsiter=lsiter+1;
     end
     % update the position
@@ -74,17 +74,18 @@ end
 return
 
 
-    function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(G,C,A,Y,alpha,Psi,du,Phi)
+    function [obj,obj_l2,obj_inner_product,obj_F] = calc_objective(F,G,C,Phi,A,Y,Psi,alpha,du)
         % argminG ||d - Fu G C Phi ||_2^2  + <Y,A-Psi G> + (alpha/2) ||A - Psi G ||_F ^2
         du=reshape(du,[128^2 100]); %resize to 2D matrix TEMPORARY
         
         obj_l2_inner= du - (F*(G*C*Phi)) ;
-        obj_l2_inner=obj_l2_inner.*(abs(du)>0); % make this more efficientS
+        obj_l2_inner=obj_l2_inner.*(abs(du)>0); % make this more efficient
         obj_l2=obj_l2_inner(:)'*obj_l2_inner(:);
         
-        obj_inner_product=sum(sum(Y.*(A-Psi*G)));
+%         obj_inner_product=sum(sum(Y.*(A-Psi*G)));
+        obj_inner_product=trace(Y'*(A-Psi*G)); %alternative method 
         
-        obj_F=sqrt(sum(sum(abs(A-Psi*G)).^2));
+        obj_F=norm((A-Psi*G),'fro')^2     % which one, why different??
         
         obj=obj_l2+obj_inner_product+(alpha/2).*obj_F;
     end
