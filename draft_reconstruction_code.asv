@@ -24,7 +24,10 @@ tensorsize=size(du);
 unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)];
 
 F=Fop([res,res]);
-Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
+
+if 
+% Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
+Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
 
 %4 zero-filled recon
 P0=F'*du;
@@ -39,7 +42,7 @@ beta=  0.5;         %penalty parameter >0
 lambda=5e-2;        %sparsity parameter
 mu=1e-2 ;           %sparsity parameter
 Lg=400;             %rank of spatial dimension
-niter=5;
+niter=15;
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    

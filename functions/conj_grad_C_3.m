@@ -1,6 +1,6 @@
 function Ck=conj_grad_C_3(G,C,B,Z,beta,d,Phi,F)
 % TO DO: THINK VERY WELL ABOUT MASK (OMEGA) 
-tol=10;
+tol=1e-5;
 maxiter=20;
 
 L=Lambda2(F,G,Phi,abs(d)>0);

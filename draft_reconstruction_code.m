@@ -3,8 +3,10 @@ clear all; close all; clc;
 
 % 1: make data (most settings in other .m file for now)
 
-uf=0.02; % undersampling factor (excluding center)
+uf=0.03; % undersampling factor (excluding center)
 noiselevel=0;
+sparsity_transform='wavelet'
+% sparsity_transform='TV'
 
 run create_undersampled_measurement.m    
 
@@ -24,7 +26,12 @@ tensorsize=size(du);
 unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)];
 
 F=Fop([res,res]);
+
+if sparsity_transform=='wavelet'
 Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
+else
+Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
+end
 
 %4 zero-filled recon
 P0=F'*du;
@@ -34,12 +41,12 @@ du_1=reshape(du,unfoldedsize);
 figure(4); imshow(abs(P0(:,:,1,1)),[])
 %% ALGO 
 %initialize parameters
-alpha= 0.5;         %penalty parameter >0
-beta=  0.5;         %penalty parameter >0
+alpha= 0.2;         %penalty parameter >0
+beta=  0.2;         %penalty parameter >0
 lambda=5e-2;        %sparsity parameter
 mu=1e-2 ;           %sparsity parameter
 Lg=400;             %rank of spatial dimension
-niter=15;
+niter=50;
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    
