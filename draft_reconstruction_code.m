@@ -3,20 +3,20 @@ clear all; close all; clc;
 
 % 1: make data (most settings in other .m file for now)
 
-uf=0.25; % undersampling factor (excluding center)
-noiselevel=10;
+uf=0.02; % undersampling factor (excluding center)
+noiselevel=0;
 
 run create_undersampled_measurement.m    
 
 
 % 2: estimate subspaces
 L3=4;               %rank of subspace dimension 3
-L4=4;               %rank of subspace dimension 4
+L4=6;               %rank of subspace dimension 4
 
-nav_parameter_dim1 = squeeze(du(ctrcoords,ctrcoords,:,5));
+nav_parameter_dim1 = squeeze(du(ctrcoords,ctrcoords,:,1));
 nav_estimate_1= subspace_estimator(nav_parameter_dim1,L3);
 
-nav_parameter_dim2 = squeeze(du(ctrcoords,ctrcoords,5,:));
+nav_parameter_dim2 = squeeze(du(ctrcoords,ctrcoords,1,:));
 nav_estimate_2= subspace_estimator(nav_parameter_dim2,L4);
 
 % 3: initialize other operators
@@ -39,14 +39,14 @@ beta=  0.5;         %penalty parameter >0
 lambda=5e-2;        %sparsity parameter
 mu=1e-2 ;           %sparsity parameter
 Lg=400;             %rank of spatial dimension
-niter=5;
+niter=15;
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,I,tensorsize,70,70)
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,I,tensorsize,61,33)
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16

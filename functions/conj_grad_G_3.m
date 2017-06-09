@@ -16,7 +16,7 @@ P=R;
 
 
 iter=0;resid=1e99;
-while iter<maxiter |resid<tol
+while iter<maxiter && resid>tol
     iter=iter+1;
     alpha= trace(R'*R)/trace(P'*X(P));
     xk=x+alpha.*P;

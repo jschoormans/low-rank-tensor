@@ -6,11 +6,11 @@
 rng(3); % random seed to control phantom generation
 res=128;
 
-ADCvals=[0.1 0.009 1 3 6];
+ADCvals=[1:5].*1e-3;
 T1vals=[20 50 100 200 800].*1e-3;
 
 TE=[10:10:100].*0.001 % in seconds
-bvals=3*[0:100:900].*1e-3 %units?
+bvals=[0:100:900] %units?
 
 I=diffusion_T1_phantom(res,ADCvals,T1vals,TE,bvals,1);
 
@@ -37,8 +37,8 @@ mask=rand(size(d))>(1-uf); %undersampling
 ctr=10;
 ctrcoords=floor(res/2)-ctr: floor(res/2)+ctr; 
 ll=length(ctrcoords);
-mask(ctrcoords,ctrcoords,5,:)=ones(ll,ll,1,size(d,4));
-mask(ctrcoords,ctrcoords,:,5)=ones(ll,ll,1,size(d,4));
+mask(ctrcoords,ctrcoords,1,:)=ones(ll,ll,1,size(d,4));
+mask(ctrcoords,ctrcoords,:,1)=ones(ll,ll,1,size(d,4));
 
 % for all measurements
 ctrcoordsall=floor(res/2)-3: floor(res/2)+3; 
