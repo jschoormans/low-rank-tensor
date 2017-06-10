@@ -64,6 +64,18 @@ for iter=1:niter
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
 end
-
-
+P_recon=G*C*Phi;
+P_recon=reshape(P_recon,tensorsize);
+%%
+figure(998); 
+ Q=[]
+for ii=1:size(I,3)
+    J=[];
+    for jj=1:size(I,4);
+        J=[J,abs(P_recon(:,:,ii,jj))];
+    end
+    Q=[Q;J];
+end
+imshow(abs(Q),[0 0.1])
+clear Q J 
 %%

@@ -9,16 +9,14 @@ a2PP=(alpha/2)*Psi'*Psi;
 b=(L'*d + (alpha/2)*Psi'*(A+Y./alpha));
 X= @(G) (L'*(L*G)) +a2PP*G;
 
-%% TEMP: USE SPOT OPERATORS
-%{
+%%
 1+1
 bspot=reshape(b,[numel(b) 1]);
 Xspot= @(G,LL) (L'*(L*G)) +a2PP*reshape(G,[numel(G)/LL,LL]); % should be some sort of blockdiagonal operator of Lrank ops
-spotoperator=opFunction(6553600,6553600,Xspot,1,1)
+spotoperator=opFunction(6553600,6553600,XSpot)
 
-solution=bicg(spotoperator,bspot)
+solution=bicg(Xspot,bspot)
 % Xa= @(d) (L*(L'*d)) +a2PP'*d; %not needed
-%}
 %%
 x=G;
 R=b-X(x);
