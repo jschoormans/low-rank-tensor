@@ -4,20 +4,20 @@ vars_kerry;
 %%
 clear; 
 current_mat_file = 'sc_27.mat'
-raw_data_fn = 'lo_12062017_2051218_27_2_wipdwitset230V4.raw';
+raw_data_fn = ['/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_06_12/',...
+    'lo_12062017_2051218_27_2_wipdwitset230V4.raw'];
 
 MR_data_raw = MRecon(raw_data_fn);
 
 MR_data = MR_data_raw.Copy;
-MR_data.Parameter.Parameter2Read.ky = [-32:32]';
 MR_data.Parameter.Parameter2Read.typ = 1;
 MR_data.Parameter.Parameter2Read.mix = 0;  
 MR_data.Parameter.Recon.ImmediateAveraging = 'Yes';
 MR_data.ReadData;
 MR_data.RandomPhaseCorrection;
-MR_data.RemoveOversampling;
+% MR_data.RemoveOversampling;
 MR_data.PDACorrection;
-MR_data.DcOffsetCorrection;
+% MR_data.DcOffsetCorrection;
 MR_data.MeasPhaseCorrection;
 
 
@@ -61,10 +61,6 @@ MR_data.RotateImage;
 
 MR_data.ShowData;
 ima_data_cc = squeeze(double(MR_data.Data));
-
+size(ima_data_cc)
 % eval(['save ', current_mat_file, 'ima_data -v7.3']);
-%%
-T2Prep = [100 80 70 60 50 40 30 20 10];
-b_value = 900:-100:0;
-b_value = 0:50:450;
 
