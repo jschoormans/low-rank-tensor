@@ -2,7 +2,7 @@
 % with fully sampled navigator k-space centers 
 
 % TO DO: -add var density and more us options
-
+rng('default') 
 rng(3); % random seed to control phantom generation
 res=128;
 
