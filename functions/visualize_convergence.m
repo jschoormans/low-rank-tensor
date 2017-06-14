@@ -1,4 +1,4 @@
-function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu,x,y)
+ function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu,x,y)
 % iter: iteration
 % MSE: (first iter use [])
 %I gold standard image
