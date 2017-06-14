@@ -28,7 +28,17 @@ ylabel('b-values')
 %% kspace : called d
 d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(I,2),1),[],1),[],2),1),2);
 figure(2); imshow(abs(d(:,:,1,1)),[])
-
+figure(11); Q=[]
+for ii=1:size(I,3)
+    J=[];
+    for jj=1:size(I,4);
+        J=[J,abs(d(:,:,ii,jj))];
+    end
+    Q=[Q;J];
+end
+imshow(abs(Q),[0 1])
+xlabel('echo times')
+ylabel('b-values')
 %% TUCKER DECOMPOSITION
 
 rank1=50
@@ -80,8 +90,8 @@ figure(11); subplot(121); imshow(F1{3},[]);
 subplot(122); imshow(nav_estimate_1,[]);
 theta = subspace(F1{3},nav_estimate_1) %angle between two subspaces 
 figure(12); hold on; 
-plot(abs(F1{3}(:,3)),'-*g'); 
-plot(abs(nav_estimate_1(:,3)),'-*b');
+plot(abs(F1{3}(:,1)),'-*g'); 
+plot(abs(nav_estimate_1(:,1)),'-*b');
 hold off
 
 %% make PSI from navigator function

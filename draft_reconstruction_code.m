@@ -3,7 +3,7 @@ clear all; close all; clc;
 
 % 1: make data (most settings in other .m file for now)
 
-uf=0.03; % undersampling factor (excluding center)
+uf=0.01; % undersampling factor (excluding center)
 noiselevel=0;
 sparsity_transform='wavelet'
 % sparsity_transform='TV'
@@ -38,7 +38,7 @@ P0=F'*du;
 P1_0=reshape(P0,unfoldedsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 du_1=reshape(du,unfoldedsize);
 
-figure(4); imshow(abs(P0(:,:,1,1)),[])
+figure(4); imshow(abs(P0(:,:,2,2)),[])
 %% ALGO 
 %initialize parameters
 alpha= 0.2;         %penalty parameter >0
