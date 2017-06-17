@@ -1,7 +1,7 @@
 clear all; close all; clc
 raw_data_fn = 'L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_06_13\lo_13062017_1942169_11_2_wipdptset2prepallinonedecendingt2acendingbV4.raw';
 MR_data_raw = MRecon(raw_data_fn);
-
+addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 %%
 % for first experiments we ignore the coil dimension, and do reconstruction
 % on a coil-combined fft of an image;, instead of on the k-space directly 
@@ -24,7 +24,7 @@ F=Fop([res,res]);
 kspa_fs = F*I;
 
 %---gen mask
-uf = 0.2;
+uf = 0.05;
 mask=rand(size(kspa_fs))>(1-uf); %undersampling
 
 % add center for subspace estimae
@@ -51,11 +51,11 @@ imshow(abs(Q),[0 1]); clear Q J
 kspa_us = kspa_fs.*mask;
 %% RECON
 
-sparsity_transform='wavelet'
-% sparsity_transform='TV'
+% sparsity_transform='wavelet'
+sparsity_transform='TV'
 
 % 2: estimate subspaces
-L3=4;               %rank of subspace dimension 3
+L3=6;               %rank of subspace dimension 3
 L4=6;               %rank of subspace dimension 4
 
 nav_parameter_dim1 = squeeze(kspa_us(ctrcoords,ctrcoords,:,1));
@@ -69,7 +69,7 @@ tensorsize=size(kspa_us);
 unfoldedsize=[size(kspa_us,1)*size(kspa_us,2),size(kspa_us,3)*size(kspa_us,4)];
 
 
-if sparsity_transform=='wavelet'
+if strcmp(sparsity_transform,'wavelet')==1
 Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
 else
 Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
@@ -86,8 +86,8 @@ figure(4); imshow(abs(P0(:,:,1,1)),[])
 alpha= 0.2;         %penalty parameter >0
 beta=  0.2;         %penalty parameter >0
 lambda=5e-2;        %sparsity parameter
-mu=1e-2 ;           %sparsity parameter
-Lg=24;             %rank of spatial dimension
+mu=1e-1 ;           %sparsity parameter
+Lg=24;             %rank of spatial dimension (not too exceed L3*L4)
 niter=50;
 
 %initialize matrices
@@ -99,7 +99,9 @@ for iter=1:niter
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-    Gk=conj_grad_G_3(G,C,Ak,Y,alpha,Psi,kspa_us_1,Phi,F);    %17 to do...
+%    Gk=conj_grad_G_3(G,C,Ak,Y,alpha,Psi,kspa_us_1,Phi,F);    %17 to do...
+    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspa_us_1,Phi,F);    %17 to do...
+
     Ck=conj_grad_C_3(Gk,C,Bk,Z,beta,kspa_us_1,Phi,F);        %18 to do...
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);

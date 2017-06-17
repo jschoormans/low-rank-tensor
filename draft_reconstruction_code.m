@@ -27,7 +27,7 @@ unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)];
 
 F=Fop([res,res]);
 
-if sparsity_transform=='wavelet'
+if strcmp(sparsity_transform,'wavelet')==1
 Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
 else
 Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
