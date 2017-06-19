@@ -24,7 +24,7 @@ F=Fop([res,res]);
 kspa_fs = F*I;
 
 %---gen mask
-uf = 0.05;
+uf = 0.1;
 mask=rand(size(kspa_fs))>(1-uf); %undersampling
 
 % add center for subspace estimae
@@ -51,12 +51,12 @@ imshow(abs(Q),[0 1]); clear Q J
 kspa_us = kspa_fs.*mask;
 %% RECON
 
-% sparsity_transform='wavelet'
-sparsity_transform='TV'
+sparsity_transform='wavelet'
+% sparsity_transform='TV'
 
 % 2: estimate subspaces
-L3=6;               %rank of subspace dimension 3
-L4=6;               %rank of subspace dimension 4
+L3=3;               %rank of subspace dimension 3
+L4=3;               %rank of subspace dimension 4
 
 nav_parameter_dim1 = squeeze(kspa_us(ctrcoords,ctrcoords,:,1));
 nav_estimate_1= subspace_estimator(nav_parameter_dim1,L3);
@@ -86,23 +86,22 @@ figure(4); imshow(abs(P0(:,:,1,1)),[])
 alpha= 0.2;         %penalty parameter >0
 beta=  0.2;         %penalty parameter >0
 lambda=5e-2;        %sparsity parameter
-mu=1e-1 ;           %sparsity parameter
-Lg=24;             %rank of spatial dimension (not too exceed L3*L4)
-niter=50;
+mu=5e-2 ;           %sparsity parameter
+Lg=L3*L4;             %rank of spatial dimension (not too exceed L3*L4)
+assert(Lg<=(L3*L4),'rank of spatial dimension too high!')
+niter=10;
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,I,tensorsize,210,170)
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,I,tensorsize,80,220)
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-%    Gk=conj_grad_G_3(G,C,Ak,Y,alpha,Psi,kspa_us_1,Phi,F);    %17 to do...
-    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspa_us_1,Phi,F);    %17 to do...
-
-    Ck=conj_grad_C_3(Gk,C,Bk,Z,beta,kspa_us_1,Phi,F);        %18 to do...
+    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspa_us_1,Phi,F);    %17
+    Ck=conj_grad_C_3(Gk,C,Bk,Z,beta,kspa_us_1,Phi,F);        %18 
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
@@ -120,16 +119,39 @@ for ii=1:size(I,3)
     end
     Q=[Q;J];
 end
-imshow(abs(Q),[0 0.1])
+imshow(abs(Q),[])
 clear Q J 
+%% analysis fit
+x=[1:10];
+for ii=50:300
+    ii
+    for jj=50:300
+        
+        Ix=squeeze(I(ii,jj,:,1));
+        Ix_rec=squeeze(abs(P_recon(ii,jj,:,1)));
+        f_ref = fit(x.',Ix,'exp1');
+        f_rec=fit(x.',Ix_rec,'exp1');
+        T1_ref(ii,jj)=f_ref.b;
+        T1_rec(ii,jj)=f_rec.b;
+    end
+end
+
+x=[1:9];
+for ii=50:300
+    ii
+    for jj=50:300
+        
+        Ix=squeeze(I(ii,jj,1,:));
+        Ix_rec=squeeze(abs(P_recon(ii,jj,1,:)));
+        f_ref = fit(x.',Ix,'exp1');
+        f_rec=fit(x.',Ix_rec,'exp1');
+        ADC_ref(ii,jj)=f_ref.b;
+        ADC_rec(ii,jj)=f_rec.b;
+    end
+end
 %%
-
-
-
-
-
-
-
+figure(98); imshow(cat(2,T1_ref,T1_rec),[-0.12 -0.09]); colormap('jet'); legend('')
+figure(99); imshow(cat(2,ADC_ref,ADC_rec),[]); colormap('jet'); legend('')
 
 
 

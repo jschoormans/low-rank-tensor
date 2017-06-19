@@ -29,4 +29,8 @@ while iter<maxiter && resid > tol
 end
 Ck=xk;
 
+
+
+
+
 end
