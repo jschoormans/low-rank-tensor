@@ -34,14 +34,14 @@
     xlabel('iter')
     title('Mean squared error')
     
-    h1=subplot(324)
+    h1=subplot(324);
     plot(squeeze(cgr(x_idx,y_idx,:,1)),'g')
     hold on 
     plot(squeeze(I(x_idx,y_idx,:,1)),'--k')
     hold off
     title(['DIM3: pixel value of x=', num2str(x),' y=',num2str(y)])
     
-    h2=subplot(326)
+    h2=subplot(326);
     plot(squeeze(cgr(x_idx,y_idx,1,:)),'g')
     hold on 
     plot(squeeze(I(x_idx,y_idx,1,:)),'--k')

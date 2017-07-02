@@ -27,7 +27,7 @@ unfoldedsize=[size(du,1)*size(du,2),size(du,3)*size(du,4)];
 
 F=Fop([res,res]);
 
-if sparsity_transform=='wavelet'
+if strcmp(sparsity_transform,'wavelet')==1
 Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
 else
 Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
@@ -57,7 +57,7 @@ for iter=1:niter
     
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-    Gk=conj_grad_G_3(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...
+    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...
     Ck=conj_grad_C_3(Gk,C,Bk,Z,beta,du_1,Phi,F);        %18 to do...
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
