@@ -2,21 +2,17 @@
 clear all; close all; clc;
 % 1: make data (most settings in other .m file for now)
 
-uf=0.25; % undersampling factor (excluding center)
+uf=0.02; % undersampling factor (excluding center)
 noiselevel=0;
 sparsity_transform='wavelet'
 % sparsity_transform='TV'
+ncoils=1;
 
 run create_undersampled_measurement_S.m    
 
 %%% TEMP TEMP
 sens_normalized=bsxfun(@rdivide,sens,sqrt(sum(abs(sens).^2,3))); 
-F=MCFop([res,res],conj(sens_normalized));
-
-P_compare=F'*du;             
-I_compare=(F'*(F*permute(I,[1 2 5 3 4])));
-figure(88); imshow(abs(cat(2,I(:,:,1,1,1),I_compare(:,:,1,1,1),P_compare(:,:,1,1,1))))
-% du=F*(F'*du); 
+F=MCFop([res,res],(sens_normalized));
 %%%%%%%%%
 
 % 2: estimate subspaces
@@ -51,13 +47,13 @@ P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the s
 du_1=reshape(du,unfoldedKsize);
 
 figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
-figure(5); imshow(abs(cat(2,sens(:,:,1),sens(:,:,2),sens(:,:,3),sens(:,:,4))),[]); axis off; title('sense maps')
+% figure(5); imshow(abs(cat(2,sens(:,:,1),sens(:,:,2),sens(:,:,3),sens(:,:,4))),[]); axis off; title('sense maps')
 
 %% ALGO 
 %initialize parameters
 alpha= 0.2;         %penalty parameter >0
 beta=  0.2;         %penalty parameter >0
-lambda=5e-4;        %sparsity parameter
+lambda=5e-3;        %sparsity parameter
 mu=1e-2 ;           %sparsity parameter
 Lg=L3*L4;             %rank of spatial dimension
 niter=50;
@@ -67,7 +63,7 @@ niter=50;
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,squeeze(I_compare),imagesize,61,33)
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,squeeze(I),imagesize,61,33)
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
     Bk=soft_thresh_B(C,Z,mu,beta);                      %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...

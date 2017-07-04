@@ -19,7 +19,7 @@ end
 S_norm=sqrt(sum(abs(S).^2,3));
 S_normalized=bsxfun(@rdivide,S,S_norm);
 
-Iout= bsxfun(@times,permute(I,[1 2 5 3 4]),S_normalized);
+Iout= bsxfun(@times,permute(I,[1 2 5 3 4]),conj(S_normalized));
 
 
 % Iout=permute(Iout,[1 2 5 3 4]);

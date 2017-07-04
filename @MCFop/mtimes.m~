@@ -43,6 +43,8 @@ elseif size(b,1)==a.imsize(1)*a.imsize(2)*a.ncoils || size(b,1)==a.imsize(1)*a.i
         res=res./sqrt(a.imsize(1)*a.imsize(2));
         res=reshape(res,[a.imsize(1)*a.imsize(2)*a.ncoils,numel(b)/(a.imsize(1)*a.imsize(2))]);
 
+    else
+        error('matrix size')
     end
 else
     error('unsupported matrix size!')

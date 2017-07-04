@@ -27,6 +27,7 @@ xlabel('echo times')
 ylabel('b-values')
 clear Q J 
 %%  add coil sensitivity information 
+ncoils=4;
 [Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils);
 
 %% to k space 
