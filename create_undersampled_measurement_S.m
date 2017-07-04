@@ -9,12 +9,12 @@ res=128;
 ADCvals=[1:5].*1e-3;
 T1vals=[20 50 100 200 800].*1e-3;
 
-TE=[10:10:100].*0.001 % in seconds
-bvals=[0:100:900] %units?
+TE=[10:10:100].*0.001; % in seconds
+bvals=[0:100:900]; %units?
 
 I=diffusion_T1_phantom(res,ADCvals,T1vals,TE,bvals,1);
 
-figure(1); Q=[]
+figure(1); Q=[];
 for ii=1:size(I,3)
     J=[];
     for jj=1:size(I,4);
@@ -28,11 +28,11 @@ ylabel('b-values')
 clear Q J 
 %%  add coil sensitivity information 
 ncoils=4
-[I,sens]=addcoilsensitvity_to_simulated(I,ncoils);
+[Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils);
 
 %% to k space 
-d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(I,2),1),[],1),[],2),1),2)./sqrt(res*res);
-figure(2); imshow(abs(d(:,:,1,1)),[])
+d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(Ic,2),1),[],1),[],2),1),2)./sqrt(res*res);
+figure(2); imshow(abs(d(:,:,1,1)),[]); axis off; title('k-space')
 
 %% make undersampling mask  (independent of coil dimensions!)
 mask=rand(res,res,length(TE),length(bvals))>(1-uf); %undersampling
@@ -48,7 +48,7 @@ mask(ctrcoords,ctrcoords,:,1)=ones(ll,ll,1,size(d,4));
 ctrcoordsall=floor(res/2)-3: floor(res/2)+3; 
 mask(ctrcoordsall,ctrcoordsall,:,:)=ones(7,7,length(TE),length(bvals));
 
-figure(3); Q=[]
+figure(3); Q=[];
 for ii=1:length(TE)
     J=[];
     for jj=1:length(bvals);
@@ -56,7 +56,7 @@ for ii=1:length(TE)
     end
     Q=[Q;J];
 end
-imshow(abs(Q),[0 1]); clear Q J 
+imshow(abs(Q),[0 1]);axis off;  clear Q J 
 
 mask=repmat(mask,[1 1 1 1 ncoils]);
 mask=permute(mask,[1 2 5 3 4]);

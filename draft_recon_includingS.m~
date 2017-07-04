@@ -2,35 +2,28 @@
 clear all; close all; clc;
 % 1: make data (most settings in other .m file for now)
 
-uf=0.25; % undersampling factor (excluding center)
+uf=0.1; % undersampling factor (excluding center)
 noiselevel=0;
 sparsity_transform='wavelet'
 % sparsity_transform='TV'
 
 run create_undersampled_measurement_S.m    
 
-%%% TEMP TEMP
-sens_normalized=bsxfun(@rdivide,sens,sqrt(sum(abs(sens).^2,3))); 
-F=MCFop([res,res],conj(sens_normalized));
+sens_normalized=bsxfun(@rdivide,sens,(sum(abs(sens),3)));
+F=MCFop([res,res],sens_normalized);
 
-P_compare=F'*du;             
+
 I_compare=(F'*(F*permute(I,[1 2 5 3 4])));
-figure(88); imshow(abs(cat(2,I(:,:,1,1,1),I_compare(:,:,1,1,1),P_compare(:,:,1,1,1))))
-% du=F*(F'*du); 
-%%%%%%%%%
 
 % 2: estimate subspaces
 L3=4;               %rank of subspace dimension 3
-L4=4;               %rank of subspace dimension 4
+L4=6;               %rank of subspace dimension 4
 
-nav_parameter_dim1 = squeeze(du(ctrcoords,ctrcoords,:,:,1));
-nav_estimate_1= subspace_estimator_multicoil(nav_parameter_dim1,L3);
-nav_estimate_1=real(nav_estimate_1); %% temp??
+nav_parameter_dim1 = squeeze(du(ctrcoords,ctrcoords,1,:,1));
+nav_estimate_1= subspace_estimator(nav_parameter_dim1,L3);
 
-nav_parameter_dim2 = squeeze(du(ctrcoords,ctrcoords,:,1,:));
-nav_estimate_2= subspace_estimator_multicoil(nav_parameter_dim2,L4);
-nav_estimate_2=real(nav_estimate_2); %temp??
-
+nav_parameter_dim2 = squeeze(du(ctrcoords,ctrcoords,1,1,:));
+nav_estimate_2= subspace_estimator(nav_parameter_dim2,L4);
 disp('for now: taking one coil element for subspace - to fix later!!')
 
 % 3: initialize other operators
