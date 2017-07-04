@@ -7,15 +7,12 @@ T2Prep = [100 80 70 60 50 40 30 20 10];
 b_value = 0:50:450;
 
 I = abs(ima_data_cc_rs(160:479,:,:,:));
-desired_res = [128 128];
-
 K_full = bart('fft 3', I);
+desired_res = [100 100];
 K_downsample = K_full(floor(size(K_full,1)/2-desired_res(1)/2):floor(size(K_full,1)/2-desired_res(1)/2)+desired_res(1)-1,...
     floor(size(K_full,2)/2-desired_res(2)/2):floor(size(K_full,2)/2-desired_res(2)/2)+desired_res(1)-1,:,:);
 I = bart('fft -i 3', K_downsample);
-clear K_full desired_res K_downsample
-
-I = abs(I); %use real data for now
+clear K_full
 %% TUCKER MODEL 
 % aa=5:3:65
 %  iter=1:length(aa)
@@ -61,7 +58,7 @@ hold on; plot(T2Prep,squeeze(I(180,160,10,:)),'r')
 figure(11); imagesc(F1{3}); axis off; plot(abs(F1{3}))
 
 %% Simulate undersampling
-kspa_fs = bart('fft 3', I);
+kspa_fs = bart('fft 3', ima_data_cc_rs(160:479,:,:,:));
 res = size(kspa_fs, 1);
 
 
@@ -137,7 +134,7 @@ alpha= 0.2;         %penalty parameter >0
 beta=  0.2;         %penalty parameter >0
 lambda=5e-2;        %sparsity parameter
 mu=1e-2 ;           %sparsity parameter
-Lg=400;             %rank of spatial dimension
+Lg=24;             %rank of spatial dimension
 niter=50;
 
 %initialize matrices
