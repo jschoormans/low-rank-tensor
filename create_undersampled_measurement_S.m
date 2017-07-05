@@ -18,12 +18,12 @@ res=128;
 
 
 %>>>>>>>>>>>>>> generate VFA TSE & T2 weighted phantoms<<<<<<<<<<<<<<<<<<<<
-T1vals=[500 400 300 200 100].*1e-3; % in seconds
-T2vals=[20 30 40 50 60].*1e-3; % in seconds
+T1vals=[500 400 300 200 1000].*1e-3; % in seconds
+T2vals=[20 30 40 50 50].*1e-3; % in seconds
 
 T2prep=[10:3:97].*0.001; % in seconds
 TEes=4.*0.001; % in seconds
-ETL = 30; 
+ETL = 60; 
 
 I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1);
 
@@ -37,8 +37,8 @@ for ii=1:size(I,3)
     Q=[Q;J];
 end
 imshow(abs(Q),[0 1])
-xlabel('echo times')
-ylabel('b-values')
+xlabel('Prameter 1')
+ylabel('Prameter 2')
 clear Q J 
 %%  add coil sensitivity information 
 [Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils);
