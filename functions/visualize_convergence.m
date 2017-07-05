@@ -9,7 +9,7 @@
     y_idx = x;
 
     current_guess=G*C*Phi;
-    MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2));   
+    MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);   
     
     cgr=abs(reshape(current_guess,sdu));
     
