@@ -14,7 +14,7 @@
 % Henk Smit, h.smit@erasmusmc.nl, 09-2012.
 % -----------------------------------------
 
-clear all; close all
+clear all; 
 set(0,'DefaultAxesFontSize', 16);
 
  TErep=1;
@@ -45,11 +45,11 @@ set(0,'DefaultAxesFontSize', 16);
 %     T2 = 90; 
         
     
-    df0 = 0;         % df0=1 will only display the results for one on resonance spin
+    df0 = 1;         % df0=1 will only display the results for one on resonance spin
 
 
     % Sequence Properties
-    TE = 7.3;          % ms, repetition time of FSPGR
+    TE = 4;          % ms, repetition time of FSPGR
     ETL = 30;        % number of inversions
     TRec = 10;      % time to wait after echotrains
     nET = 1;         % number of echo trains
@@ -103,6 +103,8 @@ set(0,'DefaultAxesFontSize', 16);
 %     angg=[180 156 127 120 120 120 120 121.43 122.86 124.29 125.71 127.14 128.57 130 131.43 132.86 134.29 135.71 137.14 138.57 140 141.43 142.86 144.29 145.71 147.14 148.57 150 151.43 152.86 154.29 155.71 157.14 158.57 160];%asymmetric ETL31+4
 %     angg = [180	125	64.86	42.77	33.72	24.77	24.92	24.26	23.8	23.61	23.62	23.81	24.11	24.52	24.99	25.52	26.04	26.58	27.08	27.56	27.99	28.42	28.82	29.23	29.65	30.11	30.59	31.11	31.66	32.23	32.79	33.35	33.89	34.44	34.98	35.54	36.11	36.73	37.36	38.04	38.71	39.4	40.08	40.77	41.46	42.19	42.94	43.74	44.56	45.41	46.26	47.13	48.01	48.93	49.89	50.91	51.96	53.04	54.14	55.28	56.46	57.71	59.03	60.4	61.82	63.29	64.84	66.5	68.21	70.11	71.98	74.04	76.26	78.59	81.08	83.85	86.72	89.91	93.48	97.32	100]
     plot(1:length(angg),angg)
+    
+    angg = 180 * ones(1,length(angg));
     angles = angg*pi/180;
 
     % ===== Simulate the Decay ======
@@ -184,9 +186,10 @@ set(0,'DefaultAxesFontSize', 16);
 
     %Plot mean Mxy
     % subplot(3,1,2)
-    if TErep == 1
-        figure('position',[200 200 900 600]);
-    end
+%     if TErep == 1
+%         figure('position',[200 200 900 600]);
+%     end
+figure(102);
     meanMxyMag = abs(mean(Mcomb,2));
     uTEs = unique(TEs);
     plot(time,abs(mean(Mcomb,2)),'b','LineWidth',2)
@@ -201,8 +204,8 @@ set(0,'DefaultAxesFontSize', 16);
     grid on;
     
      
-    figure;
-    [AX, H1, H2]=plotyy(uTEs,meanMxyMag(uTEs),[0 uTEs], angg);
+    figure(103);
+    [AX, H1, H2]=plotyy(uTEs,meanMxyMag(uTEs),[0 uTEs], [90 angg]);
     set(get(AX(1),'Ylabel'),'String','MTF');
     set(get(AX(2),'Ylabel'),'String','Angle');
     set(AX(1),'YLim',[0 1])
@@ -215,5 +218,6 @@ set(0,'DefaultAxesFontSize', 16);
     grid on;
     % title(['Flip angles x ',num2str(b1),', Number of Prepulses = ' num2str(T2ETL),', interval =  ',num2str(T2int),'ms'])
     meanmags(TErep)=mean(meanMxyMag(uTEs(5:end)));
+    hold on
 
 

@@ -6,13 +6,27 @@ rng('default')
 rng(3); % random seed to control phantom generation
 res=128;
 
-ADCvals=[1:5].*1e-3;
-T1vals=[20 50 100 200 800].*1e-3;
 
-TE=[10:10:100].*0.001; % in seconds
-bvals=[0:100:900]; %units?
+%>>>>>>>>>>>>>>> generate Diffusion & T1 (T2?) weigthed phantoms<<<<<<<<<<<
+% ADCvals=[1:5].*1e-3;
+% T1vals=[20 50 100 200 800].*1e-3;
+% 
+% TE=[10:10:100].*0.001; % in seconds
+% bvals=[0:100:900]; %units?
+% 
+% I=diffusion_T1_phantom(res,ADCvals,T1vals,TE,bvals,1);
 
-I=diffusion_T1_phantom(res,ADCvals,T1vals,TE,bvals,1);
+
+%>>>>>>>>>>>>>> generate VFA TSE & T2 weighted phantoms<<<<<<<<<<<<<<<<<<<<
+T1vals=[500 400 300 200 100].*1e-3; % in seconds
+T2vals=[20 30 40 50 60].*1e-3; % in seconds
+
+T2prep=[10:3:97].*0.001; % in seconds
+TEes=4.*0.001; % in seconds
+ETL = 30; 
+
+I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1);
+
 
 figure(1); Q=[];
 for ii=1:size(I,3)

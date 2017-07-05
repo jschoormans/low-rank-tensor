@@ -1,0 +1,66 @@
+%
+function I=VFA_TSE_T2_T1_phantom(N,T2vals,T1vals,T2prep, TEes, ETL, varargin )
+%N : resolution
+% T2vals = vector of T2 values
+% T1vals = vecotr of T1 values
+
+% TE: vector of TE
+% echo_time: vector of echo time values 
+
+%optional: visualize true/false
+%% EXAMPLE 
+% I=diffusion_T1_phantom(100,[0.1 0.5 1],[200, 400 600],[1,2,3,4,5].*0.001,[100,200,300],1)
+
+%%
+assert(length(T2vals)==length(T1vals)); %want same number of bvals as T1vals (= number of phantoms)
+
+if nargin>5
+    visualize = varargin{1};
+else
+    visualize =false;
+end
+
+%% START CODE
+
+I=zeros(N,N,ETL,length(T2prep));
+
+for ii=1:ETL
+    for nphantom=1:length(T2vals)
+        
+        [TSE_Mxy_modulation(nphantom,:), TSE_echo_time] = CUBE_Mxy_calculation_lite(T1vals, T2vals, TEes, ETL);
+        
+        
+        E(1)=0.4+0.6*rand; %intensity
+        E(2)= 0.1+rand*0.2; %length
+        E(3)= 0.1+rand*0.2; %width
+        E(4)=-0.5+(rand); %x-coord of middle 
+        E(5)=-0.5+(rand); %y-coord of middle
+        E(6)= rand*360; %angle   
+        P{nphantom} = phantom(E,N) ;
+
+
+        
+    end
+end
+
+
+
+
+% make simulation images
+I=zeros(N,N,ETL,length(T2prep));
+for ii=1:ETL
+    for jj=1:length(T2prep)
+        
+        for nphantom=1:length(T2vals) % for all separate phantoms
+            I(:,:,ii,jj)=P{nphantom}.*exp(-T2prep(jj)./T2vals(nphantom))).*;
+        end
+        
+    end
+end
+
+if visualize == 1
+% TO DO ...
+end
+
+end
+

@@ -6,6 +6,8 @@ rng('default')
 rng(3); % random seed to control phantom generation
 res=128;
 
+
+%>>>>>>>>>>>>>>> generate Diffusion & T1 (T2?) weigthed phantoms<<<<<<<<<<<
 ADCvals=[1:5].*1e-3;
 T1vals=[20 50 100 200 800].*1e-3;
 
@@ -13,6 +15,18 @@ TE=[10:10:100].*0.001; % in seconds
 bvals=[0:100:900]; %units?
 
 I=diffusion_T1_phantom(res,ADCvals,T1vals,TE,bvals,1);
+
+
+%>>>>>>>>>>>>>> generate VFA TSE & T2 weighted phantoms<<<<<<<<<<<<<<<<<<<<
+T1vals=[300 500 800 1000 1500].*1e-3; % in seconds
+T2vals=[20 40 60 80 100].*1e-3; % in seconds
+
+TE=[10:3:97].*0.001; % in seconds
+TSE_FAs = [134.5000    79.0000   58.1300   51.2500   51.2500   55.2900   62.1400   72.1400   86.7000  110.2800  120.0000  122.1100  124.2100  126.3200  128.4200  130.5300  132.6300  134.7400  136.8400  138.9500  141.0500  143.1600  145.2600  147.3700  149.4700  151.5800  153.6800  155.7900  157.8900  160.0000];
+TSEecho_time=[0:100:900]; % in seconds
+
+I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,TE,TSEecho_time,TSE_FAs,1);
+
 
 figure(1); Q=[];
 for ii=1:size(I,3)
@@ -27,7 +41,6 @@ xlabel('echo times')
 ylabel('b-values')
 clear Q J 
 %%  add coil sensitivity information 
-ncoils=4;
 [Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils);
 
 %% to k space 
