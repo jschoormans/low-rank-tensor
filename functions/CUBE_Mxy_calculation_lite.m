@@ -4,7 +4,7 @@
 
 %==================== Get the flipangles for CUBE
 
-    angles=CUBEangles(1000,50,TEes,0.7,ETL); %fix FA for all
+    angles=CUBEangles(1000,50,TEes,0.4,ETL); %fix FA for all
     angles=angles*180/pi;
 
 

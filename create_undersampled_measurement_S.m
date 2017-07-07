@@ -21,9 +21,9 @@ res=128;
 T1vals=[500 400 300 200 1000].*1e-3; % in seconds
 T2vals=[20 30 40 50 50].*1e-3; % in seconds
 
-T2prep=[10:6:97].*0.001; % in seconds
+T2prep=[10:10:97].*0.001; % in seconds
 TEes=4.*0.001; % in seconds
-ETL = 60; 
+ETL = 20; 
 
 I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1);
 

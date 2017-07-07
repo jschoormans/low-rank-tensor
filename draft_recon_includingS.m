@@ -34,10 +34,10 @@ unfoldedIsize=[size(du,1)*size(du,2),size(du,4)*size(du,5)];                %coi
 unfoldedKsize=[size(du,1)*size(du,2)*size(du,3),size(du,4)*size(du,5)];     %coils separate
 
 if strcmp(sparsity_transform,'wavelet')==1
-Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?) 
+    Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
 else
     % to do: can be made ~15 times faster with a finite difference operator
-Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
+    Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
 end
 
 %4 zero-filled recon
@@ -56,7 +56,9 @@ beta=  2;         %penalty parameter >0
 
 lambda=5e-2;        %sparsity parameter
 mu=5e-1 ;           %sparsity parameter
+
 Lg=L3*L4;             %rank of spatial dimension
+Lg=6;
 niter=10;
 
 %initialize matrices
@@ -64,11 +66,11 @@ niter=10;
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,squeeze(I),imagesize,61,33)
-    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);             %15
-    Bk=soft_thresh_B(C,Z,mu,beta);                      %16
-    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);    %17 to do...
-    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,du_1,Phi,F);        %18 to do...
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,squeeze(I),imagesize,61,33);
+    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
+    Bk=soft_thresh_B(C,Z,mu,beta);                              %16
+    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);       %17
+    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,du_1,Phi,F);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     

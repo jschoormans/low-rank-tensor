@@ -1,4 +1,6 @@
 function Ck=precon_conj_grad_C(G,C,B,Z,beta,d,Phi,F)
+tic; 
+fprintf('---conjugate gradient algorithm: solving for C_k ---- \n')
 
 tol=1e-19;
 maxiter=100;
@@ -16,10 +18,15 @@ Aop = @(C) Res(X(ResA(C)));
 %%
 % [x2,flag,relres,iter,resvec2]=bicgstab(Aop,b,tol,maxiter);
 % [x2,flag,relres,iter,resvec2]=pcg(Aop,b,tol,maxiter);
-[x2,flag,relres,iter,resvec2]=cgs(Aop,b,tol,maxiter); %seems fastest
+% [x2,flag,relres,iter,resvec2]=cgs(Aop,b,tol,maxiter); %seems fastest
+[xpcg,flag,relres,iter,resvecpcg]=cgs(Aop,b,tol,maxiter,[],[],C(:)); %seems fastest
 
-Ck=ResA(x2);
-figure(29); plot(log(resvec2)); drawnow; 
+Ck=ResA(xpcg);
+figure(29); plot(log(resvecpcg)); 
+drawnow; 
 
+t=toc; 
+fprintf('Time taken: %d seconds',t)
+fprintf('| relres %d | iters: %d | \n',relres,iter)
 
 end
