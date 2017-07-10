@@ -20,9 +20,6 @@ Res= @(x) reshape(x,[numel(G),1]);
 ResA= @(x) reshape(x,size(G));
 Aop = @(G) Res(X(ResA(G))); 
 
-
- c [xpcg,flag,relres,iter,resvecpcg]=bicgstab(Aop,b,tol,maxiter,m1fun,m2fun,G(:)); %add initial guess
-
 [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,[],[],G(:)); %add initial guess
 
 % [x2,flag,relres,iter,resvec1]=cgs(Aop,b,tol,maxiter); %seems fastest
@@ -31,7 +28,6 @@ Aop = @(G) Res(X(ResA(G)));
 
 Gk=ResA(x);
 figure(19); plot(log(resvec)); 
-hold on; plot(resvecpcg)
 
 t=toc; 
 fprintf('Time taken: %d seconds',t)

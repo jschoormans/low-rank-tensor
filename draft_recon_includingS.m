@@ -2,7 +2,7 @@
 clear all; close all; clc;
 % 1: make data (most settings in other .m file for now)
 
-uf=0.01; % undersampling factor (excluding center)
+uf=0.02; % undersampling factor (excluding center)
 noiselevel=0;
 sparsity_transform='wavelet'
 % sparsity_transform='TV'
@@ -58,7 +58,7 @@ lambda=5e-2;        %sparsity parameter
 mu=5e-1 ;           %sparsity parameter
 
 Lg=L3*L4;             %rank of spatial dimension
-Lg=6;
+Lg=3;
 niter=10;
 
 %initialize matrices
