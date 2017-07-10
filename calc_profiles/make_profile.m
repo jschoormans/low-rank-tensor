@@ -4,11 +4,11 @@
 nDim1=60; % TSE dimensions
 nDim2=5; % T2-prep 
 
-ky=128; 
+ky=64; 
 kz=128; 
 
 ctrsize=5;
-undersampling=0.01; %excluding centers
+undersampling=0.02; %excluding centers
 
 waiting_time=500e-3; 
 TR=4e-3         %TR in ms; 
@@ -21,7 +21,7 @@ assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to und
 nshots=nDim2*nr_points; 
 total_time= TR_shot*nshots; %total time im seconds; 
 
-fprintf('number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,total_time)
+fprintf('number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,round(total_time))
 
 %%
 % add random point to every independent k-space, s.t. all have equal # of
@@ -135,10 +135,10 @@ pause(0.2)
 end 
 
 %% 
-
+clear delta_x delta_y
 p=profile_order;
-delta_x=(p(1,1:end-1)-p(1,2:end));
-delta_y= (p(2,1:end-1)-p(2,2:end));
+delta_x=(p(1,1:end-1,1)-p(1,2:end,1));
+delta_y= (p(2,1:end-1,1)-p(2,2:end,1));
 figure(3)
 plot(sqrt((delta_x).^2+(delta_y).^2),'.')
 
