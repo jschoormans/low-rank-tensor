@@ -3,7 +3,7 @@ tic;
 fprintf('---conjugate gradient algorithm: solving for G_k ---- \n')
 
 tol=1e-10;
-maxiter=50; %temp
+maxiter=150; %temp
 
 L=Lambda(F,C,Phi,abs(d)>0);
 a2PP=(alpha/2)*Psi'*Psi;
@@ -31,8 +31,8 @@ mfun=@(x) Res(bsxfun(@times, ResA(x),w)); %test
 
 
 Gk=ResA(x);
-figure(19); plot(log10(resvec)); 
-
+figure(19); plot(log10(resvec),'r*-'); 
+xlabel('iterations'); ylabel('10log of residual')
 t=toc; 
 fprintf('Time taken: %d seconds',t)
 fprintf('| relres %d | iters: %d | \n',relres,iter)

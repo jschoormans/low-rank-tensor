@@ -18,8 +18,8 @@ res=128;
 
 
 %>>>>>>>>>>>>>> generate VFA TSE & T2 weighted phantoms<<<<<<<<<<<<<<<<<<<<
-T1vals=[500 400 300 200 1000].*1e-3; % in seconds
-T2vals=[20 30 40 50 50].*1e-3; % in seconds
+T1vals=[500 400 300 200 1000 500 400 300 200 1000].*1e-3; % in seconds
+T2vals=[20 30 40 50 50 55 50 60 70 10].*1e-3; % in seconds
 
 T2prep=[10:10:97].*0.001; % in seconds
 TEes=4.*0.001; % in seconds
