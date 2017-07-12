@@ -36,11 +36,11 @@ m3fun=@(x) D2inv*x %(run other code first)
 [xpcg2,flag,relres,iter,resvecpcg2]=bicgstab(Aop,b,tol,maxiter,m3fun,[],G(:)); %add initial guess
 
 clf
-figure(19); plot(log10(resvec),'ko'); 
-hold on; plot(log10(resvecpcg),'r*');
-plot(log10(resvecpcg2),'g*'); 
+figure(19); plot(log(resvec),'ko'); 
+hold on; plot(log(resvecpcg),'r*');
+plot(log(resvecpcg2),'g*'); 
 xlabel('iter'); ylabel('log(error)')
-legend('normal','Jacobi preconditioning','full inverse preconditioning');
+legend('normal','pcg','advanced preconditioning');
 hold off
 
 
