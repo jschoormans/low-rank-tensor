@@ -17,13 +17,13 @@ CPPC=(C*Phi*Phi'*C');
 w=diag(CPPC)+alpha/2; 
 w=permute(w,[2 1]);
 w=1./w;
-mfun=@(x) Res(bsxfun(@times, ResA(x),w)); %test
 
 % try to reshape operator so we have proper matrix, vector calculations
 X= @(G) (L'*(L*G)) +a2PP*G;
 Res= @(x) reshape(x,[numel(G),1]);
 ResA= @(x) reshape(x,size(G));
 Aop = @(G) Res(X(ResA(G))); 
+mfun=@(x) Res(bsxfun(@times, ResA(x),w)); %test
 
 
 
