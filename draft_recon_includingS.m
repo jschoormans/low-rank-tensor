@@ -8,7 +8,7 @@ ncoils=2;
 complexsim=1
 
 % sparsity_transform='wavelet'
-sparsity_transform='TV'
+sparsity_transform='TVcomplex'
 
 L3=4;               %rank of subspace dimension 3
 L4=4;               %rank of subspace dimension 4
@@ -33,11 +33,17 @@ if strcmp(sparsity_transform,'wavelet')
     Psi=opWavelet2(res,res,'Daubechies') %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
 elseif strcmp(sparsity_transform,'TV')
     % to do: can be made ~15 times faster with a finite difference operator
-    Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
+%     Psi=opConvolve(res,res,[-1 1],[0 0],'truncated')* opConvolve(res,res,[-1 1]',[0 0],'truncated') %2D TV operator
+elseif strcmp(sparsity_transform,'TVcomplex')
+%     Psi=TV2op()
+    Psi1=opConvolve(res,res,[-1 1],[0 0],'truncated')
+    Psi2=opConvolve(res,res,[-1 1]',[0 0],'truncated')
+    Psi=[Psi1;Psi2]
 end
 
 sens_normalized=bsxfun(@rdivide,sens,sqrt(sum(abs(sens).^2,3))); 
-F=MCFop([res,res],(sens_normalized));
+F=MCFopClass;
+set_MCFop_Params(F,(sens_normalized),[res,res],[tensorsize(4),tensorsize(5)]);
 
 %4 zero-filled recon
 P0=F'*du;             
@@ -45,6 +51,11 @@ P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the s
 du_1=reshape(du,unfoldedKsize);
 
 figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
+figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
+
+%% 
+% lowres_phase_estimate=exp(-1i*angle(P0(:,:,1,1,1)));
+% Psi=Psi*opDiag(lowres_phase_estimate(:))
 
 %% ALGO 
 %initialize parameters
@@ -61,6 +72,8 @@ niter=10;
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    
+A=zeros(size(Psi*G));
+Y=zeros(size(A));
 
 MSE=[]; 
 for iter=1:niter
