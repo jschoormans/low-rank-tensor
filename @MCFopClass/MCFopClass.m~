@@ -22,8 +22,8 @@ classdef MCFopClass < handle
             
         end
         
-        function set_MCFop_adjoint(obj,a)
-            obj.adjoint = a;
+        function set_MCFop_adjoint(obj)
+            obj.adjoint = xor(obj.adjoint,1);
             
         end
         

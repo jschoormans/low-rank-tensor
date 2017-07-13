@@ -3,14 +3,14 @@ tic;
 fprintf('---conjugate gradient algorithm: solving for C_k ---- \n')
 
 tol=1e-19;
-maxiter=100;
+maxiter=10;
 
 L=Lambda2(F,G,Phi,abs(d)>0);
 
 b=((L'*d) + (beta/2)*(B+Z./beta));
 b=b(:);
 
-X= @(G) (L'*(L*G)) +(beta/2)*G;
+X= @(C) (L'*(L*C)) +(beta/2)*C;
 Res= @(x) reshape(x,[numel(C),1]);
 ResA= @(x) reshape(x,size(C));
 Aop = @(C) Res(X(ResA(C))); 

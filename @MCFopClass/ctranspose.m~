@@ -1,0 +1,7 @@
+function res = ctranspose(F)
+res=copy(F);
+set_MCFop_adjoint(res,1)
+% % adj = 1;
+% set_MCFop_adjoint(a,adj);
+% res = a;
+
