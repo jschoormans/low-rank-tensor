@@ -25,7 +25,7 @@ T2prep=[10:10:97].*0.001; % in seconds
 TEes=4.*0.001; % in seconds
 ETL = 20; 
 
-I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1);
+I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1,complexsim);
 
 
 figure(1); Q=[];

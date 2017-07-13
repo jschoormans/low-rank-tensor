@@ -16,7 +16,9 @@ assert(length(T2vals)==length(T1vals)); %want same number of bvals as T1vals (= 
 
 if nargin>5
     visualize = varargin{1};
+    complexsim=varargin{2};
 else
+    complexsim=false;
     visualize =false;
 end
 
@@ -45,7 +47,12 @@ for ii=1:ETL
     for jj=1:length(T2prep)
         
         for nphantom=1:length(T2vals) % for all separate phantoms
-            I(:,:,ii,jj)=I(:,:,ii,jj)+(P{nphantom} .* exp(-T2prep(jj)./T2vals(nphantom))) .* TSE_Mxy_modulation(nphantom,ii);
+
+            if complexsim %add random phase to phantom 
+            I(:,:,ii,jj)=I(:,:,ii,jj)+(P{nphantom} .* exp(-T2prep(jj)./T2vals(nphantom))) .* TSE_Mxy_modulation(nphantom,ii).*exp(1i*rand);
+            else
+                            I(:,:,ii,jj)=I(:,:,ii,jj)+(P{nphantom} .* exp(-T2prep(jj)./T2vals(nphantom))) .* TSE_Mxy_modulation(nphantom,ii);
+            end
         end
         
     end
