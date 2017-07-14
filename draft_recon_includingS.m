@@ -5,7 +5,7 @@ clear all; close all; clc;
 uf=0.02; % undersampling factor (excluding center)
 noiselevel=0;
 ncoils=2;
-complexsim=0
+complexsim=1
 
 % sparsity_transform='wavelet'
 sparsity_transform='TVcomplex'
@@ -71,9 +71,7 @@ Lg=3;
 niter=10;
 
 %initialize matrices
-[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,nav_estimate_1,nav_estimate_2,Lg);                    
-A=zeros(size(Psi*G));
-Y=zeros(size(A));
+[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,Lg);                    
 
 MSE=[]; 
 for iter=1:niter

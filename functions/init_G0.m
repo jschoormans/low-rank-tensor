@@ -1,4 +1,4 @@
-function [Phi,G0,C0,A,B,Y,Z]=init_G0(P,nav_estimate_1,nav_estimate_2,L1)
+function [Phi,G0,C0,A,B,Y,Z]=init_G0(P,Psi,nav_estimate_1,nav_estimate_2,L1)
 %initializes all matrices.
 
 %input: 
@@ -16,8 +16,9 @@ G0=U(:,1:L1);                           % first Lg vectors from left-dominant  s
 
 C0=G0'*P*Phi';                          % G0^H P10 Psi^H 
 
-A = zeros(size(G0));
+A=zeros(size(Psi*G0));
+Y=zeros(size(A));
+
 B = zeros(size(C0));
-Y = zeros(size(G0));
 Z = zeros(size(C0));
 end

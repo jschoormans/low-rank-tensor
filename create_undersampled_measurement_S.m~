@@ -28,9 +28,7 @@ ETL = 20;
 I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1,complexsim);
 
 if complexsim
-   fprintf('adding 8pi phase gradient over image \n')
-   phase_gradient=exp(-1i*linspace(0,8*pi,res));
-   I=bsxfun(@times,I,phase_gradient);
+   phase_gradient= 
 end
 
 
