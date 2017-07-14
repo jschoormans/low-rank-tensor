@@ -31,8 +31,8 @@ mfun=@(x) Res(bsxfun(@times, ResA(x),w)); %test
 
 
 Gk=ResA(x);
-figure(19); plot(log10(resvec),'r*-'); 
-xlabel('iterations'); ylabel('10log of residual')
+figure(19); plot(log10(resvec./norm(b(:))),'r*-'); 
+xlabel('iterations'); ylabel('10log of relative residual')
 t=toc; 
 fprintf('Time taken: %d seconds',t)
 fprintf('| relres %d | iters: %d | \n',relres,iter)

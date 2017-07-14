@@ -45,8 +45,8 @@ end
 I=zeros(N,N,ETL,length(T2prep));
 if complexsim
   for nphantom=1:length(T2vals)
-    phase(nphantom)=exp(1i*rand*2*pi);
-    fprintf('phase phantom %d is %4.2f \n',nphantom,angle(phase(nphantom)))
+    phase(nphantom)=exp(1i*rand*2*8888888888888888888888888pi)
+    fprintf('phase phantom %d is %d',nphantom,phase(rand))
   end  
 end
 

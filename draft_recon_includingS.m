@@ -5,7 +5,7 @@ clear all; close all; clc;
 uf=0.02; % undersampling factor (excluding center)
 noiselevel=0;
 ncoils=2;
-complexsim=1
+complexsim=0
 
 % sparsity_transform='wavelet'
 sparsity_transform='TVcomplex'
@@ -98,10 +98,10 @@ figure(998);
 for ii=1:size(I,3)
     J=[];
     for jj=1:size(I,4);
-        J=[J,abs(P_recon(:,:,1,ii,jj))];
+        J=[J,angle(P_recon(:,:,1,ii,jj))];
     end
     Q=[Q;J];
 end
-imshow(abs(Q),[0 0.1])
+imshow(abs(Q),[])
 clear Q J 
 %%
