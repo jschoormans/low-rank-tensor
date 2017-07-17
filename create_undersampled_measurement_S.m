@@ -64,8 +64,10 @@ mask(ctrcoords,ctrcoords,1,:)=ones(ll,ll,1,size(I,4));
 mask(ctrcoords,ctrcoords,:,1)=ones(ll,ll,size(I,3),1);
 
 % for all measurements
+if center_for_all_frames
 ctrcoordsall=floor(res/2)-3: floor(res/2)+3; 
 mask(ctrcoordsall,ctrcoordsall,:,:)=ones(7,7,size(I,3),size(I,4));
+end
 
 figure(3); Q=[];
 for ii=1:size(I,3)
