@@ -5,7 +5,6 @@ if ispc
 else
     cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
     addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
-    addpath(genpath('/opt/amc/bart/')); vars;
 end
 
 MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
@@ -15,9 +14,6 @@ MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Labels.NumberOfEchoes=60
 MR.Parameter.Recon.RemoveMOversampling='No'
 MR.Parameter.Recon.RemovePOversampling='No'
-MR.Parameter.Recon.ArrayCompression='Yes'
-MR.Parameter.Recon.ACNrVirtualChannels=4
-
 MR.Parameter.Parameter2Read.typ = 1;
 MR.Parameter.Recon.ImmediateAveraging='No'
 
@@ -39,8 +35,9 @@ MR.MeasPhaseCorrection;
 MR.SortData;
 % MR_data.K2IM;
 %% 
-% K=bart('cc -p3',MR.Data);
-K=MR.Data(128,:,:,:,:,:,:,:,:,:,:,:);
+K=bart('cc -p3',MR.Data);
+K=K(128,:,:,:,:,:,:,:,:,:,:,:);
+size(K)
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,132,65]);
@@ -113,8 +110,8 @@ P0=F'*du;
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 du_1=reshape(du,unfoldedKsize);
 
-figure(4); imshow(abs(P0(:,:,1,5,5)),[]); axis off; title('zero filled recon of one frame')
-figure(5); imshow(angle(P0(:,:,1,5,5)),[]); axis off; title('phase of zero filled recon of one frame')
+figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
+figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
 
 %% 
 % lowres_phase_estimate=exp(-1i*angle(P0(:,:,1,1,1)));
@@ -130,7 +127,7 @@ lambda=5e-2;        %sparsity parameter
 mu=5e-1 ;           %sparsity parameter
 
 Lg=L3*L4;             %rank of spatial dimension
-% Lg=;
+Lg=3;
 niter=10;
 
 %initialize matrices
@@ -138,7 +135,7 @@ niter=10;
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,33,33);
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,61,33);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);       %17
