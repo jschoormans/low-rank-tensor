@@ -25,11 +25,10 @@ nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares;
 nr_points=ceil(undersampling*ky*kz); 
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
 nshots=nDim2*nr_points; 
-total_time= TR_shot*nshots; %total time im seconds; 
-
+total_time= TR_shot*nshots; %total time in seconds; 
 fprintf('number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,round(total_time))
-%%
-% add random point to every independent k-space
+
+%% add random point to every independent k-space
 % performs a Monte Carlo simulation s.t. all have equal # of points
 mask=zeros(ky,kz,nDim1,nDim2); 
 fprintf('Starting Monte Carlo simulation \n')
@@ -60,22 +59,16 @@ for dim1=1:nDim1;
     end
 end
 clear m
-%% 
-if visualize 
-figure(1); 
-imshow(reshape(permute(mask,[1 3 2 4]),[ky*dim1,kz*dim2]))
-end
-%% Calculate profile ordering 
+if visualize;   figure(1); clf; imshow(reshape(permute(mask,[1 3 2 4]),[ky*dim1,kz*dim2])); end
+
+%% order and save
 profile_order=profile_ordering(mask,radialflag,visualize);
-%% save as datfile
- filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
+filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
      '_r',num2str(radialflag),'_bCtr',num2str(bigctrsize),'_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)]
- if ispc()
+ 
+if ispc()
      cd('L:\basic\divi\Ima\parrec\Jasper\profiles_LRT')
  else
- end
-
+end
 savemask_LRT(profile_order,filename)
-
-
 
