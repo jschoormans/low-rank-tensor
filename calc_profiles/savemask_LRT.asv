@@ -4,7 +4,7 @@ if nargin==1
     visualizeflag=1;
     filename='tempmask'
 elseif nargin==2
-    filename=varargin{1};
+    filename=varargin{1}
     visualizeflag=1;
 elseif nargin==3
         filename=varargin{1};

@@ -19,10 +19,10 @@ vec= @(x) x(:);
 % other: for all shots sort points as such 
 % inter-shot: permute such that inter shot ordering is random 
 
-for dim2=1:nDim2
+for dim2=1:nDim2;
     m=mask(:,:,:,dim2);
-    for dim1=1:nDim1
-        [row,col]=find(mask(:,:,dim1,dim2))
+    for dim1=1:nDim1;
+        [row,col]=find(mask(:,:,dim1,dim2));
         row=row-floor((1+ky)/2);
         col=col-floor((1+kz)/2);
 
@@ -43,7 +43,7 @@ for dim2=1:nDim2
         residual_N=mod(nr_points,N);
         
         index_r=[];
-        for ii=1:number_of_pieces
+        for ii=1:number_of_pieces;
         [~,index_piece]=sort(rho_sorted(1+(ii-1)*N:ii*N));
         index_piece_transform=s_index_angle((ii-1)*N+index_piece);
         index_r=[index_r;index_piece_transform];

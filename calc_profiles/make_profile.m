@@ -33,11 +33,11 @@ fprintf('number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,
 % performs a Monte Carlo simulation s.t. all have equal # of points
 mask=zeros(ky,kz,nDim1,nDim2); 
 fprintf('Starting Monte Carlo simulation \n')
-for dim1=1:nDim1
-    for dim2=1:nDim2
+for dim1=1:nDim1;
+    for dim2=1:nDim2;
         fprintf('Dim 1: %d, Dim 2: %d |',dim1,dim2)
         m=zeros(ky,kz); MC_niter=0;
-        if dim1==1 || dim2==1
+        if dim1==1 || dim2==1;
             ctrsize=bigctrsize;
             nr_centerpoints=(2*ctrsize+1)^2; %number of k-points in the center squares; 
         else
@@ -66,7 +66,7 @@ figure(1);
 imshow(reshape(permute(mask,[1 3 2 4]),[ky*dim1,kz*dim2]))
 end
 %% Calculate profile ordering 
-profile_order=profile_ordering(mask,radialflag,visualize)
+profile_order=profile_ordering(mask,radialflag,visualize);
 %% save as datfile
  filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
      '_r',num2str(radialflag),'_bCtr',num2str(bigctrsize),'_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)]
