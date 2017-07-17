@@ -17,7 +17,7 @@ TR_shot=nDim1*TR+waiting_time;
 MC_maxiter=10000; 
 
 visualize=1
-radialflag=1
+radialflag=0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% calculating some params...

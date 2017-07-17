@@ -17,6 +17,8 @@ end
     
 profile_reshaped = reshape(profile_order, 2, size(profile_order, 2) * size(profile_order, 3))';
 
+profile_final=[];
+
 nsa = zeros(size(profile_reshaped, 1), 1);
 for k = 1 : size(profile_order, 3)
         profile_this_dynamic = profile_order(:,:,k)';
@@ -33,6 +35,8 @@ for k = 1 : size(profile_order, 3)
         end
         
     end
+    
+    profile_final=cat(1,profile_final,profile_this_dynamic)
 end
 
 
