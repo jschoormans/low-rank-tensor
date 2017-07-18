@@ -8,7 +8,7 @@ elseif nargin==2
 elseif nargin==3
     radialflag=varargin{1}; linearflag=varargin{2};
 else
-    radialflag=varargin{1}; linearflag=varargin{2}; visualizeflag=varargin{3};
+        radialflag=varargin{1}; radialflag=varargin{2}; visualizeflag=varargin{3};
 end
 
 [ky,kz,nDim1,nDim2]=size(mask);
@@ -35,11 +35,9 @@ for dim2=1:nDim2;
         [~,s_index_angle]=sort(theta);
         else
             if linearflag==0
-                [~,s_index_angle]=sort(row);
+        [~,s_index_angle]=sort(row);
             else
-                [~,s_index_angle]=sort(col);
-            end
-            
+                
         end
 
         % take blocks of N angle pieces (plus a residual) 

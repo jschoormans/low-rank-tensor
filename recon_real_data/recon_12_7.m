@@ -1,14 +1,20 @@
 clear all; close all; clc
 if ispc
-    cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_11')
+%     cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_11')
+    cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_17')
     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-    cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
+%     cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
+        cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_17')
+
     addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 
-MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
+% MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
+% MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
+MR=MRecon('lo_17072017_1635333_4_2_wipvfat2preplowrankV4.raw')
+
 %     
 % MR.Parameter.Labels.Index.Cardiac=MR.Parameter.Labels.Index.rf; %use cardiac dimensions for TFE number
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -43,11 +49,11 @@ MR.SortData;
 K=MR.Data(128,:,:,:,:,:,:,:,:,:,:,:);
 
 % remove stupid checkerboard pattern
-che=create_checkerboard([1,132,65]);
+che=create_checkerboard([1,size(K,2),size(K,3)]);
 K=bsxfun(@times,K,che);
 
 a = sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6);
-sens=bart('ecalib -r 20 -m1',a);
+sens=bart('ecalib -r 20 -S -m1',a);
 du=squeeze(K);
 mask=squeeze(du(:,:,1,:,:))~=0;
 
@@ -73,8 +79,8 @@ res1=size(du,1); res2=size(du,2);
 L3=4;
 L4=3;
 
-ctr=5
-ctrcoords1=61-ctr:61+ctr %???
+ctr=3
+ctrcoords1=32-ctr:61+ctr %???
 ctrcoords2=32-ctr:32+ctr
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -113,8 +119,35 @@ P0=F'*du;
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 du_1=reshape(du,unfoldedKsize);
 
-figure(4); imshow(abs(P0(:,:,1,5,5)),[]); axis off; title('zero filled recon of one frame')
-figure(5); imshow(angle(P0(:,:,1,5,5)),[]); axis off; title('phase of zero filled recon of one frame')
+%%
+figure(4); imshow(abs(P0(:,:,1,1,10)),[]); axis off; title('zero filled recon of one frame')
+figure(5); imshow(angle(P0(:,:,1,5,1)),[]); axis off; title('phase of zero filled recon of one frame')
+%%
+
+figure(998); 
+ Q=[]
+for ii=1:size(P0,4)
+    J=[];
+    for jj=1:size(P0,5);
+        J=[J,angle(P0(:,:,1,ii,jj))];
+    end
+    Q=[Q;J];
+end
+imshow(abs(Q),[0,3*pi])
+clear Q J 
+
+
+figure(997); 
+ Q=[]
+for ii=1:size(P0,4)
+    J=[];
+    for jj=1:size(P0,5);
+        J=[J,abs(P0(:,:,1,ii,jj))];
+    end
+    Q=[Q;J];
+end
+imshow(abs(Q),[])
+clear Q J 
 
 %% 
 % lowres_phase_estimate=exp(-1i*angle(P0(:,:,1,1,1)));
@@ -127,10 +160,10 @@ beta=  2;         %penalty parameter >0
 % alpha=0.01/(mean(abs(du(du~=0))));beta=alpha; %from paper 
 
 lambda=5e-2;        %sparsity parameter
-mu=5e-1 ;           %sparsity parameter
+mu=5e2;           %sparsity parameter
 
-Lg=L3*L4;             %rank of spatial dimension
-% Lg=;
+% Lg=L3*L4;             %rank of spatial dimension
+Lg=1;
 niter=10;
 
 %initialize matrices
@@ -138,7 +171,7 @@ niter=10;
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,33,33);
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,20,33);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);       %17

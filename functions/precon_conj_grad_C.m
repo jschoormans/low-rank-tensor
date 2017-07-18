@@ -3,7 +3,7 @@ tic;
 fprintf('---conjugate gradient algorithm: solving for C_k ---- \n')
 
 tol=1e-19;
-maxiter=10;
+maxiter=50;
 
 L=Lambda2(F,G,Phi,abs(d)>0);
 

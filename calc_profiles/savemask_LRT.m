@@ -17,8 +17,6 @@ end
     
 profile_reshaped = reshape(profile_order, 2, size(profile_order, 2) * size(profile_order, 3))';
 
-profile_final=[];
-
 nsa = zeros(size(profile_reshaped, 1), 1);
 for k = 1 : size(profile_order, 3);
         profile_this_dynamic = profile_order(:,:,k)';
@@ -36,18 +34,18 @@ for k = 1 : size(profile_order, 3);
         
     end
     
-    profile_final=cat(1,profile_final,profile_this_dynamic);
 end
-
+    profile_final=cat(2,profile_reshaped,nsa);
 
 if visualizeflag
-kspa = zeros(64, 128);
-for m = 1:9840;
-    x_idx = profile_this_dynamic(m, 1) + 32;
-    y_idx = profile_this_dynamic(m, 2) + 64;
-    kspa(x_idx, y_idx) = kspa(x_idx, y_idx) + 1;
-end
-figure(10); imshow(kspa,[]); colormap jet
+    disp('to do: CHANGE CODE FOR VISUALIZATION')
+% kspa = zeros(64, 128);
+% for m = 1:9840;
+%     x_idx = profile_this_dynamic(m, 1) + 64;
+%     y_idx = profile_this_dynamic(m, 2) + 32;
+%     kspa(x_idx, y_idx) = kspa(x_idx, y_idx) + 1;
+% end
+% figure(10); imshow(kspa,[]); colormap jet
 end
 
 

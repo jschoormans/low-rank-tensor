@@ -2,25 +2,28 @@
 %where dimension 1 is the TSE echo number and dimension 2 is T2prep
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=60; % TSE dimensions
+nDim1=20; % TSE dimensions
 nDim2=5; % T2-prep 
 ky=64; 
-kz=128; 
+kz=64; 
 
 bigctrsize=5;
 smallctrsize=2;
-undersampling=0.02; %excluding centers
+undersampling=0.05; %excluding centers
 
-waiting_time=500e-3; 
-TR=4e-3         %TR in ms; 
-TR_shot=nDim1*TR+waiting_time; 
+% waiting_time=(521-127)e-3; 
+% TR=5.21e-3         %TR in ms; 
+% TR_shot=nDim1*TR+waiting_time; 
+TR_shot=521e-3
+
 MC_maxiter=10000; 
 
 visualize=1
-radialflag=0
+radialflag=0 %radial/linear
+linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% calculating some params...
+% calculating some params...
 nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares; 
 nr_points=ceil(undersampling*ky*kz); 
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
@@ -59,16 +62,16 @@ for dim1=1:nDim1;
     end
 end
 clear m
-if visualize;   figure(1); clf; imshow(reshape(permute(mask,[1 3 2 4]),[ky*dim1,kz*dim2])); end
+if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2])); end
 
 %% order and save
-profile_order=profile_ordering(mask,radialflag,visualize);
+profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
 filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
-     '_r',num2str(radialflag),'_bCtr',num2str(bigctrsize),'_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)]
+     '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),'_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)]
  
 if ispc()
      cd('L:\basic\divi\Ima\parrec\Jasper\profiles_LRT')
  else
 end
-savemask_LRT(profile_order,filename)
+savemask_LRT(profile_order,filename,visualize)
 

@@ -3,7 +3,7 @@ tic;
 fprintf('---conjugate gradient algorithm: solving for G_k ---- \n')
 
 tol=1e-10;
-maxiter=10; %temp
+maxiter=50; %temp
 
 L=Lambda(F,C,Phi,abs(d)>0);
 a2PP=(alpha/2)*Psi'*Psi;
