@@ -12,8 +12,8 @@ else
 end
 
 % MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
-% MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
-MR=MRecon('lo_17072017_1635333_4_2_wipvfat2preplowrankV4.raw')
+MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
+% MR=MRecon('lo_17072017_1635333_4_2_wipvfat2preplowrankV4.raw')
 
 %     
 % MR.Parameter.Labels.Index.Cardiac=MR.Parameter.Labels.Index.rf; %use cardiac dimensions for TFE number
@@ -43,41 +43,31 @@ MR.DcOffsetCorrection;
 MR.MeasPhaseCorrection;
 
 MR.SortData;
-% MR_data.K2IM;
+MR.K2IM;
 %% 
 % K=bart('cc -p3',MR.Data);
-K=MR.Data(128,:,:,:,:,:,:,:,:,:,:,:);
+K=MR.Data(125,:,:,:,:,:,:,:,:,:,:,:);
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(K,2),size(K,3)]);
 K=bsxfun(@times,K,che);
 
 a = sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6);
-sens=bart('ecalib -r 20 -S -m1',a);
+sens=bart('ecalib -S -m1',a);
 du=squeeze(K);
 mask=squeeze(du(:,:,1,:,:))~=0;
 
+figure(1); clf; immontage4D(mask,[0 1]);
+xlabel('Parameter 1'); ylabel('Parameter 2');
 
-figure(1); Q=[];
-for ii=1:size(mask,3)
-    J=[];
-    for jj=1:size(mask,4);
-        J=[J,abs(mask(:,:,ii,jj))];
-    end
-    Q=[Q;J];
-end
-figure(1); clf
-imshow(abs(Q),[0 1])
-xlabel('Prameter 1')
-ylabel('Prameter 2')
-clear Q J 
-%% estimate subspaces
+% estimate subspaces
 addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
 sparsity_transform='TVcomplex'
-res1=size(du,1); res2=size(du,2);
 
-L3=4;
-L4=3;
+res1=size(du,1);
+res2=size(du,2);
+L3=2;
+L4=2;
 
 ctr=3
 ctrcoords1=32-ctr:61+ctr %???
@@ -119,35 +109,10 @@ P0=F'*du;
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 du_1=reshape(du,unfoldedKsize);
 
-%%
-figure(4); imshow(abs(P0(:,:,1,1,10)),[]); axis off; title('zero filled recon of one frame')
-figure(5); imshow(angle(P0(:,:,1,5,1)),[]); axis off; title('phase of zero filled recon of one frame')
-%%
-
-figure(998); 
- Q=[]
-for ii=1:size(P0,4)
-    J=[];
-    for jj=1:size(P0,5);
-        J=[J,angle(P0(:,:,1,ii,jj))];
-    end
-    Q=[Q;J];
-end
-imshow(abs(Q),[0,3*pi])
-clear Q J 
-
-
-figure(997); 
- Q=[]
-for ii=1:size(P0,4)
-    J=[];
-    for jj=1:size(P0,5);
-        J=[J,abs(P0(:,:,1,ii,jj))];
-    end
-    Q=[Q;J];
-end
-imshow(abs(Q),[])
-clear Q J 
+figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
+figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
+figure(6); immontage4D(squeeze(abs(P0)));
+figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
 
 %% 
 % lowres_phase_estimate=exp(-1i*angle(P0(:,:,1,1,1)));
@@ -157,13 +122,14 @@ clear Q J
 %initialize parameters
 alpha= 2;         %penalty parameter >0
 beta=  2;         %penalty parameter >0
-% alpha=0.01/(mean(abs(du(du~=0))));beta=alpha; %from paper 
+alpha=0.01/(mean(abs(du(du~=0))));
+beta=alpha; %from paper 
 
-lambda=5e-2;        %sparsity parameter
-mu=5e2;           %sparsity parameter
+lambda=1e-8;        %sparsity parameter
+mu=1e-1;           %sparsity parameter
 
 % Lg=L3*L4;             %rank of spatial dimension
-Lg=1;
+Lg=3;
 niter=10;
 
 %initialize matrices
