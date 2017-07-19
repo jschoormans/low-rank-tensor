@@ -46,18 +46,21 @@ switch simulation_typ
         %Dxx, Dyy, Dzz: diffusion coefficient in x, y, z direction, in scanner coordinate
         %Dxy, Dyz, Dxz: correlation of diffusion in any two direction
         
-        Dxx = []
-        Dyy = 
-        Dzz = 
-        Dxy = 
-        Dxz = 
-        Dyz = 
+        Dxx = [1.5 1.0 1.9 1.7 2.5 0.8 1.6 0.6 2.1 2.9].*1e-3; 
+        Dyy = [0.3 0.6 0.5 2.1 3.0 1.7 0.5 1.3 0.5 2.9].*1e-3; 
+        Dzz = [0.7 0.5 0.7 0.6 0.5 0.7 1.2 1.4 1.6 2.9].*1e-3; 
+        Dxy = [1.5 1.0 1.9 1.7 2.5 0.8 1.6 0.6 2.1 2.9].*1e-3; 
+        Dxz = [1.5 1.0 1.9 1.7 2.5 0.8 1.6 0.6 2.1 2.9].*1e-3; 
+        Dyz = [1.5 1.0 1.9 1.7 2.5 0.8 1.6 0.6 2.1 2.9].*1e-3; 
+        D = reshape(cat(1,Dxx, Dxy, Dxz, Dxy, Dyy, Dyz, Dxz, Dyz, Dzz), 3, 3, length(Dxx));
+        
         
         T2prep=[10:10:97].*0.001; % in seconds
         b_value = 600; %in s/mm2
-        diffusion_gradient = search_DTI_gr_table('IDIFF_SCHEME_OPT10_OVERPLUS');
+        diffusion_gradient = search_DTI_gr_table('IDIFF_SCHEME_OPT12_OVERPLUS');
         
-        I=DTI_T2_phantom(res,T2vals,D,diffusion_gradient,TEes,visualize,complexsim);
+        visualize = 1;
+        I=DTI_T2_phantom(res,T2vals,D,b_value,diffusion_gradient,T2prep,visualize,complexsim);
      
     otherwise
         error('Simulation type is unknown...')
