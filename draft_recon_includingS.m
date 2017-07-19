@@ -14,7 +14,7 @@ sparsity_transform='TVcomplex'
 L3=4;               %rank of subspace dimension 3
 L4=4;               %rank of subspace dimension 4
 
-simulation_typ = 'VFA_n_T2W'; %choose from: DWI_n_T2W; VFA_n_T2W; DTI_n_T2W
+simulation_typ = 'DTI_n_T2W'; %choose from: DWI_n_T2W; VFA_n_T2W; DTI_n_T2W
 run create_undersampled_measurement_S.m    
 %%
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
