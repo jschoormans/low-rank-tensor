@@ -71,6 +71,7 @@ L4=2;
 
 ctr=3
 ctrcoords1=32-ctr:61+ctr %???
+error('to do !!')
 ctrcoords2=32-ctr:32+ctr
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
