@@ -41,11 +41,10 @@ switch simulation_typ
         T2vals=[20 30 40 50 50 55 50 60 70 10].*1e-3; % in seconds
         %simple DTI model is considered. i.e. no fiber crossing
         %S_bj = S0 .* exp(-b .* Gj * D * Gj');
-        %Gj = [x, y, z]; jth diffusion gradient direction in scanner coordinate
-        %D =  [Dxx Dxy Dxz; Dyx Dyy Dyz; Dzx Dzy Dzz]
-        %Dxx, Dyy, Dzz: diffusion coefficient in x, y, z direction, in scanner coordinate
-        %Dxy, Dyz, Dxz: correlation of diffusion in any two direction
-        
+        %Gj = [x, y, z]; diffusion gradient direction in scanner coordinate
+%         D =  [Dxx Dxy Dxz
+%               Dyx Dyy Dyz
+%               Dzx Dzy Dzz]
         Dxx = []
         Dyy = 
         Dzz = 
@@ -57,7 +56,7 @@ switch simulation_typ
         b_value = 600; %in s/mm2
         diffusion_gradient = search_DTI_gr_table('IDIFF_SCHEME_OPT10_OVERPLUS');
         
-        I=DTI_T2_phantom(res,T2vals,D,diffusion_gradient,TEes,visualize,complexsim);
+        I=VFA_TSE_T2_T1_phantom(res,T2vals,T1vals,T2prep,TEes,ETL,1,complexsim);
      
     otherwise
         error('Simulation type is unknown...')
