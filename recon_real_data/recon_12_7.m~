@@ -15,7 +15,7 @@ end
 % MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
 % MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
 % MR=MRecon('lo_17072017_1635333_4_2_wipvfat2preplowrankV4.raw')
-MR=MRecon('lr_24072017_1934064_6_2_wipvfat2preplowrankV4.raw')
+MR=MRecon('lr_24072017_1920025_3_2_wipvfat2preplowrankV4.raw')
 
 %     
 % MR.Parameter.Labels.Index.Cardiac=MR.Parameter.Labels.Index.rf; %use cardiac dimensions for TFE number
@@ -51,7 +51,7 @@ MR.SortData;
 MR.K2IM;
 %% 
 % K=bart('cc -p3',MR.Data);
-K=MR.Data(125,:,:,:,:,:,:,:,:,:,:,:);
+K=MR.Data(65,:,:,:,:,:,:,:,:,:,:,:);
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(K,2),size(K,3)]);
@@ -75,8 +75,8 @@ L3=2;
 L4=2;
 
 ctr=3
-ctrcoords1=32-ctr:61+ctr %???
-ctrcoords2=32-ctr:32+ctr
+ctrcoords1=33-ctr:33+ctr %???
+ctrcoords2=33-ctr:33+ctr
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 % 2: estimate subspaces
@@ -130,11 +130,11 @@ beta=  2;         %penalty parameter >0
 alpha=0.01/(mean(abs(du(du~=0))));
 beta=alpha; %from paper 
 
-lambda=1e-8;        %sparsity parameter
-mu=1e-1;           %sparsity parameter
+lambda=1e-5;        %sparsity parameter
+mu=1e-4;           %sparsity parameter
 
 % Lg=L3*L4;             %rank of spatial dimension
-Lg=3;
+Lg=1;
 niter=10;
 
 %initialize matrices
@@ -142,7 +142,7 @@ niter=10;
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,20,33);
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,24,35);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);       %17
