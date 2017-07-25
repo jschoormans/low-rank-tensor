@@ -1,7 +1,7 @@
 function LRT_recon(kspace,sens,params,varargin)
 % 4D Low-Rank Tensor reconstruction 
 % inputs:
-% kspace: undersampled kspace with dimensions (x,y,coilsparam1,param2)
+% kspace: undersampled kspace with dimensions (x,y,coils,param1,param2)
 % sens  : sens maps - size (x,y,coils) 
 % params:;
 % optional: I= 'gold truth' tensor image 
@@ -49,6 +49,8 @@ elseif strcmp(params.sparsity_transform,'TV')
     Psi1=opConvolve(res1,res2,[-1 1],[0 0],'truncated');
     Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'truncated');
     Psi=[Psi1;Psi2];
+else 
+    error('sparsity_transform not recognized')
 end
 
 sens_normalized=bsxfun(@rdivide,sens,(eps+sqrt(sum(abs(sens).^2,3)))); 
@@ -80,6 +82,7 @@ for iter=1:params.niter
     MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,20,33);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
+%     Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);

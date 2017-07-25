@@ -7,9 +7,9 @@ T=Psi*G-Y./alpha;
 l2T=sqrt(sum(abs(T).^2,2));
 thr=(l2T>lambda/alpha);
 
-disp('---soft-thresholding matrix A----')
-disp(['lambda/alpha: ',num2str(lambda/alpha)])
-disp(['thresholding ',num2str(100*(sum(~thr(:))./numel(thr))),' percent'])
+fprintf('soft-thresholding A: ')
+fprintf('lambda/alpha: %1.2e  |',(lambda/alpha))
+fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 
 st=thr.*((l2T-(lambda/alpha))./(l2T+eps)); %soft thresholding
 Ak=repmat(st,[1 size(T,2)]).*T;

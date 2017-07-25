@@ -1,8 +1,8 @@
 function Ck=precon_conj_grad_C(G,C,B,Z,beta,d,Phi,F)
 tic; 
-fprintf('---conjugate gradient algorithm: solving for C_k ---- \n')
+fprintf('CG for C_k: ')
 
-tol=1e-19;
+tol=1e-13;
 maxiter=50;
 
 L=Lambda2(F,G,Phi,abs(d)>0);
