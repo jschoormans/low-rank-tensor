@@ -1,34 +1,22 @@
 clear all; close all; clc
 if ispc
-    %     cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_11')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_24\2017_07_24\lr_2407')
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_17')
+%     cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_11')
+    cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_17')
     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-<<<<<<< HEAD
-    %     cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
-    cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_17')
-    
-    addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
-=======
 %     cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
 %         cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_17')
         cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_24/2017_07_24/lr_2407/')
 
     addpath(genpath('/home/zhang/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
->>>>>>> df9645733ac3e6d66789e0697eb779dad5e15426
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 
 % MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
 % MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
 % MR=MRecon('lo_17072017_1635333_4_2_wipvfat2preplowrankV4.raw')
-<<<<<<< HEAD
-% MR=MRecon('lr_24072017_1918506_2_2_wipvfat2preplowrankV4.raw')
-=======
-MR=MRecon('lr_24072017_1934064_6_2_wipvfat2preplowrankV4.raw')
+MR=MRecon('lr_24072017_1920025_3_2_wipvfat2preplowrankV4.raw')
 
->>>>>>> df9645733ac3e6d66789e0697eb779dad5e15426
 %     
 % MR.Parameter.Labels.Index.Cardiac=MR.Parameter.Labels.Index.rf; %use cardiac dimensions for TFE number
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -63,7 +51,7 @@ MR.SortData;
 MR.K2IM;
 %% 
 % K=bart('cc -p3',MR.Data);
-K=MR.Data(128,:,:,:,:,:,:,:,:,:,:,:);
+K=MR.Data(65,:,:,:,:,:,:,:,:,:,:,:);
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(K,2),size(K,3)]);
@@ -87,10 +75,10 @@ L3=2;
 L4=2;
 
 ctr=3
-ctrcoords1=32-ctr:61+ctr %???
-ctrcoords2=32-ctr:32+ctr
+ctrcoords1=33-ctr:33+ctr %???
+ctrcoords2=33-ctr:33+ctr
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
-%%
+
 % 2: estimate subspaces
 nav_parameter_dim1 = squeeze(du(ctrcoords1,ctrcoords2,:,:,1));
 nav_estimate_1= subspace_estimator_multicoil(nav_parameter_dim1,L3);
@@ -142,11 +130,11 @@ beta=  2;         %penalty parameter >0
 alpha=0.01/(mean(abs(du(du~=0))));
 beta=alpha; %from paper 
 
-lambda=1e-8;        %sparsity parameter
-mu=1e-1;           %sparsity parameter
+lambda=1e-5;        %sparsity parameter
+mu=1e-4;           %sparsity parameter
 
 % Lg=L3*L4;             %rank of spatial dimension
-Lg=3;
+Lg=1;
 niter=10;
 
 %initialize matrices
@@ -154,7 +142,7 @@ niter=10;
 
 MSE=[]; 
 for iter=1:niter
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,20,33);
+    MSE=visualize_convergence(iter,MSE,G,C,Phi,[],imagesize,24,35);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,du_1,Phi,F);       %17

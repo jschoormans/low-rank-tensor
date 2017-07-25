@@ -25,8 +25,7 @@ linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
 
 % calculating some params...
 nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares; 
-nr_points=ceil(undersampling*ky*kz) 
-nr_points =240;
+nr_points=ceil(undersampling*ky*kz); 
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
 nshots=nDim2*nr_points; 
 total_time= TR_shot*nshots; %total time in seconds; 

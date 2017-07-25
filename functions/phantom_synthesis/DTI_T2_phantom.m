@@ -57,6 +57,7 @@ for ii=1:length(diffusion_gradient)
                 I(:,:,ii,jj)=I(:,:,ii,jj)+(P{nphantom} .* exp(-T2prep(jj)./T2vals(nphantom))) .* exp(-b_value .* (diffusion_gradient(ii,:) * D(:,:,nphantom) * diffusion_gradient(ii,:)')).*phase(nphantom);
             else
                 I(:,:,ii,jj)=I(:,:,ii,jj)+(P{nphantom} .* exp(-T2prep(jj)./T2vals(nphantom))) .* exp(-b_value .* (diffusion_gradient(ii,:) * D(:,:,nphantom) * diffusion_gradient(ii,:)'));
+                
             end
         end
         

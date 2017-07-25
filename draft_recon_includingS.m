@@ -5,18 +5,17 @@ clear all; close all; clc;
 uf=0.02; % undersampling factor (excluding center)
 noiselevel=0;
 ncoils=2;
-complexsim=1
+complexsim=0;
 center_for_all_frames=0;
 
 % sparsity_transform='wavelet'
 sparsity_transform='TVcomplex'
 
-L3=4;               %rank of subspace dimension 3
-L4=4;               %rank of subspace dimension 4
+L3=5;               %rank of subspace dimension 3
+L4=3;               %rank of subspace dimension 4
 
 simulation_typ = 'DTI_n_T2W'; %choose from: DWI_n_T2W; VFA_n_T2W; DTI_n_T2W
 run create_undersampled_measurement_S.m    
-%%
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 % 2: estimate subspaces
@@ -62,7 +61,7 @@ figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero fille
 
 %% ALGO 
 %initialize parameters
-alpha= 2;         %penalty parameter >0
+alpha= 20;         %penalty parameter >0
 beta=  2;         %penalty parameter >0
 alpha=0.01/(mean(abs(du(du~=0))));beta=alpha; %from paper 
 
@@ -70,7 +69,7 @@ lambda=5e-2;        %sparsity parameter
 mu=5e-1 ;           %sparsity parameter
 
 Lg=L3*L4;             %rank of spatial dimension
-Lg=3;
+Lg=5;
 niter=10;
 
 %initialize matrices
