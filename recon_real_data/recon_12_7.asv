@@ -1,8 +1,8 @@
 clear all; close all; clc
 if ispc
     %     cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_11')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_24\2017_07_24\lr_2407')
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_17')
+    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_24\2017_07_24\lr_2407')
+    cd()
     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
     %     cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
@@ -13,9 +13,9 @@ else
 end
 
 % MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');
-MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
+% MR=MRecon('lo_17072017_1603264_2_2_wipvfat2preplowrankV4.raw')
 % MR=MRecon('lo_17072017_1635333_4_2_wipvfat2preplowrankV4.raw')
-% MR=MRecon('lr_24072017_1918506_2_2_wipvfat2preplowrankV4.raw')
+MR=MRecon('lr_24072017_1918506_2_2_wipvfat2preplowrankV4.raw')
 %     
 % MR.Parameter.Labels.Index.Cardiac=MR.Parameter.Labels.Index.rf; %use cardiac dimensions for TFE number
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -47,7 +47,7 @@ MR.SortData;
 MR.K2IM;
 %% 
 % K=bart('cc -p3',MR.Data);
-K=MR.Data(128,:,:,:,:,:,:,:,:,:,:,:);
+K=MR.Data(60,:,:,:,:,:,:,:,:,:,:,:);
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(K,2),size(K,3)]);
@@ -72,9 +72,10 @@ L4=2;
 
 ctr=3
 ctrcoords1=32-ctr:61+ctr %???
+error('to do !!')
 ctrcoords2=32-ctr:32+ctr
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
-%%
+
 % 2: estimate subspaces
 nav_parameter_dim1 = squeeze(du(ctrcoords1,ctrcoords2,:,:,1));
 nav_estimate_1= subspace_estimator_multicoil(nav_parameter_dim1,L3);

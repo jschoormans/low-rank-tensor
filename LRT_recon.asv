@@ -10,7 +10,17 @@ function LRT_recon(kspace,sens,params,varargin)
 
 % 2017 J Schoormans and Q Zhang - AMC Amsterdam
 
-assert(params.Lg<=params.L3*params.L4,'reducte spatial rank!'); 
+
+%initialize parameters
+alpha= 2;           %penalty parameter >0
+beta=  2;           %penalty parameter >0
+% alpha=0.01/(mean(abs(kspace(kspace~=0))));
+beta=alpha;         %from paper 
+lambda=1e-8;        %sparsity parameter
+mu=1e-1;            %sparsity parameter
+
+% Lg=L3*L4;         %rank of spatial dimension
+niter=10;
 
 res1=size(kspace,1);
 res2=size(kspace,2);
@@ -34,13 +44,13 @@ nav_parameter_dim1=[];
 for iter=1:length(Kx1)
     nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,1)));
 end
-nav_estimate_1= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
+nav_estimate_1= subspace_estimator_multicoil(nav_parameter_dim1,params.L3);
 
 nav_parameter_dim2=[];
 for iter=1:length(Kx2)
-    nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,1,:)));
+    nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,:,1)));
 end
-nav_estimate_2= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
+nav_estimate_2= subspace_estimator_multicoil(nav_parameter_dim2,params.L4);
 
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
@@ -67,10 +77,6 @@ figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
 
 
 %% ALGO 
-alpha=params.alpha;
-beta=params.beta; 
-mu=params.mu; 
-lambda=params.lambda; 
 
 %initialize matrices
 [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);                    
