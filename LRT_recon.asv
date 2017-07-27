@@ -9,6 +9,8 @@ function LRT_recon(kspace,sens,params)
 % sens  : sens maps - size (x,y,coils) 
 % params: params is a struct- should be made with params_init
 
+% optional: I= 'gold truth' tensor image 
+
 % based on IEEE-TMI paper by Jingfei He  ,2016 
 
 % 2017 J Schoormans and Q Zhang - AMC Amsterdam
