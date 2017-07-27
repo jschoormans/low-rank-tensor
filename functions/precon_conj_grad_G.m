@@ -13,7 +13,7 @@ b=(L'*d + (alpha/2)*Psi'*(A+Y./alpha));
 b=b(:);
 
 %build preconditioner
-CPPC=(C*Phi*Phi.'*C.');
+CPPC=(C*Phi*Phi'*C');
 w=diag(CPPC)+alpha/2; 
 w=permute(w,[2 1]);
 w=1./w;

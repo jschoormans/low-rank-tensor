@@ -30,9 +30,9 @@ a = sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6);
 sens=bart('ecalib -S -m1',a);
 %%
 params=params_init();
-params.Lg=2;
-params.L3=4; 
-params.L4=6;
+params.Lg=1;
+params.L3=2; 
+params.L4=2;
 params.mu=1e4
 params.sparsity_transform='TV'
 LRT_recon(squeeze(K),squeeze(sens),params)

@@ -44,12 +44,14 @@ nav_estimate_2= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.
 
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
-    Psi=opWavelet2(res,res,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
+    Psi=opWavelet2(res1,res2,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
 elseif strcmp(params.sparsity_transform,'TV')
-    Psi1=opConvolve(res1,res2,[-1 1],[0 0],'truncated');
-    Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'truncated');
+    Psi1=opConvolve(res1,res2,[-1 1],[0 0],'cyclic');
+    Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'cyclic');
     Psi=[Psi1;Psi2];
-else 
+elseif strcmp(params.sparsity_transform,'TVOP')
+    Psi=TVOP;
+else
     error('sparsity_transform not recognized')
 end
 
@@ -84,6 +86,7 @@ for iter=1:params.niter
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
 %     Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
+    MSE=visualize_convergence(iter,MSE,Gk,C,Phi,[],imagesize,20,33);
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
