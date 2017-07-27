@@ -68,8 +68,9 @@ figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of 
 figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
 figure(6); immontage4D(squeeze(abs(P0)));
 figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
-
-
+set(0,'DefaultAxesColorOrder',jet(max([size(nav_estimate_1,2), size(nav_estimate_2,2)]))); 
+figure(8); plot(abs(nav_estimate_1)); colorbar
+figure(9); plot(abs(nav_estimate_2)); colorbar
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 
