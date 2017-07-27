@@ -80,7 +80,9 @@ figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(nav_estimate_1,2), size(nav_estimate_2,2)]))); 
 figure(8); plot(abs(nav_estimate_1)); colorbar
 figure(9); plot(abs(nav_estimate_2)); colorbar
-figure(10); hold on; plot(eigenvals_1), plot(eigenvals_2); 
+figure(10); hold on; plot(eigenvals_1./max(eigenvals_1(:)),'r'); plot(params.L3,eigenvals_1(params.L3)./max(eigenvals_1(:)),'ro');...
+    plot(eigenvals_2./max(eigenvals_2(:)),'b');plot(params.L4,eigenvals_2(params.L4)./max(eigenvals_2(:)),'bo') ;hold off;
+title('eigenvalues for the two subspaces (1=red,2-blue)')
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 
@@ -88,7 +90,14 @@ mu=params.mu;
 lambda=params.lambda; 
 
 %initialize matrices
-[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);                    
+if params.inspectLg
+params.Lg=params.L3*params.L4;
+[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);  
+
+if params.inspectLG
+figure(11); plot(sum(abs(C).^2,2),'ko-');title('rank energies for C')
+
+
 
 MSE=[]; 
 for iter=1:params.niter

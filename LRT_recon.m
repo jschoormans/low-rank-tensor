@@ -90,23 +90,35 @@ mu=params.mu;
 lambda=params.lambda; 
 
 %initialize matrices
-[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);                    
+if params.inspectLg
+params.Lg=params.L3*params.L4;end
+
+[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);  
+
+if params.inspectLg;
+    C_energies=sum(abs(C).^2,2);
+    C_energies=C_energies./max(C_energies(:));
+    figure(11); plot(C_energies,'ko-');title('rank relative energies for C');
+    fprintf('relE %f: \n',C_energies)
+    params.Lg=input('Choose spatial rank: ');
+end
+
 
 MSE=[]; 
 for iter=1:params.niter
+    fprintf('\n Outer iteration %i of %i \n',iter,params.niter)
     MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
-%   Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
-    MSE=visualize_convergence(iter,MSE,Gk,C,Phi,params.Imref,imagesize,params.x,params.y);
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
     
-% alpha=alpha*1.5; beta=beta*1.5;    %optional: increasing beta & alpha
+    if params.increase_penalty_parameters
+    alpha=alpha*1.5; beta=beta*1.5; end;   
 end
 
 P_recon=G*C*Phi;

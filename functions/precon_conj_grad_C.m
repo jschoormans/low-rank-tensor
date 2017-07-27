@@ -27,7 +27,7 @@ xlabel('iterations'); ylabel('10log of residual')
 drawnow; 
 
 t=toc; 
-fprintf('Time taken: %d seconds',t)
-fprintf('| relres %d | iters: %d | \n',relres,iter)
+fprintf('t: %i seconds',t)
+fprintf('| relres %d | iters: %i | \n',relres,iter)
 
 end

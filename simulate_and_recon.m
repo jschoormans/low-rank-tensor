@@ -14,10 +14,10 @@ run create_undersampled_measurement_S.m
 %% 
 close all;
 params=params_init();
-params.Lg=2;
+params.Lg=8;
 params.L3=5;
 params.L4=3;
-params.sparsity_transform='TV'
+params.sparsity_transform='TV';
 params.Imref=I;
 params.x=95;
 params.y=60;
