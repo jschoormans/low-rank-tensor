@@ -1,7 +1,7 @@
-function LRT_recon(kspace,sens,params)
+function P_recon=LRT_recon(kspace,sens,params)
 % 4D Low-Rank Tensor reconstruction 
 
-% recon is run as: LRT_recon(kspace,sens,params)
+% recon is run as: P_recon=LRT_recon(kspace,sens,params)
 % params is a struct- should be made with params_init
 
 % inputs:
@@ -99,3 +99,7 @@ for iter=1:params.niter
     
 % alpha=alpha*1.5; beta=beta*1.5;    %optional: increasing beta & alpha
 end
+
+P_recon=G*C*Phi;
+P_recon=reshape(P_recon,imagesize);
+

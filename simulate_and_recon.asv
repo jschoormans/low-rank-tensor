@@ -19,7 +19,7 @@ params.L4=4;
 params.mu=1e4
 params.sparsity_transform='TV'
 params.Imref=I;
-params.x=50;
+params.x=50
 params.y=60;
 
-P_recon=LRT_recon(du,squeeze(sens),params);
+LRT_recon(du,squeeze(sens),params)
