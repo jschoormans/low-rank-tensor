@@ -1,9 +1,9 @@
-function Gk=precon_conj_grad_G(G,C,A,Y,alpha,Psi,d,Phi,F)
+function Gk=precon_conj_grad_G(G,C,A,Y,alpha,Psi,d,Phi,F,params)
 tic; 
 fprintf('CG for G_k: ')
 
-tol=1e-10;
-maxiter=50; %temp
+tol=params.G.tol;
+maxiter=params.G.maxiter;
 
 L=Lambda(F,C,Phi,abs(d)>0);
 a2PP=(alpha/2)*Psi'*Psi;
@@ -25,10 +25,7 @@ ResA= @(x) reshape(x,size(G));
 Aop = @(G) Res(X(ResA(G))); 
 mfun=@(x) Res(bsxfun(@times, ResA(x),w)); %test
 
-
-
 [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
-
 
 Gk=ResA(x);
 figure(19); plot(log10(resvec./norm(b(:))),'r*-'); 

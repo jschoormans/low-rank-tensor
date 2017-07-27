@@ -1,9 +1,9 @@
-function Ck=precon_conj_grad_C(G,C,B,Z,beta,d,Phi,F)
+function Ck=precon_conj_grad_C(G,C,B,Z,beta,d,Phi,F,params)
 tic; 
 fprintf('CG for C_k: ')
 
-tol=1e-13;
-maxiter=50;
+tol=params.C.tol;
+maxiter=params.C.maxiter;
 
 L=Lambda2(F,G,Phi,abs(d)>0);
 

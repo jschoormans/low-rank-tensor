@@ -21,7 +21,8 @@ params.y=20;                %pixel to plot during recon loop
 
 params.scaleksp=true';      %option to scale kspace before recon - for consistent parameter use (TODO!)
 
-params.C.tol=1e-10;
-params.C.maxiter=50;
-params.G.tol=1e-13;
-params.G.maxiter=100;
+tol=params.C.tol=1e-13;
+maxiter=params.C.maxiter=50;
+
+tol=params.C.tol=1e-13;
+maxiter=params.C.maxiter=50;

@@ -68,7 +68,7 @@ P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the s
 
 if params.scaleksp
     [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
-    I=I./scaling; %scale ref image with same scaling;
+    params.Imref=params.Imref./scaling; %scale ref image with same scaling;
 end 
 
 kspace_1=reshape(kspace,unfoldedKsize);
@@ -95,9 +95,9 @@ for iter=1:params.niter
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
 %   Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
-    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
+    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     MSE=visualize_convergence(iter,MSE,Gk,C,Phi,params.Imref,imagesize,params.x,params.y);
-    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F);           %18
+    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
