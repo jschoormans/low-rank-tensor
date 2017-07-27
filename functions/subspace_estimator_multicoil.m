@@ -1,4 +1,4 @@
-function nav_estimate= subspace_estimator_multicoil(kspace,L)
+function [nav_estimate,eigenvals]= subspace_estimator_multicoil(kspace,L)
 % Function that calculates the subspace based on k-space
 % estimator 
 % to do: make compatible with 3D kspace 
@@ -24,6 +24,7 @@ end
     
 % calculate singular value decomposition
 [left_1,eigen_1,right_1]=svd(S);
+eigenvals=diag(eigen_1);  %output for evaluation
 
 %navigator estimate are first L left singular vectors
 nav_estimate=right_1(:,1:L);

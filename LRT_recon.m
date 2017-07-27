@@ -37,13 +37,13 @@ nav_parameter_dim1=[];
 for iter=1:length(Kx1)
     nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,1)));
 end
-nav_estimate_1= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
+[nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
 
 nav_parameter_dim2=[];
 for iter=1:length(Kx2)
     nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,1,:)));
 end
-nav_estimate_2= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
+[nav_estimate_2,eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
 
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
@@ -80,6 +80,9 @@ figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(nav_estimate_1,2), size(nav_estimate_2,2)]))); 
 figure(8); plot(abs(nav_estimate_1)); colorbar
 figure(9); plot(abs(nav_estimate_2)); colorbar
+figure(10); hold on; plot(eigenvals_1./max(eigenvals_1(:)),'r'); plot(params.L3,eigenvals_1(params.L3)./max(eigenvals_1(:)),'ro');...
+    plot(eigenvals_2./max(eigenvals_2(:)),'b');plot(params.L4,eigenvals_2(params.L4)./max(eigenvals_2(:)),'bo') ;hold off;
+title('eigenvalues for the two subspaces (1=red,2-blue)')
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 

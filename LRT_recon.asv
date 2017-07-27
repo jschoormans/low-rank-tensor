@@ -1,15 +1,13 @@
-function LRT_recon(kspace,sens,params)
+function P_recon=LRT_recon(kspace,sens,params)
 % 4D Low-Rank Tensor reconstruction 
 
-% recon is run as: LRT_recon(kspace,sens,params)
+% recon is run as: P_recon=LRT_recon(kspace,sens,params)
 % params is a struct- should be made with params_init
 
 % inputs:
 % kspace: undersampled kspace with dimensions (x,y,coils,param1,param2)
 % sens  : sens maps - size (x,y,coils) 
 % params: params is a struct- should be made with params_init
-
-% optional: I= 'gold truth' tensor image 
 
 % based on IEEE-TMI paper by Jingfei He  ,2016 
 
@@ -30,7 +28,7 @@ mask=squeeze(kspace(:,:,1,:,:))~=0;
 figure(1); clf; immontage4D(mask,[0 1]);
 xlabel('Parameter 1'); ylabel('Parameter 2');
 
-%%
+
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 [Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask);
 
@@ -39,13 +37,13 @@ nav_parameter_dim1=[];
 for iter=1:length(Kx1)
     nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,1)));
 end
-nav_estimate_1= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
+[nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
 
 nav_parameter_dim2=[];
 for iter=1:length(Kx2)
     nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,1,:)));
 end
-nav_estimate_2= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
+[nav_estimate_2,eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
 
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
@@ -67,6 +65,12 @@ set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
 %4 zero-filled recon
 P0=F'*kspace;             
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
+
+if params.scaleksp
+    [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
+    params.Imref=params.Imref./scaling; %scale ref image with same scaling;
+end 
+
 kspace_1=reshape(kspace,unfoldedKsize);
 
 figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
@@ -76,6 +80,7 @@ figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(nav_estimate_1,2), size(nav_estimate_2,2)]))); 
 figure(8); plot(abs(nav_estimate_1)); colorbar
 figure(9); plot(abs(nav_estimate_2)); colorbar
+figure(10); hold on; plot(eigenvals_1), plot(eigenvals_2); 
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 
@@ -90,10 +95,10 @@ for iter=1:params.niter
     MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
-%     Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
-    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
+%   Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
+    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     MSE=visualize_convergence(iter,MSE,Gk,C,Phi,params.Imref,imagesize,params.x,params.y);
-    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F);           %18
+    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
@@ -101,3 +106,7 @@ for iter=1:params.niter
     
 % alpha=alpha*1.5; beta=beta*1.5;    %optional: increasing beta & alpha
 end
+
+P_recon=G*C*Phi;
+P_recon=reshape(P_recon,imagesize);
+
