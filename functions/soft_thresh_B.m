@@ -4,9 +4,10 @@ CZb=C-(Z./beta); %precalculate to speed up
 
 thr=abs(CZb)>=mub; %threshold
 
-disp('---soft-thresholding matrix B----')
-disp(['mu/beta: ',num2str(mub)])
-disp(['thresholding ',num2str(100*(sum(~thr(:))./numel(thr))),' percent'])
+
+fprintf('soft-thresholding B: ')
+fprintf('mu/beta: %1.2e  |',(mub))
+fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 
 Bk=thr.*(abs(CZb)-mub).*((CZb)./(abs(CZb)+eps));
 end

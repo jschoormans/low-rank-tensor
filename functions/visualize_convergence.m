@@ -12,7 +12,7 @@
     if ~isempty(I); 
     MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);   
     else
-        MSE=[]
+        MSE=[];
     end
     cgr=abs(reshape(current_guess,sdu));
     
