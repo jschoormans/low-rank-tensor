@@ -11,8 +11,7 @@
     current_guess=G*C*Phi;
     if ~isempty(I); 
 %     MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);
-%     %mean-squared error
-    MSE(iter)=norm(abs(current_guess(:)-I(:)),'fro')^2/norm(abs(I(:)),'fro')^2; % relativer error
+    MSE(iter)=norm(abs(current_guess(:)-I(:)),'fro')/norm(abs(I),'fro') 
     
     else
         MSE=[];
@@ -39,9 +38,9 @@
     
     subplot(322)
         if ~isempty(I)
-    plot([1:iter],MSE,'.-b'); 
+    plot([1:iter],MSE,'.-b'); title(MSE)
     xlabel('iter')
-    title('relative error')
+    title('Mean squared error')
         end
         
     h1=subplot(324);

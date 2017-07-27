@@ -12,9 +12,11 @@ params.niter=20;            %number of outer iterations in algo
 %initialize parameters
 params.alpha= 2;           %penalty parameter >0
 params.beta=  2;           %penalty parameter >0
-params.lambda=1e-8;        %sparsity parameter
+params.lambda=1e-1;        %sparsity parameter
 params.mu=1e-1;            %sparsity parameter
 
 params.Imref=[];            %possible reference (gold standard) image
 params.x=20;                %pixel to plot during recon loop
 params.y=20;                %pixel to plot during recon loop
+
+params.scaleksp=true';      %option to scale kspace before recon - for consistent parameter use (TODO!)

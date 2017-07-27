@@ -28,7 +28,7 @@ mask=squeeze(kspace(:,:,1,:,:))~=0;
 figure(1); clf; immontage4D(mask,[0 1]);
 xlabel('Parameter 1'); ylabel('Parameter 2');
 
-%%
+
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 [Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask);
 
@@ -65,6 +65,12 @@ set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
 %4 zero-filled recon
 P0=F'*kspace;             
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
+
+if params.scaleksp
+    [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
+    I=I./scaling; %scale ref image with same scaling;
+end 
+
 kspace_1=reshape(kspace,unfoldedKsize);
 
 figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
@@ -88,7 +94,7 @@ for iter=1:params.niter
     MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
-%     Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
+%   Gk=precon_conj_grad_G_mod(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F);       %17
     MSE=visualize_convergence(iter,MSE,Gk,C,Phi,params.Imref,imagesize,params.x,params.y);
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F);           %18

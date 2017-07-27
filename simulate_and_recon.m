@@ -13,7 +13,7 @@ simulation_typ = 'DTI_n_T2W'; %choose from: DWI_n_T2W; VFA_n_T2W; DTI_n_T2W
 run create_undersampled_measurement_S.m    
 %% 
 params=params_init();
-params.Lg=1;
+params.Lg=2;
 params.L3=4; 
 params.L4=4;
 params.mu=1e4
