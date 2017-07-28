@@ -13,6 +13,15 @@ function P_recon=LRT_recon(kspace,sens,params)
 
 % 2017 J Schoormans and Q Zhang - AMC Amsterdam
 
+fprintf('------------------------------ \n')
+fprintf('Low-Rank Tensor Reconstruction \n')
+fprintf('------------------------------ \n')
+fprintf('   J Schoormans & Q Zhang  \n')
+fprintf('       Amsterdam 2017      \n \n')
+
+
+
+%%
 assert(params.Lg<=params.L3*params.L4,'reducte spatial rank!'); 
 
 res1=size(kspace,1);

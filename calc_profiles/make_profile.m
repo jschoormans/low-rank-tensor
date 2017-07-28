@@ -2,14 +2,15 @@
 %where dimension 1 is the TSE echo number and dimension 2 is T2prep
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=9; % TSE dimensions
-nDim2=6; % T2-prep 
+nDim1=20; % TSE dimensions
+nDim2=5; % T2-prep 
 ky=64; 
 kz=64; 
 
 bigctrsize=5;
 smallctrsize=2;
 undersampling=0.05; %excluding centers
+% nr_points =240;
 
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms; 
@@ -26,7 +27,6 @@ linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
 % calculating some params...
 nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares; 
 nr_points=ceil(undersampling*ky*kz) 
-nr_points =240;
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
 nshots=nDim2*nr_points; 
 total_time= TR_shot*nshots; %total time in seconds; 

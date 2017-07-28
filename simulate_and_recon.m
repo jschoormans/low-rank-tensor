@@ -16,10 +16,10 @@ close all;
 params=params_init();
 params.Lg=8;
 params.L3=5;
-params.L4=3;
+params.L4=4;
 params.sparsity_transform='TV';
 params.Imref=I;
 params.x=95;
 params.y=60;
-
+params.increase_penalty_parameters=true
 P_recon=LRT_recon(du,squeeze(sens),params);

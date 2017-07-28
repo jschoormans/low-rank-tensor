@@ -4,7 +4,7 @@ function params= params_init()
 
 params.inspectLg=true;              % option to dynamically choose spatial rank based on first guess of C
 params.increase_penalty_parameters=false; %option to increase alpha and beta inside the loop
-params.scaleksp=true';              %option to scale kspace before recon - for consistent parameter use (TODO!)
+params.scaleksp=true;              %option to scale kspace before recon - for consistent parameter use (TODO!)
 
 params.Lg=1;                        %spatial rank
 params.L3=3;                        %rank of first parameter dimension
