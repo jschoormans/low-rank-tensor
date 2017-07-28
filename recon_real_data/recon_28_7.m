@@ -21,19 +21,15 @@ if ~DTI
     % MR.Parameter.Labels.NumberOfEchoes=60
     % MR.Parameter.Recon.RemoveMOversampling='No'
     % MR.Parameter.Recon.RemovePOversampling='No'
-    MR.Parameter.Recon.ArrayCompression='No';
-    MR.Parameter.Recon.ACNrVirtualChannels=2;
+    MR.Parameter.Recon.ArrayCompression='Yes';
+    MR.Parameter.Recon.ACNrVirtualChannels=4;
     MR.Parameter.Parameter2Read.typ = 1;
-    MR.Parameter.Parameter2Read.ky=[-28:29].'
-    MR.Parameter.Parameter2Read.kz=[-28:29].'
-
-MR.Parameter.Recon.ImmediateAveraging='No';
-MR.Parameter.Parameter2Read.chan=[2,3].';
+    MR.Parameter.Recon.ImmediateAveraging='No';
+%     MR.Parameter.Parameter2Read.chan=[2,3,4].';
 else
-%     MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
-%     MR.Parameter.Recon.ImmediateAveraging='Yes'
-MR.Parameter.Parameter2Read.typ = 1;
-
+    %MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
+    %MR.Parameter.Recon.ImmediateAveraging='Yes'
+    MR.Parameter.Parameter2Read.typ = 1;
 end
 
 % load data
@@ -85,6 +81,8 @@ params.sparsity_transform='TV';
 params.Imref=[];
 params.x=30;
 params.y=30;
+params.G.maxiter=100;
+% sens(sens==0)=1e-2;
 
 params.increase_penalty_parameters=true
 P_recon=LRT_recon(kspace,squeeze(sens),params);
