@@ -110,6 +110,8 @@ if params.inspectLg;
     figure(11); plot(C_energies,'ko-');title('rank relative energies for C');
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
+    [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);  
+
 end
 
 

@@ -19,7 +19,7 @@ elseif ndims(kspace)==3 %kx ky param
     S=reshape(kspace,[size(kspace,1)*size(kspace,2)*size(kspace,3),size(kspace,4)]);
 
 elseif ndims(kspace)==2 %assume kx*ky*nx, param (already Casorati matrix)
-    
+    S=kspace; 
 end  
     
 % calculate singular value decomposition

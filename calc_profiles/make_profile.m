@@ -21,7 +21,7 @@ MC_maxiter=10000;
 
 visualize=1
 radialflag=0 %radial/linear
-linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
+linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % calculating some params...
@@ -66,8 +66,8 @@ clear m
 if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2])); end
 
 %% order and save
-% profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
-profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize);
+profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
+% profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize);
 
 filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
      '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),'_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)]
