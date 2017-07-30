@@ -73,15 +73,19 @@ if ndims(kspace)==4 % if one chan
    kspace=permute(kspace,[1 2 5 3 4]); 
 end
 
-kspace=kspace(4:67,2:end,:,:,:);
-sens=bart('ecalib -S -m1',permute(kspace(:,:,:,1,1),[4 1 2 3]));
+kspace=kspace(4:66,2:end-1,:,:,:);
+a = sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
+sens=bart('ecalib -S -m1',permute(a,[4 1 2 3]));
+sens=sens+1e-7; % no zero vals in sense maps...
+
+sens=sens;
 close all;
 params=params_init();
 params.Lg=1;
 params.inspectLg=false
 params.L3=5;
 params.L4=5;
-params.sparsity_transform='wavelet';
+params.sparsity_transform='TV';
 params.Imref=[];
 params.x=30;
 params.y=30;
@@ -90,5 +94,5 @@ params.lambda=1e-3
 
 params.increase_penalty_parameters=true
 params.G.precon=false;
-params.G.maxiter=300
+params.G.maxiter=50
 P_recon=LRT_recon(kspace,squeeze(sens),params);

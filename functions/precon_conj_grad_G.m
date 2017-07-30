@@ -35,6 +35,7 @@ else
     mfun=[];
 end
 
+% [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 [x,flag,relres,iter,resvec]=cgs(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 % [x,flag,relres,iter,resvec]=pcg(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 

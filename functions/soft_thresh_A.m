@@ -14,5 +14,5 @@ fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 st=thr.*((l2T-(lambda/alpha))./(l2T+eps)); %soft thresholding
 Ak=repmat(st,[1 size(T,2)]).*T;
 
-% figure(39); clf; imshow(reshape(thr,[operatorsize]),[]); title('s.t. A')
+figure(39); clf; imshow(reshape(thr,[operatorsize]),[]); title('s.t. A')
 end
