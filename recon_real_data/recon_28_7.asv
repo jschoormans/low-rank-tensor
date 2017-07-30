@@ -4,8 +4,8 @@ cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')
 %
 % MR=MRecon('lr_28072017_1118286_15_2_wip_vfa-t2prep_tenr18dynsV4.raw'); % wrong orientation/resolution/t2prepvals
 % MR1=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-% MR1=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
-% MR1.Perform
+MR1=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
+MR1.Perform
 
 % MR=MRecon('lr_28072017_1141160_17_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
@@ -21,17 +21,15 @@ if ~DTI
     % MR.Parameter.Labels.NumberOfEchoes=60
     % MR.Parameter.Recon.RemoveMOversampling='No'
     % MR.Parameter.Recon.RemovePOversampling='No'
-    MR.Parameter.Recon.ArrayCompression='No';
-    MR.Parameter.Recon.ACNrVirtualChannels=2;
+    MR.Parameter.Recon.ArrayCompression='Yes';
+    MR.Parameter.Recon.ACNrVirtualChannels=4;
     MR.Parameter.Parameter2Read.typ = 1;
-
-MR.Parameter.Recon.ImmediateAveraging='No';
-% MR.Parameter.Parameter2Read.chan=[2].';
+    MR.Parameter.Recon.ImmediateAveraging='No';
+%     MR.Parameter.Parameter2Read.chan=[2,3,4].';
 else
-%     MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
-%     MR.Parameter.Recon.ImmediateAveraging='Yes'
-MR.Parameter.Parameter2Read.typ = 1;
-
+    %MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
+    %MR.Parameter.Recon.ImmediateAveraging='Yes'
+    MR.Parameter.Parameter2Read.typ = 1;
 end
 
 % load data
@@ -75,16 +73,16 @@ end
 %%
 close all;
 params=params_init();
-params.Lg=8;
-params.inspectLg=true
+params.Lg=1;
+params.inspectLg=false
 params.L3=4;
 params.L4=4;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=30;
 params.y=30;
-
-sens(sens==0)=1e-2;
+params.G.maxiter=100;
+% sens(sens==0)=1e-2;
 
 params.increase_penalty_parameters=true
 P_recon=LRT_recon(kspace,squeeze(sens),params);

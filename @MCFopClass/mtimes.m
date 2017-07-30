@@ -23,6 +23,7 @@ if size(b,1)==a.imsize(1)&& size(b,2)==a.imsize(2)
         
         % SC IMAGE
 %         res=b.*exp(1i*a.phase);
+        res=b;
         res=bsxfun(@times,res,conj(a.sens)); %MC IMAGE SPACE
         res=fftshift(fftshift(fft(fft(ifftshift(ifftshift(res,1),2),[],1),[],2),1),2); %zero filled recon
         res=res./sqrt(a.imsize(1)*a.imsize(2));

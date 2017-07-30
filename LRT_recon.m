@@ -57,12 +57,19 @@ end
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
     Psi=opWavelet2(res1,res2,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
+    operatorsize=[96,96]; % not sure - to do
 elseif strcmp(params.sparsity_transform,'TV')
     Psi1=opConvolve(res1,res2,[-1 1],[0 0],'cyclic');
     Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'cyclic');
     Psi=[Psi1;Psi2];
+    operatorsize=[res1,res2*2];
 elseif strcmp(params.sparsity_transform,'TVOP')
     Psi=TVOP;
+    operatorsize=[res1,res2*2]; % not sure - to do 
+elseif strcmp(params.sparsity_transform,'I')
+    Psi=opEye(res1*res2);
+    operatorsize=[res1,res2]; % not sure - to do 
+
 else
     error('sparsity_transform not recognized')
 end
@@ -123,12 +130,13 @@ sensmask=reshape(sensmask,[res1*res2 1]);
 for iter=1:params.niter
     fprintf('\n Outer iteration %i of %i \n',iter,params.niter)
     MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
-    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
+    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     
     %%%%%%%%%%% temp heuristic
-    Gk=bsxfun(@times,Gk,sensmask);
+%     Gk=abs(Gk); % OMG
+%     Gk=bsxfun(@times,Gk,sensmask); %MAYBE NOT EVEN NECESSARY??
     %%%%%%%%%%%%%%%%%%
     
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18

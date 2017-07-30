@@ -4,9 +4,9 @@ cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')
 %
 % MR=MRecon('lr_28072017_1118286_15_2_wip_vfa-t2prep_tenr18dynsV4.raw'); % wrong orientation/resolution/t2prepvals
 % MR1=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-% MR1=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
-% MR1.Perform
-
+MR1=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
+MR1.Perform
+%%
 % MR=MRecon('lr_28072017_1141160_17_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 MR=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
@@ -55,10 +55,6 @@ a = sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6);
 sens=bart('ecalib -S -m1',a);
 % sens=ones(size(kspace));
 
-kspace=squeeze(K);
-if ndims(kspace)==4 % if one chan
-   kspace=permute(kspace,[1 2 5 3 4]); 
-end
 
 if DTI
 par_dim1 = 9; par_dim2 = 6;
@@ -71,18 +67,28 @@ end
 kspace=du; 
 end
 %%
+
+kspace=squeeze(K);
+if ndims(kspace)==4 % if one chan
+   kspace=permute(kspace,[1 2 5 3 4]); 
+end
+
+kspace=kspace(4:67,2:end,:,:,:);
+sens=bart('ecalib -S -m1',permute(kspace(:,:,:,1,1),[4 1 2 3]));
 close all;
 params=params_init();
-params.Lg=8;
-params.inspectLg=true
-params.L3=4;
-params.L4=4;
-params.sparsity_transform='TV';
+params.Lg=1;
+params.inspectLg=false
+params.L3=5;
+params.L4=5;
+params.sparsity_transform='wavelet';
 params.Imref=[];
 params.x=30;
 params.y=30;
-params.G.maxiter=100;
+params.lambda=1e-3
 % sens(sens==0)=1e-2;
 
 params.increase_penalty_parameters=true
+params.G.precon=false;
+params.G.maxiter=300
 P_recon=LRT_recon(kspace,squeeze(sens),params);
