@@ -1,6 +1,7 @@
 % recon 28 july
 clear all; close all; clc
-cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')  
+% cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')  
+cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_07_28');
 %
 % MR=MRecon('lr_28072017_1118286_15_2_wip_vfa-t2prep_tenr18dynsV4.raw'); % wrong orientation/resolution/t2prepvals
 % MR1=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
@@ -9,10 +10,10 @@ cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')
 
 % MR=MRecon('lr_28072017_1141160_17_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-MR=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-% MR=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
+% MR=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
+MR=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
 
-DTI=false;
+DTI=true;
 
 if ~DTI
     MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
