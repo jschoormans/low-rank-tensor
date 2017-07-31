@@ -9,10 +9,10 @@ MR1.Perform
 %%
 % MR=MRecon('lr_28072017_1141160_17_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-MR=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-% MR=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
+% MR=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
+MR=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
 
-DTI=false;
+DTI=true;
 
 if ~DTI
     MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -73,23 +73,26 @@ if ndims(kspace)==4 % if one chan
    kspace=permute(kspace,[1 2 5 3 4]); 
 end
 
-kspace=kspace(4:67,2:end,:,:,:);
+kspace=kspace(2:end-1,:,:,:,:);
 a = sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
-sens=bart('ecalib -S -m1',permute(kspace(:,:,:,1,1),[4 1 2 3]));
+sens=bart('ecalib -S -m1',permute(a,[4 1 2 3]));
+sens=sens+1e-7; % no zero vals in sense maps...
+
+sens=sens;
 close all;
 params=params_init();
 params.Lg=1;
 params.inspectLg=false
 params.L3=5;
 params.L4=5;
-params.sparsity_transform='wavelet';
+params.sparsity_transform='TV';
 params.Imref=[];
 params.x=30;
 params.y=30;
-params.lambda=1e-3
+params.lambda=2e-3
 % sens(sens==0)=1e-2;
 
 params.increase_penalty_parameters=true
 params.G.precon=false;
-params.G.maxiter=300
+params.G.maxiter=50
 P_recon=LRT_recon(kspace,squeeze(sens),params);

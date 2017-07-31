@@ -4,8 +4,8 @@ cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')
 %
 % MR=MRecon('lr_28072017_1118286_15_2_wip_vfa-t2prep_tenr18dynsV4.raw'); % wrong orientation/resolution/t2prepvals
 % MR1=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-MR1=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-MR1.Perform
+% MR1=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
+% MR1.Perform
 %%
 % MR=MRecon('lr_28072017_1141160_17_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
@@ -54,6 +54,7 @@ K=bsxfun(@times,K,che);
 a = sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6);
 sens=bart('ecalib -S -m1',a);
 % sens=ones(size(kspace));
+kspace=squeeze(K);
 
 
 if DTI
@@ -68,12 +69,11 @@ kspace=du;
 end
 %%
 
-kspace=squeeze(K);
 if ndims(kspace)==4 % if one chan
    kspace=permute(kspace,[1 2 5 3 4]); 
 end
 
-kspace=kspace(4:66,2:end-1,:,:,:);
+kspace=kspace(2:end-1,:,:,:,:);
 a = sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
 sens=bart('ecalib -S -m1',permute(a,[4 1 2 3]));
 sens=sens+1e-7; % no zero vals in sense maps...
@@ -81,7 +81,7 @@ sens=sens+1e-7; % no zero vals in sense maps...
 sens=sens;
 close all;
 params=params_init();
-params.Lg=1;
+params.Lg=2;
 params.inspectLg=false
 params.L3=5;
 params.L4=5;
@@ -89,10 +89,10 @@ params.sparsity_transform='TV';
 params.Imref=[];
 params.x=30;
 params.y=30;
-params.lambda=1e-3
+params.lambda=2e-3
 % sens(sens==0)=1e-2;
 
-params.increase_penalty_parameters=true
+params.increase_penalty_parameters=false
 params.G.precon=false;
 params.G.maxiter=50
 P_recon=LRT_recon(kspace,squeeze(sens),params);
