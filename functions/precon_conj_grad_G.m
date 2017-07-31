@@ -1,10 +1,10 @@
 function Gk=precon_conj_grad_G(G,C,A,Y,alpha,Psi,d,Phi,F,params)
 tic; 
-
+samplingmask=abs(d)>0; 
 tol=params.G.tol;
 maxiter=params.G.maxiter;
 
-L=Lambda(F,C,Phi,abs(d)>0);
+L=Lambda(F,C,Phi,samplingmask);
 % a2PP=(alpha/2)*pinv(Psi)*Psi;
 a2PP=(alpha/2)*Psi'*Psi;
 
@@ -15,7 +15,7 @@ b=b(:);
 
 
 % try to reshape operator so we have proper matrix, vector calculations
-X= @(G) (L'*(L*G)) +a2PP*G;
+X= @(G) (L'*((L*G))) +a2PP*G;
 Res= @(x) reshape(x,[numel(G),1]);
 ResA= @(x) reshape(x,size(G));
 Aop = @(G) Res(X(ResA(G))); 
@@ -35,8 +35,8 @@ else
     mfun=[];
 end
 
-% [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
-[x,flag,relres,iter,resvec]=cgs(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
+[x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
+% [x,flag,relres,iter,resvec]=cgs(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 % [x,flag,relres,iter,resvec]=pcg(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 
 Gk=ResA(x);

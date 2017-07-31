@@ -81,18 +81,20 @@ sens=sens+1e-7; % no zero vals in sense maps...
 sens=sens;
 close all;
 params=params_init();
-params.Lg=2;
+params.Lg=1;
 params.inspectLg=false
 params.L3=5;
-params.L4=5;
+params.L4=4;
 params.sparsity_transform='TV';
 params.Imref=[];
-params.x=30;
-params.y=30;
-params.lambda=2e-3
+params.x=17;
+params.y=31;
+params.lambda=2e-4
 % sens(sens==0)=1e-2;
 
 params.increase_penalty_parameters=false
 params.G.precon=false;
 params.G.maxiter=50
 P_recon=LRT_recon(kspace,squeeze(sens),params);
+%% visualize recon
+figure(1000); immontage4D(squeeze(abs(P_recon)),[]);

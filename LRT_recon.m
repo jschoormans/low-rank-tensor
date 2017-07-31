@@ -92,7 +92,7 @@ kspace_1=reshape(kspace,unfoldedKsize);
 figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
 figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
 figure(6); immontage4D(squeeze(abs(P0)));
-figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
+figure(7); immontage4D(squeeze(angle(P0)),[-pi pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(nav_estimate_1,2), size(nav_estimate_2,2)]))); 
 figure(8); plot(abs(nav_estimate_1)); colorbar
 figure(9); plot(abs(nav_estimate_2)); colorbar
@@ -133,18 +133,11 @@ for iter=1:params.niter
     Ak=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
-    
-    %%%%%%%%%%% temp heuristic
-%     Gk=abs(Gk); % OMG
-%     Gk=bsxfun(@times,Gk,sensmask); %MAYBE NOT EVEN NECESSARY??
-    %%%%%%%%%%%%%%%%%%
-    
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
-     
 
     if params.increase_penalty_parameters
     alpha=alpha*1.5; beta=beta*1.5; end;   

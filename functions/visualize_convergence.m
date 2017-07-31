@@ -37,7 +37,7 @@
         title('Gold standard')
     else
         subplot(223);
-        imshow(angle(cgr(:,:,1,1,1)),[0 2*pi]);
+        imshow(angle(cgr(:,:,1,1,1)),[-pi pi]);
         hold on
         plot(x,y,'r+','MarkerSize',10)
         hold off
