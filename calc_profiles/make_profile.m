@@ -2,14 +2,14 @@
 %where dimension 1 is the TSE echo number and dimension 2 is T2prep
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=20; % TSE dimensions
+nDim1=60; % TSE dimensions
 nDim2=5; % T2-prep 
-ky=64; 
-kz=64; 
+ky=100; 
+kz=100; 
 
 bigctrsize=5;
 smallctrsize=2;
-undersampling=0.05; %excluding centers
+undersampling=0.02; %excluding centers
 % nr_points =240;
 
 % waiting_time=(521-127)e-3; 
@@ -74,7 +74,8 @@ filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',n
  
 if ispc()
      cd('L:\basic\divi\Ima\parrec\Jasper\profiles_LRT')
- else
+else
+     cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/profiles_LRT')
 end
 savemask_LRT(profile_order,filename,visualize)
 
