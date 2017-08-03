@@ -118,15 +118,10 @@ if params.inspectLg;
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
     [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);  
-
 end
 
 
 MSE=[]; 
-
-sensmask=sum(sens_normalized,3)~=0;
-sensmask=reshape(sensmask,[res1*res2 1]);
-
 for iter=1:params.niter
     fprintf('\n Outer iteration %i of %i \n',iter,params.niter)
     MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);

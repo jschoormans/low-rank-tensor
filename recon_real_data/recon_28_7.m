@@ -83,7 +83,7 @@ close all;
 params=params_init();
 params.Lg=1;
 params.inspectLg=false
-params.L3=5;
+params.L3=2;
 params.L4=4;
 params.sparsity_transform='TV';
 params.Imref=[];
@@ -94,7 +94,7 @@ params.lambda=2e-4
 
 params.increase_penalty_parameters=false
 params.G.precon=false;
-params.G.maxiter=50
+params.G.maxiter=10
 P_recon=LRT_recon(kspace,squeeze(sens),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);

@@ -42,7 +42,7 @@ close all;
 params=params_init();
 params.Lg=4;
 params.inspectLg=false
-params.L3=2;
+params.L3=4;
 params.L4=4;
 params.sparsity_transform='TV';
 params.Imref=[];
@@ -66,7 +66,7 @@ figure(1001); immontage4D(squeeze(angle(P_recon)),[-pi pi]);
 figure(1002); imshow(angle(P_recon(:,:,1,1,1)),[-pi pi]);
 %
 cplkdiff=squeeze((P_recon(:,:,:,:,1))./(P_recon(:,:,:,:,2)));
-  figure(1003); immontage4D(reshape(angle(cplkdiff),[64 64 6 4]),[-pi/4 pi/4])
+  figure(1003); immontage4D(reshape(angle(cplkdiff),[64 64 6 4]),[-pi/8 pi/8])
 
 
 %%
