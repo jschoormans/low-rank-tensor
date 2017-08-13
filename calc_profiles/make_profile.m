@@ -5,21 +5,21 @@ fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=60; % TSE dimensions
-nDim2=5; % T2-prep 
+nDim1=9; % TSE dimensions
+nDim2=6; % T2-prep 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
-dim2_bigctr=5; % dimension number of fully sampled center (param dimension 1)
+dim2_bigctr=6; % dimension number of fully sampled center (param dimension 1)
 
-ky=127; 
-kz=127; 
+ky=64; 
+kz=64; 
 
 bigctrsize=5;
 smallctrsize=2;
-DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
+DTI=1; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
 
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
-% nr_points =240; undersampling=nr_points./(ky*kz);
-undersampling=0.015;    nr_points=ceil(undersampling*ky*kz);
+nr_points =240; undersampling=nr_points./(ky*kz);
+% undersampling=0.015;    nr_points=ceil(undersampling*ky*kz);
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
 %%%%%%%00
@@ -27,7 +27,7 @@ fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,unders
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms; 
 % TR_shot=nDim1*TR+waiting_time; 
-TR_shot=521e-3;
+TR_shot=600e-3;
 
 MC_maxiter=10000; 
 visualize=1;
@@ -40,10 +40,11 @@ linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares; 
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
 nshots=nDim2*nr_points; 
+total_time= TR_shot*nshots; %total time in seconds; 
+
 fprintf('Number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,round(total_time))
 assert(dim1_bigctr <= nDim1,'dim1_bigctr should be in range [1, nDim1]')
 assert(dim2_bigctr <= nDim2,'dim1_bigctr should be in range [1, nDim1]')
-total_time= TR_shot*nshots; %total time in seconds; 
 
 %% add random point to every independent k-space
 % performs a Monte Carlo simulation s.t. all have equal # of points
@@ -84,7 +85,7 @@ end
 
 makefilename = @(x) [x,num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
         '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
-        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)];
+        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points)];
     
 
 if ~DTI
