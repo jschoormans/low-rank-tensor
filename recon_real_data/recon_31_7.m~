@@ -1,17 +1,16 @@
 % recon 28 july
 clear all; close all; clc
-% cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_07_28')  
-cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_07_28');
+cd('/home/qzhang/lood_storage/divi/Ima/parrec/Kerry/Data/2017_07_31_LRT_DTI_T2prep');
 %
 % MR=MRecon('lr_28072017_1118286_15_2_wip_vfa-t2prep_tenr18dynsV4.raw'); % wrong orientation/resolution/t2prepvals
 % MR1=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-% MR1=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
+% MR1=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
 % MR1.Perform
-%%
+
 % MR=MRecon('lr_28072017_1141160_17_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1112088_14_2_wip_vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_28072017_1242319_23_2_wip_vfa-t2prep_tenr18dynsV4.raw')
-MR=MRecon('lr_28072017_1150231_18_2_wip_vfa-dtiV4.raw')
+MR=MRecon('lr_31072017_1737345_2_2_wip_sc18-vfa-dtiV4.raw')
 
 DTI=true;
 
@@ -22,23 +21,21 @@ if ~DTI
     % MR.Parameter.Labels.NumberOfEchoes=60
     % MR.Parameter.Recon.RemoveMOversampling='No'
     % MR.Parameter.Recon.RemovePOversampling='No'
-    MR.Parameter.Recon.ArrayCompression='Yes';
-    MR.Parameter.Recon.ACNrVirtualChannels=4;
+    MR.Parameter.Recon.ArrayCompression='No';
+    MR.Parameter.Recon.ACNrVirtualChannels=2;
     MR.Parameter.Parameter2Read.typ = 1;
-    MR.Parameter.Recon.ImmediateAveraging='No';
-%     MR.Parameter.Parameter2Read.chan=[2,3,4].';
+    MR.Parameter.Parameter2Read.ky=[-28:29].'
+    MR.Parameter.Parameter2Read.kz=[-28:29].'
+
+MR.Parameter.Recon.ImmediateAveraging='No';
+MR.Parameter.Parameter2Read.chan=[2,3].';
 else
-<<<<<<< HEAD
-    %MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
-    %MR.Parameter.Recon.ImmediateAveraging='Yes'
-    MR.Parameter.Parameter2Read.typ = 1;
-=======
 %     MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
 %     MR.Parameter.Recon.ImmediateAveraging='Yes'
+MR.Parameter.Labels.Index.aver = 0 .* MR.Parameter.Labels.Index.rf;
 MR.Parameter.Parameter2Read.typ = 1;
 % run retro_profile_check; %optional
 
->>>>>>> master
 end
 
 % load data
@@ -61,10 +58,14 @@ K=K(32,:,:,:,:,:,:,:,:,:,:,:);
 che=create_checkerboard([1,size(K,2),size(K,3)]);
 K=bsxfun(@times,K,che);
 a = sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6);
-sens=bart('ecalib -S -m1',a);
 % sens=ones(size(kspace));
-kspace=squeeze(K);
 
+kspace=squeeze(K);
+if ~DTI
+if ndims(kspace)==4 % if one chan
+   kspace=permute(kspace,[1 2 5 3 4]); 
+end
+end
 
 if DTI
 par_dim1 = 9; par_dim2 = 6;
@@ -76,34 +77,35 @@ for ii = 1:par_dim1
 end
 kspace=du; 
 end
-%%
-
-if ndims(kspace)==4 % if one chan
-   kspace=permute(kspace,[1 2 5 3 4]); 
-end
-
-kspace=kspace(2:end-1,:,:,:,:);
-a = sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
+%% crop kspace
+kspace=du; 
+kspace=bart('cc -p4',permute(kspace,[6 1 2 3 7 4 5]));
+kspace=permute(kspace,[2 3 4 6 7 1 5]);
+kspace=kspace(3:end-2,2:end-1,:,:,:);
+% a=sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
+a=kspace(:,:,:,1,1);
 sens=bart('ecalib -S -m1',permute(a,[4 1 2 3]));
-sens=sens+1e-7; % no zero vals in sense maps...
+figure(1002); immontage4D(abs(squeeze(sens)),[])
 
-sens=sens;
+%%
 close all;
 params=params_init();
 params.Lg=1;
-params.inspectLg=false
-params.L3=2;
-params.L4=4;
+params.inspectLg=false;
+params.L3=5;
+params.L4=5;
 params.sparsity_transform='TV';
 params.Imref=[];
-params.x=17;
-params.y=31;
-params.lambda=2e-4
-% sens(sens==0)=1e-2;
+params.x=25;
+params.y=25;
+params.G.maxiter=10;
+params.lambda=4e-3;
+params.mu=1e3;
 
 params.increase_penalty_parameters=false
-params.G.precon=false;
-params.G.maxiter=10
 P_recon=LRT_recon(kspace,squeeze(sens),params);
-%% visualize recon
-figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
+
+%%
+figure(1000); immontage4D(abs(squeeze(P_recon)),[])
+figure(1001); immontage4D(angle(squeeze(P_recon)),[])
+figure(1002); surf(squeeze(mean(mean(abs(squeeze(P_recon(20:30,20:30,1,:,:))),1),2)))
