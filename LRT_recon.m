@@ -40,6 +40,8 @@ xlabel('Parameter 1'); ylabel('Parameter 2');
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 [Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask,params);
+fprintf('# of shared ky-kz points of dim 1: %i \n',numel(Kx1))
+fprintf('# of shared ky-kz points of dim 2: %i \n',numel(Kx2))
 
 % 2: estimate subspaces: generalized for non-square shared k-points
 nav_parameter_dim1=[];
