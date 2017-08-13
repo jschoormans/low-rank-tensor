@@ -2,15 +2,25 @@
 %where dimension 1 is the TSE echo number and dimension 2 is T2prep
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=20; % TSE dimensions
+nDim1=60; % TSE dimensions
 nDim2=5; % T2-prep 
-ky=64; 
-kz=64; 
+dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
+dim2_bigctr=5; % dimension number of fully sampled center (param dimension 1)
+
+ky=127; 
+kz=127; 
 
 bigctrsize=5;
 smallctrsize=2;
-undersampling=0.05; %excluding centers
-% nr_points =240;
+DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
+
+%%%%%%%  CHOOSE ONE OF BOTH OPTIONS
+nr_points =240;
+undersampling=nr_points./(ky*kz)
+
+% undersampling=0.015; %excluding centers
+% nr_points=ceil(undersampling*ky*kz) 
+%%%%%%%%
 
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms; 
@@ -18,19 +28,20 @@ undersampling=0.05; %excluding centers
 TR_shot=521e-3
 
 MC_maxiter=10000; 
-
 visualize=1
 radialflag=0 %radial/linear
 linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % calculating some params...
 nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares; 
-nr_points=ceil(undersampling*ky*kz) 
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
 nshots=nDim2*nr_points; 
-total_time= TR_shot*nshots; %total time in seconds; 
 fprintf('number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,round(total_time))
+assert(dim1_bigctr <= nDim1,'dim1_bigctr should be in range [1, nDim1]')
+assert(dim2_bigctr <= nDim2,'dim1_bigctr should be in range [1, nDim1]')
+total_time= TR_shot*nshots; %total time in seconds; 
 
 %% add random point to every independent k-space
 % performs a Monte Carlo simulation s.t. all have equal # of points
@@ -40,7 +51,7 @@ for dim1=1:nDim1;
     for dim2=1:nDim2;
         fprintf('Dim 1: %d, Dim 2: %d |',dim1,dim2)
         m=zeros(ky,kz); MC_niter=0;
-        if dim1==1 || dim2==1;
+        if dim1==dim1_bigctr || dim2==dim2_bigctr;
             ctrsize=bigctrsize;
             nr_centerpoints=(2*ctrsize+1)^2; %number of k-points in the center squares; 
         else
@@ -63,18 +74,32 @@ for dim1=1:nDim1;
     end
 end
 clear m
-if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2])); end
+if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2]));
+ figure(11); clf; imshow(reshape(permute(mask(:,:,:,:),[1 3 2 4]),[ky*nDim1,kz*nDim2]));
+end
 
 %% order and save
-profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
-% profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize);
 
-filename=['LRT_TSE_T2prep_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
-     '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),'_sCtr',num2str(smallctrsize),'_us',num2str(undersampling)]
+if ~DTI
+    profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
+    filename=['LRT_VFAT2p_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
+        '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
+        '_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'bigctr_',num2str(dim1_bigctr),'_',num2str(dim2_bigctr)]
+    
+else
+    profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize);
+    filename=['LRT_DTIT2p_',num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
+        '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
+        '_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'bigctr_',num2str(dim1_bigctr),'_',num2str(dim2_bigctr)]
+end
+
+
+end
  
 if ispc()
      cd('L:\basic\divi\Ima\parrec\Jasper\profiles_LRT')
- else
+else
+    cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/profiles_LRT')
 end
 savemask_LRT(profile_order,filename,visualize)
 
