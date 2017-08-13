@@ -8,14 +8,16 @@ else
 %     addpath(genpath('/home/qzhang/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
     addpath(genpath('/opt/amc/bart/')); vars;
 end
-MR=MRecon('lr_13082017_1757596_32_2_wip_sc18-vfa-dtiV4.raw')
+
+MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
+% MR=MRecon('lr_13082017_1702510_29_2_wip_sc18-vfa-dtiV4.raw')
 % MR=MRecon('lr_13082017_1652290_28_2_wip_sc23-vfa-t2prep_iV4.raw')
 % MR=MRecon('lr_13082017_1431351_12_2_wip_sc23-vfa-t2prep_iV4.raw')
 % MR=MRecon('lr_13082017_1157339_3_2_wip_sc23-vfa-t2prep_tenr18dynsV4.raw')
 % MR=MRecon('lr_13082017_1545170_21_2_wip_sc23-vfa-t2prep_iV4.raw')
 % MR=MRecon('lr_13082017_1641548_26_2_wip_surveyV4.raw')
 %%
-DTI=1;
+DTI=0;
 
 if ~DTI
     MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -24,11 +26,11 @@ if ~DTI
     % MR.Parameter.Labels.NumberOfEchoes=60
     % MR.Parameter.Recon.RemoveMOversampling='No'
     % MR.Parameter.Recon.RemovePOversampling='No'
-    MR.Parameter.Recon.ArrayCompression='No';
+    MR.Parameter.Recon.ArrayCompression='Yes';
     MR.Parameter.Recon.ACNrVirtualChannels=6;
     MR.Parameter.Parameter2Read.typ = 1;
     MR.Parameter.Recon.ImmediateAveraging='No';
-    MR.Parameter.Parameter2Read.chan=[2,3,4].';
+%     MR.Parameter.Parameter2Read.chan=[2,3,4].';
 %     MR.Parameter.Parameter2Read.ky=[-50:50].'
 
 else
@@ -53,11 +55,7 @@ disp('sortdata')
 MR.SortData;
 %%
 %{
-params=params_init();
-params.L3=4;
-params.L4=4;
-params.subspacedim1=1;
-params.subspacedim2=5; 
+
 
 [nav_estimate_1,eigenvals_1,nav_estimate_2,eigenvals_2] = full_subspace_estimate_3D(K,params)
 %}
@@ -69,7 +67,9 @@ K=MR.Data;
 
 K=ifftshift(ifft(K,[],1),1); 
 size(K)
+
 K=K(32,4:67,2:end,:,:,:,:,:,:,:,:,:);
+
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(K,2),size(K,3)]);
@@ -94,14 +94,18 @@ sens=sens+1e-7; % no zero vals in sense maps...
 figure(112)
 immontage4D(abs(sens),[])
 %%
+
 sens=sens;
 close all;
 params=params_init();
-
+params.L3=4;
+params.L4=4;
 params.subspacedim1=1;
 params.subspacedim2=5; 
+
+>>>>>>> 3eb88d74f932bf7e6288ddac9087f137e1e94a19
 params.Lg=1;
-params.inspectLg=false
+params.inspectLg=true
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=50;
