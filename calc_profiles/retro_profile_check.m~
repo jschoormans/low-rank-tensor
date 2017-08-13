@@ -19,8 +19,8 @@ kz_range = (max(kz_read)- min(kz_read) + 1)
 dyn_range = (max(dyn_read)- min(dyn_read) + 1)
 rf_range = (max(rf_read)- min(rf_read) + 1)
 
-kspa_frames = zeros(ky_range,kz_range,1,dyn_range);
-% kspa_frames = zeros(ky_range,kz_range,rf_range,dyn_range);
+% kspa_frames = zeros(ky_range,kz_range,1,dyn_range);
+kspa_frames = zeros(ky_range,kz_range,rf_range,dyn_range);
 
 for ii = 1:length(ky_read)
     ky_cor = ky_read(ii) - min(ky_read) + 1;
@@ -28,14 +28,14 @@ for ii = 1:length(ky_read)
     dyn_cor = dyn_read(ii) - min(dyn_read) + 1;
     rf_cor = rf_read(ii) - min(rf_read) + 1;
     
-    kspa_frames(ky_cor, kz_cor, 1, dyn_cor) = 1 + kspa_frames(ky_cor, kz_cor, 1, dyn_cor);
-%     kspa_frames(ky_cor, kz_cor, rf_cor, dyn_cor) = 1 + kspa_frames(ky_cor, kz_cor, rf_cor, dyn_cor);
+%     kspa_frames(ky_cor, kz_cor, 1, dyn_cor) = 1 + kspa_frames(ky_cor, kz_cor, 1, dyn_cor);
+    kspa_frames(ky_cor, kz_cor, rf_cor, dyn_cor) = 1 + kspa_frames(ky_cor, kz_cor, rf_cor, dyn_cor);
 end
 
-figure(1); montage(kspa_frames,'displayrange',[0 3],'size',[6 9]); title('actual sampling pattern'); colormap jet;
+% figure(1); montage(kspa_frames,'displayrange',[0 3],'size',[6 9]); title('actual sampling pattern'); colormap jet;
 
-% kkk = reshape(kspa_frames, 127, 127, 1, 300);
-% figure(1); montage(kkk,'displayrange',[0 3],'size',[5 60]); title('actual sampling pattern'); colormap jet;
+kkk = reshape(kspa_frames, 127, 127, 1, 300);
+figure(1); montage(kkk,'displayrange',[0 3],'size',[5 60]); title('actual sampling pattern'); colormap jet;
 %% input profile
 cd('/home/qzhang/lood_storage/divi/Ima/parrec/Kerry/CSENSE_profiles');
 profile = dlmread('LRT_TSE_T2prep_64_64_9_6_r0_l1_bCtr5_sCtr2_us0.05.dat');

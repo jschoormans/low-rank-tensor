@@ -3,12 +3,12 @@ if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-    cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13')
-    addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
+    cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13')
+%     addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
 %     addpath(genpath('/home/qzhang/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
     addpath(genpath('/opt/amc/bart/')); vars;
 end
-MR=MRecon('lr_13082017_1702510_29_2_wip_sc18-vfa-dtiV4.raw')
+MR=MRecon('lr_13082017_1757596_32_2_wip_sc18-vfa-dtiV4.raw')
 % MR=MRecon('lr_13082017_1652290_28_2_wip_sc23-vfa-t2prep_iV4.raw')
 % MR=MRecon('lr_13082017_1431351_12_2_wip_sc23-vfa-t2prep_iV4.raw')
 % MR=MRecon('lr_13082017_1157339_3_2_wip_sc23-vfa-t2prep_tenr18dynsV4.raw')
@@ -34,7 +34,7 @@ if ~DTI
 else
     %MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
     %MR.Parameter.Recon.ImmediateAveraging='Yes'
-    MR.Parameter.Recon.ArrayCompression='No';
+    MR.Parameter.Recon.ArrayCompression='Yes';
     MR.Parameter.Recon.ACNrVirtualChannels=6;
     MR.Parameter.Parameter2Read.typ = 1;
 end
@@ -63,11 +63,13 @@ params.subspacedim2=5;
 %}
 
 %%
+
+
 K=MR.Data;
 
 K=ifftshift(ifft(K,[],1),1); 
 size(K)
-K=K(32,:,:,:,:,:,:,:,:,:,:,:);
+K=K(32,4:67,2:end,:,:,:,:,:,:,:,:,:);
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(K,2),size(K,3)]);
@@ -95,6 +97,9 @@ immontage4D(abs(sens),[])
 sens=sens;
 close all;
 params=params_init();
+
+params.subspacedim1=1;
+params.subspacedim2=5; 
 params.Lg=1;
 params.inspectLg=false
 params.sparsity_transform='TV';
