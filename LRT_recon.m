@@ -39,30 +39,37 @@ xlabel('Parameter 1'); ylabel('Parameter 2');
 
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
-[Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask);
+[Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask,params);
 
 % 2: estimate subspaces: generalized for non-square shared k-points
 nav_parameter_dim1=[];
 for iter=1:length(Kx1)
-    nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,1)));
+    nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,params.subspacedim1)));
 end
 [nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
 
 nav_parameter_dim2=[];
 for iter=1:length(Kx2)
-    nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,1,:)));
+    nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,params.subspacedim2,:)));
 end
 [nav_estimate_2,eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
 
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
     Psi=opWavelet2(res1,res2,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
+    operatorsize=[96,96]; % not sure - to do
 elseif strcmp(params.sparsity_transform,'TV')
     Psi1=opConvolve(res1,res2,[-1 1],[0 0],'cyclic');
     Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'cyclic');
     Psi=[Psi1;Psi2];
+    operatorsize=[res1,res2*2];
 elseif strcmp(params.sparsity_transform,'TVOP')
     Psi=TVOP;
+    operatorsize=[res1,res2*2]; % not sure - to do 
+elseif strcmp(params.sparsity_transform,'I')
+    Psi=opEye(res1*res2);
+    operatorsize=[res1,res2]; % not sure - to do 
+
 else
     error('sparsity_transform not recognized')
 end
@@ -85,7 +92,7 @@ kspace_1=reshape(kspace,unfoldedKsize);
 figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
 figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
 figure(6); immontage4D(squeeze(abs(P0)));
-figure(7); immontage4D(squeeze(angle(P0)),[0 2*pi]);
+figure(7); immontage4D(squeeze(angle(P0)),[-pi pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(nav_estimate_1,2), size(nav_estimate_2,2)]))); 
 figure(8); plot(abs(nav_estimate_1)); colorbar
 figure(9); plot(abs(nav_estimate_2)); colorbar
@@ -111,7 +118,6 @@ if params.inspectLg;
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
     [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,nav_estimate_1,nav_estimate_2,params.Lg);  
-
 end
 
 
@@ -119,7 +125,7 @@ MSE=[];
 for iter=1:params.niter
     fprintf('\n Outer iteration %i of %i \n',iter,params.niter)
     MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
-    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi);                     %15
+    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize);                     %15
     Bk=soft_thresh_B(C,Z,mu,beta);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
@@ -127,7 +133,7 @@ for iter=1:params.niter
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
-    
+
     if params.increase_penalty_parameters
     alpha=alpha*1.5; beta=beta*1.5; end;   
 end

@@ -10,4 +10,6 @@ fprintf('mu/beta: %1.2e  |',(mub))
 fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 
 Bk=thr.*(abs(CZb)-mub).*((CZb)./(abs(CZb)+eps));
+
+figure(49);clf;imshow(thr); title('s.t. C')
 end

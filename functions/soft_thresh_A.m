@@ -1,4 +1,4 @@
-function Ak=soft_thresh_A(G,Y,alpha,lambda,Psi)
+function Ak=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize)
 % applies elementwise soft-thresholding operator
 % as described in eqn B1
 
@@ -13,4 +13,6 @@ fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 
 st=thr.*((l2T-(lambda/alpha))./(l2T+eps)); %soft thresholding
 Ak=repmat(st,[1 size(T,2)]).*T;
+
+figure(39); clf; imshow(reshape(thr,[operatorsize]),[]); title('s.t. A')
 end

@@ -28,3 +28,6 @@ params.C.maxiter=50;
 params.G.tol=1e-13;
 params.G.maxiter=100;
 params.G.precon=true;               %optional preconditioning of G
+
+params.subspacedim1=1               % dimension along which to take f.s. vals 
+params.subspacedim2=1               % dimension along which to take f.s. vals

@@ -17,7 +17,7 @@
     else
         MSE=[];
     end
-    cgr=abs(reshape(current_guess,sdu));
+    cgr=(reshape(current_guess,sdu));
     
     figure(999);
     
@@ -29,12 +29,19 @@
     title('image at current iteration')
     
     if ~isempty(I)
-    subplot(223);
-    imshow(abs(I(:,:,1,1)),[]);
-    hold on 
-    plot(x,y,'r+','MarkerSize',10)
-    hold off
-    title('Gold standard')
+        subplot(223);
+        imshow(abs(I(:,:,1,1)),[0 max(abs(cgr(:)))]);
+        hold on
+        plot(x,y,'r+','MarkerSize',10)
+        hold off
+        title('Gold standard')
+    else
+        subplot(223);
+        imshow(angle(cgr(:,:,1,1,1)),[-pi pi]);
+        hold on
+        plot(x,y,'r+','MarkerSize',10)
+        hold off
+        title('image at current iteration (end,end)')
     end
     
     subplot(322)
@@ -45,7 +52,7 @@
         end
         
     h1=subplot(324);
-    plot(squeeze(cgr(x_idx,y_idx,1,:,1)),'g')
+    plot(squeeze(abs(cgr(x_idx,y_idx,1,:,1))),'g')
     if ~isempty(I)
         hold on
         plot(abs(squeeze(I(x_idx,y_idx,:,1))),'--k')
@@ -54,7 +61,7 @@
     title(['DIM3: pixel value of x=', num2str(x),' y=',num2str(y)])
     
     h2=subplot(326);
-    plot(squeeze(cgr(x_idx,y_idx,1,1,:)),'g')
+    plot(squeeze(abs(cgr(x_idx,y_idx,1,1,:))),'g')
     if ~isempty(I)
         hold on
         plot(abs(squeeze(I(x_idx,y_idx,1,:))),'--k')
