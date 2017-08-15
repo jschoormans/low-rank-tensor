@@ -91,7 +91,9 @@ F=MCFopClass;
 set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
 
 %4 zero-filled recon
-P0=F'*kspace;             
+
+
+P0=F'*(kspace);             
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 
 if params.scaleksp

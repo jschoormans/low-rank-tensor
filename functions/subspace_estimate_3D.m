@@ -19,8 +19,7 @@ nav_parameter_dim1=[];
 for iter=1:length(Kx1)
     nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(:,Kx1(iter),Ky1(iter),:,:,params.subspacedim1)));
 end
-nav_parameter_dim1=squeeze(nav_parameter_dim1); 
-[nx nc npar]=size(nav_parameter_dim1); 
+[nx ny nz nc npar]=size(nav_parameter_dim1); 
 nav_parameter_dim1=reshape(nav_parameter_dim1,[nx*nc,npar]);
 
 [nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
@@ -29,8 +28,7 @@ nav_parameter_dim2=[];
 for iter=1:length(Kx1)
     nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(:,Kx2(iter),Ky2(iter),:,params.subspacedim2,:)));
 end
-nav_parameter_dim2=squeeze(nav_parameter_dim2); 
-[nx nc npar]=size(nav_parameter_dim2); 
+[nx ny nz nc npar]=size(nav_parameter_dim2); 
 nav_parameter_dim2=reshape(nav_parameter_dim2,[nx*nc,npar]);
 
 [nav_estimate_2,eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);

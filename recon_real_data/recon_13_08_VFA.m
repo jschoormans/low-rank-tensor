@@ -108,16 +108,16 @@ immontage4D(angle(sens),[-pi pi])
 
 % sens=ones(size(sens)); % WERKT BETER DAN SENSE MAPS 
 % sens=abs(sens); % VALT OOK TE PROBEREN 
-% sens_onecoil=sens(:,:,:,[1]); 
-% kspace_onecoil=kspace_sm(:,:,[1],:,:);
+sens_onecoil=sens(:,:,:,[3]); 
+kspace_onecoil=kspace_sm(:,:,[3],:,:);
 
 params=params_init();
 params.L3=3;
 params.L4=2;
 params.subspacedim1=1;
 params.subspacedim2=5; 
+[nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
 
-[nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp,params);
 params.nav_estimate_1=nav_estimate_1;
 params.nav_estimate_2=nav_estimate_2;
 params.eigenvals_1=eigenvals_1;
@@ -135,8 +135,9 @@ params.lambda=5e-3;
 
 params.niter=15; 
 params.increase_penalty_parameters=false;
-params.G.precon=false;
-params.G.maxiter=10;
+params.G.precon=true;
+params.G.maxiter=50;
+
 P_recon=LRT_recon(kspace,squeeze(sens),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
