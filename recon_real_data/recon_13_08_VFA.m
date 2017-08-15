@@ -26,12 +26,13 @@ if ~DTI
     % MR.Parameter.Labels.NumberOfEchoes=60
     % MR.Parameter.Recon.RemoveMOversampling='No'
     % MR.Parameter.Recon.RemovePOversampling='No'
-    MR.Parameter.Recon.ArrayCompression='Yes';
+    MR.Parameter.Recon.ArrayCompression='No';
     MR.Parameter.Recon.ACNrVirtualChannels=6;
     MR.Parameter.Parameter2Read.typ = 1;
     MR.Parameter.Recon.ImmediateAveraging='No';
 %     MR.Parameter.Parameter2Read.chan=[2,3,4].';
 %     MR.Parameter.Parameter2Read.ky=[-50:50].'
+    MR.Parameter.Parameter2Read.chan=[34;35;36;37;44;45]
 
 else
     %MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
@@ -64,18 +65,21 @@ MR.SortData;
 
 
 K=MR.Data;
-
-K=ifftshift(ifft(K,[],1),1); 
+K=fftshift(ifft(ifftshift(K,1),[],1),1); 
 size(K)
+%%
+Ktemp=squeeze(MR.Data); 
 
-K=K(32,4:67,2:end,:,:,:,:,:,:,:,:,:);
+%%
+kspace=K(32,2:end,2:end,:,:,:,:,:,:,:,:,:);
+imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
+size(kspace)
 
 
 % remove stupid checkerboard pattern
-che=create_checkerboard([1,size(K,2),size(K,3)]);
-K=bsxfun(@times,K,che);
-
-kspace=squeeze(K);
+che=create_checkerboard([1,size(kspace,2),size(kspace,3)]);
+kspace=bsxfun(@times,kspace,che);
+kspace=squeeze(kspace);
 
 if DTI
 par_dim1 = 9; par_dim2 = 6;
@@ -87,36 +91,53 @@ for ii = 1:par_dim1
 end
 kspace=du; 
 end
-%%
-a = sum(sum(kspace(:,:,:,1,:),4),5)./sum(sum(kspace(:,:,:,1,:)~=0,4),5);
-sens=bart('ecalib -S -r20 -m1',permute(a,[4 1 2 3]));
+
+a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
+sens=bart('ecalib -S -r15 -m1',permute(a,[4 1 2 3]));
 sens=sens+1e-7; % no zero vals in sense maps...
+
 figure(112)
+subplot(311)
 immontage4D(abs(sens),[])
+subplot(312)
+immontage4D(real(sens),[])
+subplot(313)
+immontage4D(angle(sens),[-pi pi])
+
 %%
 
-sens=sens;
-close all;
+% sens=ones(size(sens)); % WERKT BETER DAN SENSE MAPS 
+% sens=abs(sens); % VALT OOK TE PROBEREN 
+% sens_onecoil=sens(:,:,:,[1]); 
+% kspace_onecoil=kspace_sm(:,:,[1],:,:);
+
 params=params_init();
-params.L3=4;
-params.L4=4;
+params.L3=3;
+params.L4=2;
 params.subspacedim1=1;
 params.subspacedim2=5; 
 
->>>>>>> 3eb88d74f932bf7e6288ddac9087f137e1e94a19
-params.Lg=1;
-params.inspectLg=true
+[nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp,params);
+params.nav_estimate_1=nav_estimate_1;
+params.nav_estimate_2=nav_estimate_2;
+params.eigenvals_1=eigenvals_1;
+params.eigenvals_2=eigenvals_2;
+
+params.Lg=2;
+params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=50;
-params.y=25;
-params.mu=1e3;
-params.lambda=0.5e-3
+params.y=35;
+params.mu=0.1e2;
+params.lambda=5e-3;
 % sens(sens==0)=1e-2;
 
-params.increase_penalty_parameters=false
+params.niter=15; 
+params.increase_penalty_parameters=false;
 params.G.precon=false;
-params.G.maxiter=10
+params.G.maxiter=10;
 P_recon=LRT_recon(kspace,squeeze(sens),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
+

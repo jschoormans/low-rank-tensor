@@ -1,0 +1,27 @@
+function []= subspace_estimate_3D(kspace,params)
+
+disp('estimating subspace...')
+assert(ndims(kspace)==6,'dims') % kx ky kz nc param1 
+
+mask=squeeze(abs((kspace(floor(size(kspace,1)/2),:,:,1,:,:))))>0;
+% >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask,params);
+fprintf('# of shared ky-kz points of dim 1: %i \n',numel(Kx1))
+fprintf('# of shared ky-kz points of dim 2: %i \n',numel(Kx2))
+
+%%%%%%% 2: estimate subspaces: generalized for non-square shared k-points
+nav_parameter_dim1=[];
+for iter=1:length(Kx1)
+    nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(:,Kx1(iter),Ky1(iter),:,:,params.subspacedim1)));
+end
+[nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+% calculate singular value decomposition
+[left_1,eigen_1,right_1]=svd(S.','econ');
+eigenvals=diag(eigen_1);  %output for evaluation
+
+%navigator estimate are first L left singular vectors
+nav_estimate=left_1(:,1:L);
+

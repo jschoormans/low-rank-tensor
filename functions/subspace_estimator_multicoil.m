@@ -6,9 +6,6 @@ function [nav_estimate,eigenvals]= subspace_estimator_multicoil(kspace,L)
 %kspace: 3D kspace center size(kx,ky,nc,M)/(kx*ky,nc,M)
 %L:  rank of subspace estimator (L) (L<=M)
 
-disp('estimating subspace...')
-
-
 if ndims(kspace)==4 % kx ky nc param
     assert(L<=size(kspace,4))
     S=reshape(kspace,[size(kspace,1)*size(kspace,2)*size(kspace,3),size(kspace,4)]);
@@ -23,11 +20,11 @@ elseif ndims(kspace)==2 %assume kx*ky*nx, param (already Casorati matrix)
 end  
     
 % calculate singular value decomposition
-[left_1,eigen_1,right_1]=svd(S);
+[left_1,eigen_1,right_1]=svd(S.','econ');
 eigenvals=diag(eigen_1);  %output for evaluation
 
 %navigator estimate are first L left singular vectors
-nav_estimate=right_1(:,1:L);
+nav_estimate=left_1(:,1:L);
 
 
 

@@ -9,6 +9,8 @@
     y_idx = x;
 
     current_guess=G*C*Phi;
+    run fig9999_spatial_images.m
+    
     if ~isempty(I); 
 %     MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);
 %     %mean-squared error

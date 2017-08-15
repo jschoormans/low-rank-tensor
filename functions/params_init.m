@@ -31,3 +31,8 @@ params.G.precon=true;               %optional preconditioning of G
 
 params.subspacedim1=1               % dimension along which to take f.s. vals 
 params.subspacedim2=1               % dimension along which to take f.s. vals
+
+params.nav_estimate_1=[];
+params.nav_estimate_2=[];
+params.eigenvals_1=[];
+params.eigenvals_2=[];

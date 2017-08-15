@@ -20,9 +20,10 @@ fprintf('   J Schoormans & Q Zhang  \n')
 fprintf('       Amsterdam 2017      \n \n')
 
 
+
 %%
 assert(params.Lg<=params.L3*params.L4,'reduce spatial rank!'); 
-assert(~xor(isempty(params.nav_estimate_1),isempty(params.nav_estimate_2)),'Input either both or no subspaces!')
+assert(isempty(params.nav_estimate_1)&&isempty(params.nav_estimate_1),'subspaces should be ')
 res1=size(kspace,1);
 res2=size(kspace,2);
 tensorsize=size(kspace);
@@ -39,9 +40,8 @@ xlabel('Parameter 1'); ylabel('Parameter 2');
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-if isempty(params.nav_estimate_1)                  % subspace estimation 
+if ~isempty(params.nav_estimate_1)                  % subspace estimation 
     [Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask,params);
-    fprintf('Estimating subspaces...\n')
     fprintf('# of shared ky-kz points of dim 1: %i \n',numel(Kx1))
     fprintf('# of shared ky-kz points of dim 2: %i \n',numel(Kx2))
     
@@ -50,20 +50,16 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
     for iter=1:length(Kx1)
         nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,params.subspacedim1)));
     end
-    [nav_estimate_1,params.eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
+    [nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
     
     nav_parameter_dim2=[];
     for iter=1:length(Kx2)
         nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,params.subspacedim2,:)));
     end
-    [nav_estimate_2,params.eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
+    [nav_estimate_2,eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
     
     params.nav_estimate_1=nav_estimate_1;
     params.nav_estimate_2=nav_estimate_2;
-    params.params.eigenvals_1=params.eigenvals_1;
-    params.params.eigenvals_2=params.eigenvals_2;
-else
-        fprintf('Subspaces user-defined...\n')
 end
 
 % 3: initialize other operators
@@ -108,8 +104,8 @@ figure(7); immontage4D(squeeze(angle(P0)),[-pi pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
 figure(8); plot(abs(params.nav_estimate_1)); colorbar
 figure(9); plot(abs(params.nav_estimate_2)); colorbar
-figure(10); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
-    plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
+figure(10); hold on; plot(eigenvals_1./max(eigenvals_1(:)),'r'); plot(params.L3,eigenvals_1(params.L3)./max(eigenvals_1(:)),'ro');...
+    plot(eigenvals_2./max(eigenvals_2(:)),'b');plot(params.L4,eigenvals_2(params.L4)./max(eigenvals_2(:)),'bo') ;hold off;
 title('eigenvalues for the two subspaces (1=red,2-blue)')
 %% ALGO 
 alpha=params.alpha;
