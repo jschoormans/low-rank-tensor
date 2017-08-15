@@ -127,14 +127,14 @@ params.nav_estimate_2=nav_estimate_2;
 params.eigenvals_1=eigenvals_1;
 params.eigenvals_2=eigenvals_2;
 
-params.Lg=3;
+params.Lg=1;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=50;
 params.y=35;
-params.mu=0.1e2;
-params.lambda=5e-3;
+params.mu=1e3;
+params.lambda=5e-4;
 % sens(sens==0)=1e-2;
 
 params.niter=15; 

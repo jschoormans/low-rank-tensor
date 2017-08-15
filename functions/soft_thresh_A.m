@@ -14,5 +14,6 @@ fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 st=thr.*((l2T-(lambda/alpha))./(l2T+eps)); %soft thresholding
 Ak=repmat(st,[1 size(T,2)]).*T;
 
-figure(39); clf; imshow(reshape(thr,[operatorsize]),[]); title('s.t. A')
+title_text = sprintf('s.t. A: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
+figure(39); clf; spy(reshape(thr,[operatorsize])); title(title_text); 
 end

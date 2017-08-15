@@ -66,8 +66,9 @@ switch simulation_typ
         error('Simulation type is unknown...')
 end
 
-
-
+% give background signal testing sense estimation
+% I = I + 0.1;
+% end
 
 figure(1); Q=[];
 for ii=1:size(I,3)
@@ -82,7 +83,7 @@ xlabel('Prameter 1')
 ylabel('Prameter 2')
 clear Q J 
 %%  add coil sensitivity information 
-[Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils);
+[Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils,sens_external);
 
 %% to k space 
 d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(Ic,2),1),[],1),[],2),1),2)./sqrt(res*res);
@@ -92,7 +93,7 @@ figure(2); imshow(abs(d(:,:,1,1)),[]); axis off; title('k-space')
 mask=rand(size(I))>(1-uf); %undersampling
 
 % add center for subspace estimae
-ctr=10;
+ctr=20;
 ctrcoords=floor(res/2)-ctr: floor(res/2)+ctr; 
 ll=length(ctrcoords);
 mask(ctrcoords,ctrcoords,1,:)=ones(ll,ll,1,size(I,4));
@@ -114,11 +115,19 @@ for ii=1:size(I,3)
 end
 imshow(abs(Q),[0 1]);axis off;  clear Q J 
 
+%>>>>>>>>>>simulate 0 frames of sampling mask<<<<<<<<<<<<
+mask(1:3,:,:,:) = 0;
+mask(end-2:end,:,:,:) = 0;
+mask(:,1:3,:,:) = 0;
+mask(:,end-2:end,:,:) = 0;
+%>>>>>>>>>>>>>>>>end<<<<<<<<<<<<<<<<<<<<<<<<<
 mask=repmat(mask,[1 1 1 1 ncoils]);
 mask=permute(mask,[1 2 5 3 4]);
+
+% mask(:,:,:,1,1) = ones(size(mask(:,:,:,1,1)));
 %% make undersampled measurement; 
 du=mask.*d; 
-clear d 
+% clear d 
 
 %add noise
 if noiselevel>0
