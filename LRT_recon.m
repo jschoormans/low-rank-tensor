@@ -137,10 +137,12 @@ end
 
 MSE=[]; 
 for iter=1:params.niter
-    fprintf('\n Outer iteration %i of %i \n',iter,params.niter)
-    MSE=visualize_convergence(iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
-    Ak=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize);                     %15
-    Bk=soft_thresh_B(C,Z,mu,beta);                              %16
+    params.iter=iter; 
+    fprintf('\n Outer iteration %i of %i \n',params.iter,params.niter)
+    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
+    
+    [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
+    [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
     Yk=Y+alpha*(Ak-Psi*Gk);

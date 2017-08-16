@@ -36,3 +36,6 @@ params.nav_estimate_1=[];
 params.nav_estimate_2=[];
 params.eigenvals_1=[];
 params.eigenvals_2=[];
+
+params.autolambda=0   ; 
+params.automu=0       ;             % automatically estimate mu on s.t. of first iter
