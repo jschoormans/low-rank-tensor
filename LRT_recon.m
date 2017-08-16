@@ -83,7 +83,11 @@ else
     error('sparsity_transform not recognized')
 end
 
+if params.normalize_sense %find out how it should be done...
 sens_normalized=bsxfun(@rdivide,sens,(eps+sqrt(sum(abs(sens).^2,3)))); 
+% sens_normalized=bsxfun(@rdivide,sens,(eps+sum(abs(sens),3))); 
+else sens_normalized
+end
 F=MCFopClass;
 set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
 
@@ -96,12 +100,14 @@ P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the s
 if params.scaleksp
     [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
     params.Imref=params.Imref./scaling; %scale ref image with same scaling;
+    P0=F'*(kspace);             
+    P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 end 
 
 kspace_1=reshape(kspace,unfoldedKsize);
 
-figure(21); subplot(211); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
-figure(21); subplot(212);  imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
+figure(21); subplot(211); imshow(abs(P0(:,:,1,params.subspacedim1,params.subspacedim2)),[]); axis off; title('zero filled recon of one frame')
+figure(21); subplot(212);  imshow(angle(P0(:,:,1,params.subspacedim1,params.subspacedim2)),[]); axis off; title('phase of zero filled recon of one frame')
 figure(22);subplot(311); immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
 figure(22); subplot(312);  immontage4D(squeeze(abs(P0)));
 figure(22); subplot(313); immontage4D(squeeze(angle(P0)),[-pi pi]);
