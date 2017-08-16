@@ -26,7 +26,7 @@ params.y=20;                        %pixel to plot during recon loop
 params.C.tol=1e-10;
 params.C.maxiter=50;
 params.G.tol=1e-13;
-params.G.maxiter=100;
+params.G.maxiter=10;
 params.G.precon=true;               %optional preconditioning of G
 
 params.subspacedim1=1               % dimension along which to take f.s. vals 

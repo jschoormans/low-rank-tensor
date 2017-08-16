@@ -1,28 +1,21 @@
 clear; close all; clc
 if ispc
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15')
+    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
 else
-    cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13')
+    cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13')
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 
-MR=MRecon('')
+MR=MRecon('lr_15082017_2116431_6_2_wip_vfa-t2prep_csV4.raw')
 %%
 DTI=0;
 
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
-% MR.Parameter.Parameter2Read.aver=[0:60].';
-% MR.Parameter.Labels.NumberOfEchoes=60
-% MR.Parameter.Recon.RemoveMOversampling='No'
-% MR.Parameter.Recon.RemovePOversampling='No'
-MR.Parameter.Recon.ArrayCompression='No';
-MR.Parameter.Recon.ACNrVirtualChannels=6;
+MR.Parameter.Recon.ArrayCompression='Yes';
+MR.Parameter.Recon.ACNrVirtualChannels=4;
 MR.Parameter.Parameter2Read.typ = 1;
 MR.Parameter.Recon.ImmediateAveraging='No';
-%     MR.Parameter.Parameter2Read.chan=[2,3,4].';
-%     MR.Parameter.Parameter2Read.ky=[-50:50].'
-MR.Parameter.Parameter2Read.chan=[34;35;36;37;44;45]
 
 % load data
 disp('readdata')
@@ -37,40 +30,30 @@ MR.MeasPhaseCorrection;
 disp('sortdata')
 MR.SortData;
 
-%%
-
 
 K=MR.Data;
 K=fftshift(ifft(ifftshift(K,1),[],1),1); 
 size(K)
-%%
 Ktemp=squeeze(MR.Data); 
+%% quick fft 
+
+
 
 %%
-kspace=K(32,2:end,2:end,:,:,:,:,:,:,:,:,:);
+kspace=K(90,1:end,1:end,:,:,:,:,:,:,:,:,:);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
-
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(kspace,2),size(kspace,3)]);
 kspace=bsxfun(@times,kspace,che);
 kspace=squeeze(kspace);
 
-if DTI
-par_dim1 = 9; par_dim2 = 6;
-du = zeros(size(kspace,1),size(kspace,2),size(kspace,3),par_dim1,par_dim2);
-for ii = 1:par_dim1
-    for jj = 1:par_dim2
-        du(:,:,:,ii,jj) = kspace(:,:,:,((jj-1) * par_dim1 +ii));
-    end
-end
-kspace=du; 
-end
-
-a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
-sens=bart('ecalib -S -r15 -m1',permute(a,[4 1 2 3]));
-sens=sens+1e-7; % no zero vals in sense maps...
+%%
+% a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
+a=kspace(:,:,:,5,1);
+sens=bart('ecalib -S -r25 -m1 ',permute(a,[4 1 2 3]));
+% sens=sens+1e-7; % no zero vals in sense maps...
 
 figure(112)
 subplot(311)
@@ -82,14 +65,12 @@ immontage4D(angle(sens),[-pi pi])
 
 %%
 
-% sens=ones(size(sens)); % WERKT BETER DAN SENSE MAPS 
-% sens=abs(sens); % VALT OOK TE PROBEREN 
-sens_onecoil=sens(:,:,:,[3]); 
-kspace_onecoil=kspace_sm(:,:,[3],:,:);
+sens_onecoil=sens(:,:,:,[2]); 
+kspace_onecoil=kspace(:,:,[2],:,:);
 
 params=params_init();
 params.L3=3;
-params.L4=2;
+params.L4=4;
 params.subspacedim1=1;
 params.subspacedim2=5; 
 [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
@@ -99,22 +80,26 @@ params.nav_estimate_2=nav_estimate_2;
 params.eigenvals_1=eigenvals_1;
 params.eigenvals_2=eigenvals_2;
 
-params.Lg=2;
+params.Lg=1;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=50;
-params.y=35;
-params.mu=0.1e2;
-params.lambda=5e-3;
+params.y=55;
+
+params.mu=1e2;
+params.lambda=10e0-3;
+params.automu=1; 
+params.autolambda=1; 
+
 % sens(sens==0)=1e-2;
 
-params.niter=15; 
+params.niter=5; 
 params.increase_penalty_parameters=false;
 params.G.precon=true;
-params.G.maxiter=50;
+params.G.maxiter=10;
 
-P_recon=LRT_recon(kspace,squeeze(sens),params);
+P_recon=LRT_recon(kspace_onecoil,squeeze(sens_onecoil),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
-
+figure(1001);imshow(abs(P_recon(:,:,1,5,1)).',[0 1])

@@ -33,9 +33,6 @@ unfoldedKsize=[size(kspace,1)*size(kspace,2)*size(kspace,3),size(kspace,4)*size(
 %%
 % FIND MASK
 mask=squeeze(kspace(:,:,1,:,:))~=0;
-figure(1); clf; immontage4D(mask,[0 1]);
-xlabel('Parameter 1'); ylabel('Parameter 2');
-
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -103,16 +100,18 @@ end
 
 kspace_1=reshape(kspace,unfoldedKsize);
 
-figure(4); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
-figure(5); imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
-figure(6); immontage4D(squeeze(abs(P0)));
-figure(7); immontage4D(squeeze(angle(P0)),[-pi pi]);
+figure(21); subplot(211); imshow(abs(P0(:,:,1,1,1)),[]); axis off; title('zero filled recon of one frame')
+figure(21); subplot(212);  imshow(angle(P0(:,:,1,1,1)),[]); axis off; title('phase of zero filled recon of one frame')
+figure(22);subplot(311); immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
+figure(22); subplot(312);  immontage4D(squeeze(abs(P0)));
+figure(22); subplot(313); immontage4D(squeeze(angle(P0)),[-pi pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
-figure(8); plot(abs(params.nav_estimate_1)); colorbar
-figure(9); plot(abs(params.nav_estimate_2)); colorbar
-figure(10); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
+figure(23); subplot(221); plot(abs(params.nav_estimate_1)); colorbar
+figure(23); subplot(222); plot(abs(params.nav_estimate_2)); colorbar
+figure(23); subplot(212); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
     plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
-title('eigenvalues for the two subspaces (1=red,2-blue)')
+title('eigenvalues for the two subspaces (1=red,2-blue)');
+drawnow;
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 

@@ -22,7 +22,8 @@ Aop = @(C) Res(X(ResA(C)));
 [xpcg,flag,relres,iter,resvecpcg]=cgs(Aop,b,tol,maxiter,[],[],C(:)); %seems fastest
 
 Ck=ResA(xpcg);
-figure(29); plot(log10(resvecpcg./norm(b(:))),'r*-'); 
+figure(998);subplot(224);
+plot(log10(resvecpcg./norm(b(:))),'r*-'); 
 xlabel('iterations'); ylabel('10log of residual')
 drawnow; 
 

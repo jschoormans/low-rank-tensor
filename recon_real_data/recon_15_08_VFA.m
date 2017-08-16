@@ -37,30 +37,19 @@ size(K)
 Ktemp=squeeze(MR.Data); 
 
 %%
-kspace=K(60,1:end,1:end,:,:,:,:,:,:,:,:,:);
+kspace=K(69,1:end,1:end,:,:,:,:,:,:,:,:,:);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
-
 
 % remove stupid checkerboard pattern
 che=create_checkerboard([1,size(kspace,2),size(kspace,3)]);
 kspace=bsxfun(@times,kspace,che);
 kspace=squeeze(kspace);
 
-if DTI
-par_dim1 = 9; par_dim2 = 6;
-du = zeros(size(kspace,1),size(kspace,2),size(kspace,3),par_dim1,par_dim2);
-for ii = 1:par_dim1
-    for jj = 1:par_dim2
-        du(:,:,:,ii,jj) = kspace(:,:,:,((jj-1) * par_dim1 +ii));
-    end
-end
-kspace=du; 
-end
 %%
 % a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
 a=kspace(:,:,:,5,1);
-sens=bart('ecalib -S -r25 -m1 -c0.015',permute(a,[4 1 2 3]));
+sens=bart('ecalib -S -r25 -m1 -c0.3',permute(a,[4 1 2 3]));
 % sens=sens+1e-7; % no zero vals in sense maps...
 
 figure(112)
@@ -71,10 +60,10 @@ immontage4D(real(sens),[])
 subplot(313)
 immontage4D(angle(sens),[-pi pi])
 
-%%
-
-sens_onecoil=sens(:,:,:,[3]); 
-kspace_onecoil=kspace(:,:,[3],:,:);
+%% 3,4, ok, 2 too noisy
+coilnr=[3,4]
+sens_onecoil=sens(:,:,:,coilnr); 
+kspace_onecoil=kspace(:,:,coilnr,:,:);
 
 params=params_init();
 params.L3=3;
@@ -88,12 +77,12 @@ params.nav_estimate_2=nav_estimate_2;
 params.eigenvals_1=eigenvals_1;
 params.eigenvals_2=eigenvals_2;
 
-params.Lg=1;
+params.Lg=2;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
-params.x=50;
-params.y=55;
+params.x=40;
+params.y=65;
 
 params.mu=1e2;
 params.lambda=10e0-3;
@@ -110,4 +99,4 @@ params.G.maxiter=10;
 P_recon=LRT_recon(kspace_onecoil,squeeze(sens_onecoil),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
-figure(1001);imshow(abs(P_recon(:,:,5,1)).',[])
+figure(1001);imshow(abs(P_recon(:,:,1,3,1)).',[])
