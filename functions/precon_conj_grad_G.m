@@ -40,7 +40,9 @@ end
 % [x,flag,relres,iter,resvec]=pcg(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 
 Gk=ResA(x);
-figure(19); plot(log10(resvec./norm(b(:))),'r*-'); 
+
+figure(998);subplot(223);
+plot(log10(resvec./norm(b(:))),'r*-'); 
 xlabel('iterations'); ylabel('10log of relative residual')
 t=toc; 
 fprintf('t: %i seconds',t)

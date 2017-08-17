@@ -26,7 +26,7 @@ params.y=20;                        %pixel to plot during recon loop
 params.C.tol=1e-10;
 params.C.maxiter=50;
 params.G.tol=1e-13;
-params.G.maxiter=100;
+params.G.maxiter=10;
 params.G.precon=true;               %optional preconditioning of G
 
 params.subspacedim1=1               % dimension along which to take f.s. vals 
@@ -36,3 +36,6 @@ params.nav_estimate_1=[];
 params.nav_estimate_2=[];
 params.eigenvals_1=[];
 params.eigenvals_2=[];
+
+params.autolambda=0   ; 
+params.automu=0       ;             % automatically estimate mu on s.t. of first iter
