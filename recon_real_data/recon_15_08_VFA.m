@@ -13,7 +13,7 @@ DTI=0;
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
 MR.Parameter.Recon.ArrayCompression='Yes';
-MR.Parameter.Recon.ACNrVirtualChannels=4;
+MR.Parameter.Recon.ACNrVirtualChannels=6;
 MR.Parameter.Parameter2Read.typ = 1;
 MR.Parameter.Recon.ImmediateAveraging='No';
 
@@ -87,15 +87,15 @@ params.y=65;
 params.mu=1e2;
 params.lambda=5e-3;
 params.automu=1; 
-params.autolambda=1; 
-% sens(sens==0)=1e-2;
+params.autolambda=1;
 
+params.scaleksp=0
 params.niter=5; 
 params.increase_penalty_parameters=false;
 params.G.precon=false;
 params.G.maxiter=5;
 params.normalize_sense=1
-P_recon=LRT_recon(kspace_onecoil,squeeze(conj(sens_onecoil)),params);
+P_recon=LRT_recon(kspace_onecoil,squeeze((sens_onecoil)),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
 figure(1001);imshow(abs(P_recon(:,:,1,1,60)).',[])
@@ -106,6 +106,6 @@ imshow(cat(1,cat(2,...
     abs(P_recon(:,:,1,5,60).')),...
     cat(2,abs(P_recon(:,:,1,1,60).'),...
     abs(P_recon(:,:,1,3,60).'),...
-    abs(P_recon(:,:,1,5,60).'))),[0 0.2]);
+    abs(P_recon(:,:,1,5,60).'))),[]);
 
 figure(1003);imshow(abs(sqrt(sum(P_recon(:,:,1,3,:).^2,5))).',[])

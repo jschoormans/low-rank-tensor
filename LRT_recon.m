@@ -84,9 +84,10 @@ else
 end
 
 if params.normalize_sense %find out how it should be done...
-sens_normalized=bsxfun(@rdivide,sens,(eps+sqrt(sum(abs(sens).^2,3)))); 
-% sens_normalized=bsxfun(@rdivide,sens,(eps+sum(abs(sens),3))); 
-else sens_normalized
+    sensvec=reshape(sens,[size(sens,1)*size(sens,2),size(sens,3)]);
+    sens1_mag = reshape(vecnorm(reshape(sensvec, [], size(sens,3)).'), [size(sens,1),size(sens,2)]);
+    sens_normalized = bsxfun(@rdivide, sens, sens1_mag);
+else sens_normalized=sens;
 end
 F=MCFopClass;
 set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);

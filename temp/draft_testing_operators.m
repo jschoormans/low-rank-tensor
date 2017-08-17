@@ -104,6 +104,7 @@ sens1_mag = reshape(vecnorm(reshape(sensvec, [], size(sens,3)).'), [size(sens,1)
 sens_normalized = bsxfun(@rdivide, sens, sens1_mag);
 sens_normalized(isnan(sens_normalized)) = 0;
 sens_normalized=reshape(sens_normalized,[size(sens)]);
+% sens_normalized=sens;
 
 F=MCFopClass;
 set_MCFop_Params(F,(squeeze(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
@@ -117,16 +118,15 @@ S_for = @(a) bsxfun(@times, sens_normalized, a);
 A_adj = @(y) S_adj(F_adj(((y))));
 A_for = @(a) ((F_for(S_for(a))));
 
-kspace_adj=A_adj(kspace);
-
-%%
+kspace_s=kspace;
+%
 F=MCFopClass;
 set_MCFop_Params(F,sens_normalized,[res1,res2],[tensorsize(4),tensorsize(5)]);
 
 k2=F*(F'*kspace_s); 
 k3=F*(F'*k2); 
 k4=F*(F'*k3); 
-fprintf('MCFLASS F %d %d %d %d %d \n',mean(abs(kspace(:))),...
+fprintf('MCFLASS F %d %d %d %d \n',...
 mean(abs(kspace_s(:))),...
 mean(abs(k2(:))),...
 mean(abs(k3(:))),...
@@ -136,7 +136,7 @@ mean(abs(k4(:))))
 k2=F_for(F_adj(kspace_s)); 
 k3=F_for(F_adj(k2));  
 k4=F_for(F_adj(k3)); 
-fprintf('FASJ FFOR FUNCTIONS %d %d %d %d %d \n',mean(abs(kspace(:))),...
+fprintf('FASJ FFOR FUNCTIONS %d %d %d %d \n',...
 mean(abs(kspace_s(:))),...
 mean(abs(k2(:))),...
 mean(abs(k3(:))),...
@@ -146,8 +146,29 @@ mean(abs(k4(:))))
 k2=A_for(A_adj(kspace_s)); 
 k3=A_for(A_adj(k2));  
 k4=A_for(A_adj(k3)); 
-fprintf('AADJ FUNCTIONS %d %d %d %d %d \n',mean(abs(kspace(:))),...\
+fprintf('AADJ FUNCTIONS %d %d %d %d \n',...
 mean(abs(kspace_s(:))),...
 mean(abs(k2(:))),...
 mean(abs(k3(:))),...
 mean(abs(k4(:))))
+%%
+F=MCFopClass;
+set_MCFop_Params(F,sens_normalized,[res1,res2],[tensorsize(4),tensorsize(5)]);
+
+tic
+for i=1:5
+    
+    k2=F*(F'*kspace_s);
+end
+toc
+
+%%
+im1=F_adj(kspace);
+% size(im1)
+im2=S_for(S_adj(im1));
+im3=S_for(S_adj(im1));
+im4=S_for(S_adj(im1));
+im5=S_for(S_adj(im1));
+
+fprintf('%d %d %d %d %d\n',mean(abs(im1(:))),mean(abs(im2(:))),mean(abs(im3(:))),mean(abs(im4(:))),mean(abs(im5(:))))
+
