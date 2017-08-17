@@ -31,12 +31,14 @@ params.G.maxiter = 10;
 % params.mu=1e3;
 % params.lambda=5e-4;
 
+%% SENSE map estimation
 % a = sum(sum(du(:,:,:,:,:),4),5)./sum(sum(du(:,:,:,:,:)~=0,4),5);
 % a =du(:,:,:,1,1);
 a =d(:,:,:,1,1);
 sens_est=bart('ecalib -m1 -c0',permute(a,[4 1 2 3]));
 sens_est=sens_est+1e-7; % no zero vals in sense maps...
 
+sens_est = bart('caldir 40',permute(a,[4 1 2 3]));
 figure(112)
 subplot(321)
 immontage4D(abs(sens_est),[]); title('est. sense abs')
@@ -58,6 +60,7 @@ subplot(312)
 immontage4D(permute(real(squeeze(sens_est)./sens), [4 1 2 3]),[0.9 1.1]); title('true sense real')
 subplot(313)
 immontage4D(permute(angle(squeeze(sens_est)./sens), [4 1 2 3]),[-pi pi]); title('true sense phase'); colormap jet
+%%
 
 % P_recon=LRT_recon(du,squeeze(sens_est),params);
 % P_recon=LRT_recon(du,squeeze(sens),params);
