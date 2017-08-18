@@ -23,6 +23,7 @@ end
 nav_parameter_dim1=reshape(nav_parameter_dim1,[nx*nc,npar]);
 
 [nav_estimate_1,eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
+fprintf('subspace 1 finished \n')
 %% param dim 2
 nav_parameter_dim2=[];
 for iter=1:length(Kx1)
@@ -32,6 +33,6 @@ end
 nav_parameter_dim2=reshape(nav_parameter_dim2,[nx*nc,npar]);
 
 [nav_estimate_2,eigenvals_2]= subspace_estimator_multicoil(squeeze(nav_parameter_dim2),params.L4);
-
+fprintf('subspace 2 finished \n')
 
 end
