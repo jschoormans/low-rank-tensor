@@ -13,7 +13,7 @@ DTI=0;
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
 MR.Parameter.Recon.ArrayCompression='Yes';
-MR.Parameter.Recon.ACNrVirtualChannels=6;
+MR.Parameter.Recon.ACNrVirtualChannels=4;
 MR.Parameter.Parameter2Read.typ = 1;
 MR.Parameter.Recon.ImmediateAveraging='No';
 
@@ -32,9 +32,13 @@ MR.SortData;
 
 
 K=MR.Data;
-K=fftshift(ifft(ifftshift(K,1),[],1),1); 
-size(K)
 Ktemp=squeeze(MR.Data); 
+clear MR
+K=squeeze(K);
+for i=1:size(K,6); 
+K(:,:,:,:,:,i)=fftshift(ifft(ifftshift(squeeze(K(:,:,:,:,:,i)),1),[],1),1); 
+end
+size(K)
 
 %%
 kspace=K(69,1:end,1:end,:,:,:,:,:,:,:,:,:);
@@ -71,7 +75,7 @@ params.L4=4;
 params.subspacedim1=1;
 params.subspacedim2=5; 
 [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
-%%
+
 params.nav_estimate_1=nav_estimate_1;
 params.nav_estimate_2=nav_estimate_2;
 params.eigenvals_1=eigenvals_1;

@@ -32,7 +32,8 @@ MR.SortData;
 
 
 K=MR.Data;
-K=fftshift(ifft(ifftshift(K,1),[],1),1); 
+clear MR
+K=fftshift(ifft(ifftshift(squeeze(K),1),[],1),1); 
 size(K)
 Ktemp=squeeze(MR.Data); 
 
@@ -71,7 +72,7 @@ params.L4=4;
 params.subspacedim1=1;
 params.subspacedim2=5; 
 [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
-%%
+
 params.nav_estimate_1=nav_estimate_1;
 params.nav_estimate_2=nav_estimate_2;
 params.eigenvals_1=eigenvals_1;
