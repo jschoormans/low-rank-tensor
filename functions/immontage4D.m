@@ -15,5 +15,5 @@ for ii=1:size(IM,3)
     Q=[Q;J];
 end
 
-imshow((Q),scale); axis off; 
+imshow((Q),scale); axis off; xlabel('dim #4'); ylabel('dim #3')
 end

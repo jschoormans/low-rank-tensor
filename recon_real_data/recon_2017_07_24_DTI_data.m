@@ -5,11 +5,7 @@ if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\Low_Rank_2017_07_17')
     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-%     cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_11')
-%         cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/Low_Rank_2017_07_17')
-        cd('/home/qzhang/lood_storage/divi/Ima/parrec/Kerry/Data/2017_07_24_LRT_DTI_T2prep')
-        vars_kerry;
-    
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/Data/2017_07_24_LRT_DTI_T2prep'])  
 end
 
 % MR = MRecon('lo_12072017_1926046_17_2_wipvfat2preplowrankV4.raw');

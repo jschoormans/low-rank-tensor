@@ -103,8 +103,7 @@ end
 if ispc()
      cd('L:\basic\divi\Ima\parrec\Jasper\profiles_LRT')
 else
-%     cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/profiles_LRT')
-    cd('/home/jschoormans/lood_storage/divi/Ima/parrec/Jasper/profiles_LRT')
+     cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/profiles_LRT']);
 end
 savemask_LRT(profile_order,filename,visualize)
 fprintf('Saved as %s \n',filename)

@@ -3,9 +3,7 @@ if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-    cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13')
-%     addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
-%     addpath(genpath('/home/qzhang/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13'])
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 
@@ -62,8 +60,6 @@ MR.SortData;
 %}
 
 %%
-
-
 K=MR.Data;
 K=fftshift(ifft(ifftshift(K,1),[],1),1); 
 size(K)
@@ -109,7 +105,7 @@ immontage4D(angle(sens),[-pi pi])
 % sens=ones(size(sens)); % WERKT BETER DAN SENSE MAPS 
 % sens=abs(sens); % VALT OOK TE PROBEREN 
 sens_onecoil=sens(:,:,:,[3]); 
-kspace_onecoil=kspace_sm(:,:,[3],:,:);
+kspace_onecoil=kspace(:,:,[3],:,:);
 
 params=params_init();
 params.L3=3;
@@ -138,7 +134,7 @@ params.increase_penalty_parameters=false;
 params.G.precon=true;
 params.G.maxiter=50;
 
-P_recon=LRT_recon(kspace,squeeze(sens),params);
+P_recon=LRT_recon(kspace_onecoil,squeeze(sens_onecoil),params);
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
 

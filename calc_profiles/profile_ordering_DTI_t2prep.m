@@ -20,7 +20,7 @@ vec= @(x) x(:);
 % idea: for every shot: measure  points that are close in ky,kz after each
 % other: for all shots sort points as such 
 % inter-shot: permute such that inter shot ordering is random 
-
+profile_order = [];
 for dim2=1:nDim2;
     m=mask(:,:,:,dim2);
     for dim1=1:nDim1;
@@ -40,8 +40,8 @@ for dim2=1:nDim2;
         
     end
     
-    profile_order(1,:,dim2)=vec(permute(kp(1,:,:),[1 2 3]));
-    profile_order(2,:,dim2)=vec(permute(kp(2,:,:),[1 2 3]));
+    %for DTI-T2prep: both dim1 & dim2 are in dynamics
+    profile_order = cat(3, profile_order, kp);
     
 end
 

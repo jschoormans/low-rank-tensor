@@ -3,10 +3,8 @@ if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-    cd('/home/qzhang/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13')
-%     addpath(genpath('/home/jschoormans/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
-%     addpath(genpath('/home/qzhang/lood_storage/divi/Projects/cosart/CS_simulations/tensor/low-rank-tensor'))
-    addpath(genpath('/opt/amc/bart/')); vars;
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13'])
+   addpath(genpath('/opt/amc/bart/')); vars;
 end
 
 MR=MRecon('lr_13082017_1757596_32_2_wip_sc18-vfa-dtiV4.raw')
