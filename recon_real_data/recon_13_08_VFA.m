@@ -131,7 +131,7 @@ params.lambda=5e-3;
 
 params.niter=15; 
 params.increase_penalty_parameters=false;
-params.G.precon=true;
+params.G.precon=false;
 params.G.maxiter=50;
 
 P_recon=LRT_recon(kspace_onecoil,squeeze(sens_onecoil),params);
