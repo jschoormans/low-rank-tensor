@@ -10,12 +10,12 @@ complexsim=1;
 center_for_all_frames=1;
 load('sense_map.mat'); %optional load external sense map
 
-simulation_typ = 'DTI_n_T2W'; %choose from: DWI_n_T2W; VFA_n_T2W; DTI_n_T2W
+simulation_typ = 'VFA_n_T2W'; %choose from: DWI_n_T2W; VFA_n_T2W; DTI_n_T2W
 run create_undersampled_measurement_S.m    
 %% 
 close all;
 params=params_init();
-params.Lg=2;
+params.Lg=1;
 params.L3=5;
 params.L4=4;
 params.sparsity_transform='TV';
@@ -63,4 +63,4 @@ immontage4D(permute(angle(squeeze(sens_est)./sens), [4 1 2 3]),[-pi pi]); title(
 %%
 
 % P_recon=LRT_recon(du,squeeze(sens_est),params);
-% P_recon=LRT_recon(du,squeeze(sens),params);
+P_recon=LRT_recon(du,squeeze(sens),params);

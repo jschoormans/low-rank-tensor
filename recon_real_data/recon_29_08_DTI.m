@@ -22,6 +22,7 @@ MR.Parameter.Parameter2Read.typ = 1;
 % load data
 disp('readdata')
 MR.ReadData;
+check_k0_intensity(MR,9,6); %optional
 MR.RandomPhaseCorrection;
 disp('corrections...')
 MR.RemoveOversampling;
@@ -42,7 +43,7 @@ K=fftshift(ifft(ifftshift(K,1),[],1),1);
 size(K)
 
 %%
-kspace=K(36,1:end,1:end,:,:,:,:,:,:,:,:,:);
+kspace=K(30,1:end,1:end,:,:,:,:,:,:,:,:,:);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
 
@@ -84,17 +85,18 @@ coilnr=[3]
 sens_onecoil=sens(:,:,:,coilnr); 
 kspace_onecoil=kspace(:,:,coilnr,:,:);
 
+
 params=params_init();
 params.L3=3;
 params.L4=4;
 params.subspacedim1=6;
 params.subspacedim2=1; 
-[nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
+% [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
 
-params.nav_estimate_1=nav_estimate_1;
-params.nav_estimate_2=nav_estimate_2;
-params.eigenvals_1=eigenvals_1;
-params.eigenvals_2=eigenvals_2;
+% params.nav_estimate_1=nav_estimate_1;
+% params.nav_estimate_2=nav_estimate_2;
+% params.eigenvals_1=eigenvals_1;
+% params.eigenvals_2=eigenvals_2;
 
 params.Lg=1;
 params.inspectLg=false;
@@ -108,15 +110,17 @@ params.lambda=5e-3;
 params.automu=0; 
 params.autolambda=0;
 
-params.scaleksp=1
+params.scaleksp=0;
 params.niter=5; 
 params.increase_penalty_parameters=false;
-params.G.precon=true;
+params.G.precon=false;
 params.G.maxiter=40;
 params.normalize_sense=1;
 
 P_recon=LRT_recon(kspace,squeeze((sens)),params);
 % P_recon=LRT_recon(kspace_onecoil,squeeze((sens_onecoil)),params);
+
+
 
 %% visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
