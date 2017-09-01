@@ -12,9 +12,10 @@ DTI=1;
 if(~DTI)
     MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
     MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].';
+    MR.Parameter.Recon.ArrayCompression='No';
+    MR.Parameter.Recon.ACNrVirtualChannels=4;
 end
-MR.Parameter.Recon.ArrayCompression='No';
-MR.Parameter.Recon.ACNrVirtualChannels=4;
+
 MR.Parameter.Parameter2Read.typ = 1;
 
 
@@ -82,15 +83,16 @@ immontage4D(angle(sens),[-pi pi])
 
 %% 3,4, ok, 2 too noisy
 coilnr=[3]
-sens_onecoil=sens(:,:,:,coilnr); 
 kspace_onecoil=kspace(:,:,coilnr,:,:);
 
 
 params=params_init();
+params.Lcoil=4;    %coil dimention  %same as coil compression co
 params.L3=3;
 params.L4=4;
 params.subspacedim1=6;
 params.subspacedim2=1; 
+params.subspacecoil=1;
 % [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
 
 % params.nav_estimate_1=nav_estimate_1;
@@ -117,7 +119,7 @@ params.G.precon=false;
 params.G.maxiter=40;
 params.normalize_sense=1;
 
-P_recon=LRT_recon(kspace,squeeze((sens)),params);
+P_recon=LRT_recon_c(kspace,params);
 % P_recon=LRT_recon(kspace_onecoil,squeeze((sens_onecoil)),params);
 
 

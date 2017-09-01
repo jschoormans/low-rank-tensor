@@ -7,6 +7,7 @@ params.increase_penalty_parameters=false; %option to increase alpha and beta ins
 params.scaleksp=true;              %option to scale kspace before recon - for consistent parameter use (TODO!)
 
 params.Lg=1;                        %spatial rank
+params.Lcoil=1;                        %rank of coil dimension
 params.L3=3;                        %rank of first parameter dimension
 params.L4=3;                        %rank of second parameter dimension
 
@@ -31,11 +32,14 @@ params.G.precon=true;               %optional preconditioning of G
 
 params.subspacedim1=1               % dimension along which to take f.s. vals 
 params.subspacedim2=1               % dimension along which to take f.s. vals
+params.subspacecoil=1
 
 params.nav_estimate_1=[];
 params.nav_estimate_2=[];
+params.nav_estimate_coil=[];
 params.eigenvals_1=[];
 params.eigenvals_2=[];
+params.eigenvals_coil=[];
 
 params.autolambda=0   ; 
 params.automu=0       ;             % automatically estimate mu on s.t. of first iter

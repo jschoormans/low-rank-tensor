@@ -11,7 +11,7 @@ coil_nr = length(MR.Parameter.Labels.CoilNrs);
 ky_typ1_1coil = ky_typ1(1:coil_nr:end);
 kz_typ1_1coil = kz_typ1(1:coil_nr:end);
 
-data_coil_nr = MR.Parameter.Recon.ACNrVirtualChannels;
+data_coil_nr = length(MR.Parameter.Labels.CoilNrs); 
 data_1coil = data(:,1:data_coil_nr:end);
 
 k0_locations = find((ky_typ1_1coil == 0).*(kz_typ1_1coil == 0));

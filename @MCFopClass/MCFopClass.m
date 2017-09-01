@@ -1,7 +1,5 @@
 classdef MCFopClass < handle
     properties
-        sens
-        ncoils
         adjoint
         imsize
         phase
@@ -13,9 +11,7 @@ classdef MCFopClass < handle
             
         end
         
-        function set_MCFop_Params(obj,sens,imsize,dimsize)
-            obj.sens=sens;
-            obj.ncoils=size(sens,3);
+        function set_MCFop_Params(obj,imsize,dimsize)
             obj.adjoint = 0;
             obj.imsize=imsize;
             obj.dimsize=dimsize;
