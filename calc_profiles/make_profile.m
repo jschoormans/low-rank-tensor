@@ -7,8 +7,8 @@ fprintf('--------------------\n \n')
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
 nDim1=9; % TSE dimensions
 nDim2=6; % T2-prep 
-ky=71; 
-kz=64; 
+ky=148; 
+kz=149; 
 
 bigctrsize=4;
 smallctrsize=2;
@@ -21,8 +21,8 @@ smallctrsize=2;
 DTI=1; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
 
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
-nr_points =240; undersampling=nr_points./(ky*kz);
-% undersampling=0.03;    nr_points=ceil(undersampling*ky*kz);
+nr_points =960; undersampling=nr_points./(ky*kz);
+% undersampling=0.05;    nr_points=ceil(undersampling*ky*kz);
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
 %%%%%%%00
