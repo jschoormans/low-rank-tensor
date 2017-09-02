@@ -28,8 +28,8 @@ else
 end
 
 
-if size(b,1)== size(b,1)==a.imsize(1)*a.imsize(2)
-        res=reshape(res,[a.imsize(1)*a.imsize(2),numel(b)/(a.imsize(1)*a.imsize(2)*a.ncoils)]);
+if size(b,1)==a.imsize(1)*a.imsize(2)
+        res=reshape(res,[a.imsize(1)*a.imsize(2),numel(b)/(a.imsize(1)*a.imsize(2))]);
 end
 
 set_MCFop_adjoint(a,0); %temporary hack: reset adjoint value to 0 after every mtimes because we do not know how handle classes work :( 

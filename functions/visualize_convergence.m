@@ -32,7 +32,7 @@
     
     if ~isempty(I)
         subplot(223);
-        imshow(abs(I(:,:,1,1)),[0 max(abs(cgr(:)))]);
+        imshow(abs(I(:,:,1,1,1)),[0 max(abs(cgr(:)))]);
         hold on
         plot(x,y,'r+','MarkerSize',10)
         hold off
@@ -46,30 +46,39 @@
         title('image at current iteration (end,end)')
     end
     
-    subplot(322)
+    subplot(422)
         if ~isempty(I)
     plot([1:iter],MSE,'.-b'); 
     xlabel('iter')
     title('relative error')
         end
         
-    h1=subplot(324);
+    h1=subplot(424);
     plot(squeeze(abs(cgr(x_idx,y_idx,1,:,1))),'g')
     if ~isempty(I)
         hold on
-        plot(abs(squeeze(I(x_idx,y_idx,:,1))),'--k')
+        plot(abs(squeeze(I(x_idx,y_idx,1,:,1))),'--k')
         hold off
     end
-    title(['DIM3: pixel value of x=', num2str(x),' y=',num2str(y)])
+    title(['par1: pixel value of x=', num2str(x),' y=',num2str(y)])
     
-    h2=subplot(326);
+    h2=subplot(426);
     plot(squeeze(abs(cgr(x_idx,y_idx,1,1,:))),'g')
     if ~isempty(I)
         hold on
-        plot(abs(squeeze(I(x_idx,y_idx,1,:))),'--k')
+        plot(abs(squeeze(I(x_idx,y_idx,1,1,:))),'--k')
         hold off
     end
-    title(['DIM4: pixel value of x=', num2str(x),' y=',num2str(y)])
+    title(['par2: pixel value of x=', num2str(x),' y=',num2str(y)])
+    
+    h2=subplot(428);
+    plot(squeeze(abs(cgr(x_idx,y_idx,:,1,1))),'g')
+    if ~isempty(I)
+        hold on
+        plot(abs(squeeze(I(x_idx,y_idx,:,1,1))),'--k')
+        hold off
+    end
+    title(['par coil: pixel value of x=', num2str(x),' y=',num2str(y)])
 
 drawnow;
 end

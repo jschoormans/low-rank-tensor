@@ -107,8 +107,8 @@ params.Imref=[];
 params.x=40;
 params.y=50;
 
-params.mu=1e1;
-params.lambda=5e-3;
+params.mu=1e3;
+params.lambda=5e-2;
 params.automu=0; 
 params.autolambda=0;
 
@@ -125,7 +125,9 @@ P_recon=LRT_recon_c(kspace,params);
 
 
 %% visualize recon
-figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
+figure(1003); immontage4D(squeeze(abs(P_recon)),[]);
+figure(1004); immontage4D(squeeze(abs(permute(P_recon,[1 2 4 5 3]))),[]);
+
 figure(1001);imshow(abs(P_recon(:,:,1,1,6)).',[])
 figure(1002)
 imshow(cat(1,cat(2,...

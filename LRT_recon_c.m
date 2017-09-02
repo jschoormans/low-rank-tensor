@@ -26,7 +26,7 @@ assert(temp==3||temp==0,'Input either all or no subspaces!')
 res1=size(kspace,1);
 res2=size(kspace,2);
 tensorsize=size(kspace);
-imagesize=tensorsize; imagesize(3)=1; 
+imagesize=tensorsize; 
 unfoldedIsize=[size(kspace,1)*size(kspace,2),size(kspace,3)*size(kspace,4)*size(kspace,5)];                
 unfoldedKsize=[size(kspace,1)*size(kspace,2),size(kspace,3)*size(kspace,4)*size(kspace,5)];    
 
@@ -91,12 +91,6 @@ else
     error('sparsity_transform not recognized')
 end
 
-if params.normalize_sense %find out how it should be done...
-    sensvec=reshape(sens,[size(sens,1)*size(sens,2),size(sens,3)]);
-    sens1_mag = reshape(vecnorm(reshape(sensvec, [], size(sens,3)).'), [size(sens,1),size(sens,2)]);
-    sens_normalized = bsxfun(@rdivide, sens, sens1_mag);
-else sens_normalized=sens;
-end
 
 F=MCFopClass;
 set_MCFop_Params(F,[res1,res2],[tensorsize(3), tensorsize(4),tensorsize(5)]);
@@ -106,20 +100,7 @@ set_MCFop_Params(F,[res1,res2],[tensorsize(3), tensorsize(4),tensorsize(5)]);
 
 P0=F'*(kspace);             
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
-% 
-% 
-% 
-% 
-% 
-% 
-% 
-% 
-% 
-% %>>>>>>>>>>>>>>>Kerry: modified untill here<<<<<<<<<<<<<<<<
-% 
-% 
-% 
-% 
+
 if params.scaleksp
     [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
     params.Imref=params.Imref./scaling; %scale ref image with same scaling;
@@ -135,11 +116,13 @@ figure(22);subplot(311); immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel(
 figure(22); subplot(312);  immontage4D(squeeze(abs(P0)));
 figure(22); subplot(313); immontage4D(squeeze(angle(P0)),[-pi pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
-figure(23); subplot(221); plot(abs(params.nav_estimate_1)); colorbar
-figure(23); subplot(222); plot(abs(params.nav_estimate_2)); colorbar
-figure(23); subplot(212); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
-    plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
-title('eigenvalues for the two subspaces (1=red,2-blue)');
+figure(23); subplot(231); plot(abs(params.nav_estimate_1)); colorbar; title('par1');
+figure(23); subplot(232); plot(abs(params.nav_estimate_2)); colorbar; title('par2');
+figure(23); subplot(233); plot(abs(params.nav_estimate_coil)); colorbar; title('par coil');
+figure(23); subplot(212); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'rs','MarkerSize',10,'MarkerFaceColor','r');...
+    plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bs','MarkerSize',10,'MarkerFaceColor','b') ;
+    plot(params.eigenvals_coil./max(params.eigenvals_coil(:)),'g');plot(params.Lcoil,params.eigenvals_coil(params.Lcoil)./max(params.eigenvals_coil(:)),'gs','MarkerSize',10,'MarkerFaceColor','g') ;hold off;
+title('eigenvalues for the three subspaces (par1-red,par2-blue,coil-green)');
 drawnow;
 %% ALGO 
 alpha=params.alpha;
@@ -151,7 +134,7 @@ lambda=params.lambda;
 if params.inspectLg
 params.Lg=params.L3*params.L4;end
 
-[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_coil,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 
 if params.inspectLg;
     C_energies=sum(abs(C).^2,2);

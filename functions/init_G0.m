@@ -1,4 +1,4 @@
-function [Phi,G0,C0,A,B,Y,Z]=init_G0(P,Psi,nav_estimate_1,nav_estimate_2,L1)
+function [Phi,G0,C0,A,B,Y,Z]=init_G0(P,Psi,nav_estimate_coil,nav_estimate_1,nav_estimate_2,L1)
 %initializes all matrices.
 
 %input: 
@@ -6,7 +6,7 @@ function [Phi,G0,C0,A,B,Y,Z]=init_G0(P,Psi,nav_estimate_1,nav_estimate_2,L1)
 % Phi: kronecker product of subspace estimates
 % L1: estimated rank of G
 disp('initializing matrices...')
-Phi=kron(nav_estimate_2,nav_estimate_1).';      %from subspaces Phi= kron(G^4,G^3)^T
+Phi=kron(nav_estimate_2,kron(nav_estimate_1,nav_estimate_coil)).'; %order matters!   %from subspaces Phi= kron(G^4,G^3, G^coil)^T
 
 X=P*Phi'; 
 % [U,S,V] = svds(X,L1);
