@@ -7,11 +7,8 @@ fprintf('--------------------\n \n')
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
 nDim1=9; % TSE dimensions
 nDim2=6; % T2-prep 
-ky=148; 
-kz=149; 
-
-bigctrsize=4;
-smallctrsize=2;
+ky=71; 
+kz=64; 
 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=6; % dimension number of fully sampled center (param dimension 1)
@@ -19,9 +16,9 @@ dim2_bigctr=6; % dimension number of fully sampled center (param dimension 1)
 bigctrsize=5;
 smallctrsize=2;
 DTI=1; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
-
+ETL = 40;
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
-nr_points =960; undersampling=nr_points./(ky*kz);
+nr_points =240; undersampling=nr_points./(ky*kz);
 % undersampling=0.05;    nr_points=ceil(undersampling*ky*kz);
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
@@ -34,7 +31,7 @@ TR_shot=800e-3;
 
 MC_maxiter=10000; 
 visualize=1;
-radialflag=0; %radial/linear
+radialflag=1; %radial/linear
 linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,7 +39,11 @@ linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 % calculating some params...
 nr_centerpoints=(2*bigctrsize+1)^2; %number of k-points in the center squares; 
 assert(nr_points>=nr_centerpoints,'fully sampled centers too big relative to undersampling')
-nshots=nDim2*nr_points; 
+if DTI
+    nshots =nDim2*nDim1*nr_points/ ETL;
+else
+    nshots=nDim2*nr_points; 
+end
 total_time= TR_shot*nshots; %total time in seconds; 
 
 fprintf('Number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,round(total_time))
@@ -81,7 +82,7 @@ for dim1=1:nDim1;
 end
 clear m
 if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2]));
- figure(11); clf; imshow(reshape(permute(mask(:,:,:,:),[1 3 2 4]),[ky*nDim1,kz*nDim2]));
+ figure(11); clf; immontage4D(mask,[]);
 end
 
 %% order and save
@@ -95,7 +96,11 @@ if ~DTI
     profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
     filename=makefilename('LRT_VFA_T2p_'); 
 else
-    profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize);
+    shot_per_frame = nr_points./ETL;
+    if(round(shot_per_frame)~=shot_per_frame)
+        error('profiles in every dynamic must be acquired in integer no. of shots! Change nr_points or ETL!')
+    end
+    profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize,shot_per_frame);
     filename=makefilename('LRT_DTI_T2p_'); 
 end
 

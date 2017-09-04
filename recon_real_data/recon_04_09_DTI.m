@@ -2,7 +2,7 @@ clear; close all; clc
 if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
 else
-    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_04'])
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_08_31'])
 end
 
 MR=MRecon('lr_31082017_1931098_18_2_wipdtit2prepcsV4.raw')
