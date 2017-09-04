@@ -2,10 +2,10 @@ clear; close all; clc
 if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
 else
-    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_08_31'])
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_03'])
 end
 
-MR=MRecon('lr_31082017_1931098_18_2_wipdtit2prepcsV4.raw')
+MR=MRecon('lr_04092017_1804183_18_2_wip_sc2_dti-t2prep_csV4.raw')
 %%
 DTI=1;
 
@@ -92,13 +92,13 @@ params.L4=4;
 params.subspacedim1=6;
 params.subspacedim2=1; 
 % [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
-
+% 
 % params.nav_estimate_1=nav_estimate_1;
 % params.nav_estimate_2=nav_estimate_2;
 % params.eigenvals_1=eigenvals_1;
 % params.eigenvals_2=eigenvals_2;
 
-params.Lg=1;
+params.Lg=2;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
