@@ -25,18 +25,17 @@ for k = 1 : size(profile_order, 3);
         ky_match = (profile_this_dynamic(1:p-1, 1) == profile_this_dynamic(p, 1));
         kz_match = (profile_this_dynamic(1:p-1, 2) == profile_this_dynamic(p, 2));
         
-        if(~isempty(ky_match)&&~isempty(kz_match));
-            match_profiles_idx = find( ky_match .* kz_match );
-            if(~isempty(match_profiles_idx));
-                nsa(p + (k-1) * size(profile_order, 2)) = nsa(match_profiles_idx(end) + (k-1) * size(profile_order, 2)) + 1;
-            end
-        end
+        
+        match_profiles_nr = sum( ky_match .* kz_match );
+        nsa(p + (k-1) * size(profile_order, 2)) = match_profiles_nr;
+
+        
         
     end
     
 end
     profile_final=cat(2,profile_reshaped,nsa);
-
+disp(['max nsa:',num2str(max(nsa))]);
 if visualizeflag
     disp('to do: CHANGE CODE FOR VISUALIZATION')
 % kspa = zeros(64, 128);

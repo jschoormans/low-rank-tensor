@@ -31,8 +31,8 @@ TR_shot=800e-3;
 
 MC_maxiter=10000; 
 visualize=1;
-radialflag=1; %radial/linear
-linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
+radialflag=0; %radial/linear
+linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -97,9 +97,7 @@ if ~DTI
     filename=makefilename('LRT_VFA_T2p_'); 
 else
     shot_per_frame = nr_points./ETL;
-    if(round(shot_per_frame)~=shot_per_frame)
-        error('profiles in every dynamic must be acquired in integer no. of shots! Change nr_points or ETL!')
-    end
+    assert((round(shot_per_frame)==shot_per_frame),'Profiles in every dynamic must be acquired in integer no. of shots! Change nr_points or ETL!');
     profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize,shot_per_frame);
     filename=makefilename('LRT_DTI_T2p_'); 
 end

@@ -15,7 +15,7 @@ end
 
 [ky,kz,nDim1,nDim2]=size(mask);
 nr_points=sum(sum(mask(:,:,1,1)));
-assert(xor(radialflag, linearflag));
+assert(xor(radialflag, linearflag),'Choose either radial or linear!');
 
 
 vec= @(x) x(:);
@@ -31,7 +31,7 @@ for dim2=1:nDim2;
         row=row-floor((1+ky)/2);
         col=col-floor((1+kz)/2);
         
-        
+        ETL = length(row)/nr_shot;
         
         %         figure(10); plot(row(index_r),col(index_r))
         
@@ -64,17 +64,18 @@ for dim2=1:nDim2;
             end
             for s = 1:nr_shot
                 %patch the shorter ones
-                if(length(order{s})<ETL)
-                    order{s} =cat(1, order{s}, pool(1:ETL-length(order{s})));
-                    pool(1:ETL-length(order{s})) = [];
+                l = length(order{s});
+                if(l<ETL)
+                    order{s} =cat(1, order{s}, pool(1:ETL-l));
+                    pool(1:ETL-l) = [];
                 end
             end
-            order_fin = [];
+            order_final = [];
             for s = 1:nr_shot
-                order_fin = cat(1, order_fin, order{s});               
+                order_final = cat(1, order_final, order{s});
             end
-            kp(1,:,dim1)=imag(order_fin);
-            kp(2,:,dim1)=real(order_fin);
+            kp(1,:,dim1)=imag(order_final);
+            kp(2,:,dim1)=real(order_final);
             
             
             
@@ -123,15 +124,16 @@ if visualizeflag
     plot((delta_y),'b*'); hold off
     title('kspace-jumps')
     
-    
-    figure(4);
-    for frame = 1:size(profile_order,3);
-        for k=1:size(profile_order,2)
-            im(profile_order(1,k,frame)+floor((1+ky)/2), profile_order(2,k,frame)+floor((1+kz)/2),1,frame) = mod(k,ETL)+1;
+    if(exist('ETL','var'))
+        figure(4);
+        for frame = 1:size(profile_order,3);
+            for k=1:size(profile_order,2)
+                im(profile_order(1,k,frame)+floor((1+ky)/2), profile_order(2,k,frame)+floor((1+kz)/2),1,frame) = mod(k,ETL)+1;
+            end
         end
+        im = reshape(im, size(im,1),size(im,2),nDim1, nDim2);
+        immontage4D(im, []);colormap(jet(128)); colorbar; title('#rf');
     end
-    im = reshape(im, size(im,1),size(im,2),nDim1, nDim2);
-    immontage4D(im, []);colormap(jet(128)); colorbar; title('#rf'); 
     
     
     
