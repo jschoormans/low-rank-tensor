@@ -7,17 +7,26 @@ else
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 %%
-clear MR
 MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
 DTI=0;
 
-MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
-MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
-MR.Parameter.Recon.ArrayCompression='Yes';
-MR.Parameter.Recon.ACNrVirtualChannels=6;
-MR.Parameter.Parameter2Read.typ = 1;
-MR.Parameter.Recon.ImmediateAveraging='No';
-% MR.Parameter.Parameter2Read.chan=[34;35;36;37;44;45]
+if ~DTI
+    MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
+    MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
+    MR.Parameter.Recon.ArrayCompression='No';
+    MR.Parameter.Recon.ACNrVirtualChannels=6;
+    MR.Parameter.Parameter2Read.typ = 1;
+    MR.Parameter.Recon.ImmediateAveraging='No';
+    MR.Parameter.Parameter2Read.chan=[34;35;36;37;44;45]
+
+else
+    %MR.Parameter.Labels.Index.aver=zeros(size(MR.Parameter.Labels.Index.aver));
+    %MR.Parameter.Recon.ImmediateAveraging='Yes'
+    MR.Parameter.Recon.ArrayCompression='Yes';
+    MR.Parameter.Recon.ACNrVirtualChannels=6;
+    MR.Parameter.Parameter2Read.typ = 1;
+end
+
 % load data
 disp('readdata')
 MR.ReadData;
@@ -29,14 +38,14 @@ MR.DcOffsetCorrection;
 MR.MeasPhaseCorrection;
 
 disp('sortdata')
-MR.SortData;
-% D= sortArray(MR);
+% MR.SortData;
+D= sortArray(MR);
 %%
-K=MR.Data;
+K=D;
 K=fftshift(ifft(ifftshift(K,1),[],1),1); 
 size(K)
 %%
-Ktemp=squeeze(MR.Data); 
+Ktemp=squeeze(D); 
 
 %%
 kspace=K(32,2:end,2:end,:,:,:,:,:,:,:,:,:);
