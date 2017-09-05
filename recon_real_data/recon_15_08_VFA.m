@@ -12,7 +12,7 @@ DTI=0;
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
 MR.Parameter.Recon.ArrayCompression='Yes';
-MR.Parameter.Recon.ACNrVirtualChannels=4;
+MR.Parameter.Recon.ACNrVirtualChannels=;
 MR.Parameter.Parameter2Read.typ = 1;
 MR.Parameter.Recon.ImmediateAveraging='No';
 
@@ -40,7 +40,7 @@ end
 size(K)
 
 %%
-kspace=K(69,1:end,1:end,:,:,:,:,:,:,:,:,:);
+kspace=K(113,1:end,1:end,:,:,:,:,:,:,:,:,:);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
 
@@ -49,7 +49,7 @@ che=create_checkerboard([1,size(kspace,2),size(kspace,3)]);
 kspace=bsxfun(@times,kspace,che);
 kspace=squeeze(kspace);
 
-%%
+%
 % a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
 a=kspace(:,:,:,5,1);
 sens=bart('ecalib -S -m1 -c0.1',permute(a,[4 1 2 3]));
@@ -63,6 +63,14 @@ immontage4D(real(sens),[])
 subplot(313)
 immontage4D(angle(sens),[-pi pi])
 
+% quick recon of all 
+a2 = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
+a2(isnan(a2))=0;
+% im2=ifft(ifft(a2,[],1),[],2);
+im2=ifft2c(a2);
+im2=sqrt((sum(im2.^2,3)));
+im2(isnan(im2))=0; 
+figure(113); imshow(abs(im2),[])
 %% 3,4, ok, 2 too noisy
 coilnr=[3]
 sens_onecoil=sens(:,:,:,coilnr); 
@@ -81,7 +89,7 @@ params.eigenvals_1=eigenvals_1;
 params.eigenvals_2=eigenvals_2;
 
 params.Lg=2;
-params.inspectLg=true;
+params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=40;
@@ -96,7 +104,7 @@ params.scaleksp=0
 params.niter=5; 
 params.increase_penalty_parameters=false;
 params.G.precon=false;
-params.G.maxiter=5;
+params.G.maxiter=15;
 params.normalize_sense=1
 P_recon=LRT_recon(kspace_onecoil,squeeze((sens_onecoil)),params);
 %% visualize recon

@@ -26,34 +26,30 @@ maxchan=max(chan);
 chanunique=unique(chan);
 nchans=length(chanunique);
 
-p1unique=unique(param1+1);
+p1unique=unique(param1);
 minp1=min(p1unique);
 maxp1=max(p1unique);
 np1=length(p1unique);
 
 %input chan number, outputs index of chan in inuqie chan list
-chantransform=zeros(numel(chanunique),1);
-for ii=1:numel(chanunique)
-chantransform(chanunique(ii))=ii; %[0,1,2,3,4,]
-end
+tempcount1=[1:nchans]
+tempcount2=[1:maxchan]
 
-%input chan number, outputs index of chan in inuqie chan list
-p1indextransform=zeros(numel(p1unique),1);
-for ii=1:numel(p1unique)
-p1indextransform(p1unique(ii))=ii; %[0,1,2,3,4,]
-end
 
+chantransform %
+chanindexfunc =@(chan) chanunique(chan)
+p1indexfunc =@(p1) p1unique(p1)
 
 D=zeros(nkx,nky,nkz,nchans,np1);
 
 kyindex=ky-minky+1;
 kzindex=kz-minkz+1;
-chanindex= chantransform(chan); % should be able to deal with eg chan=2,3,5,6
-np1index= p1indextransform(param1+1); % TO DO: CHANGE: 
+chanindex= chanindexfunc(chan); % should be able to deal with eg chan=2,3,5,6
+np1index= p1indexfunc(param1); % TO DO: CHANGE: 
 
 fprintf('sorting MR.Data \n')
 fprintf('number of unique channels %d \n',nchans)
-fprintf('number of unique dynamics %d \n',np1)
+fprintf('number of unique dynamics %d \n',nchans)
 
 tic
 for ii=1:size(MRD,2)
