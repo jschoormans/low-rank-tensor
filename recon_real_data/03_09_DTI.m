@@ -1,11 +1,9 @@
 clear; close all; clc
-if ispc
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
-else
-    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_04'])
-end
 
-MR=MRecon('lr_31082017_1931098_18_2_wipdtit2prepcsV4.raw')
+cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_03'])
+
+
+MR=MRecon('lr_03092017_1435546_16_2_wip_sc2_dti-t2prep_csV4.raw')
 %%
 DTI=1;
 
@@ -22,7 +20,7 @@ MR.Parameter.Parameter2Read.typ = 1;
 % load data
 disp('readdata')
 MR.ReadData;
-check_k0_intensity(MR,9,6); %optional
+% check_k0_intensity(MR,9,6); %optional
 MR.RandomPhaseCorrection;
 disp('corrections...')
 MR.RemoveOversampling;
@@ -65,10 +63,17 @@ if DTI
     kspace=du;
     Ktemp = du_temp;
 end
-figure(111); immontage4D(squeeze(abs(kspace(:,:,1,:,:))>0),[]);
+
+figure(111); 
+subplot(121);immontage4D(squeeze(abs(kspace(:,:,1,:,:))>0),[]);
+
+% kspace = flipdim(kspace, 5);
+% Ktemp = flipdim(Ktemp,5);
+subplot(122); immontage4D(squeeze(abs(kspace(:,:,1,:,:))>0),[]); title('afterflip')
+
 %%
 % a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
-a=kspace(:,:,:,1,6);  %highest SNR volume
+a=kspace(:,:,:,1,1);  %highest SNR volume
 sens=bart('ecalib -S -m1 -c0.1',permute(a,[4 1 2 3]));
 % sens=sens+1e-7; % no zero vals in sense maps...
 
@@ -87,9 +92,9 @@ kspace_onecoil=kspace(:,:,coilnr,:,:);
 
 
 params=params_init();
-params.L3=3;
-params.L4=4;
-params.subspacedim1=6;
+params.L3=2;
+params.L4=5;
+params.subspacedim1=1;
 params.subspacedim2=1; 
 % [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
 
@@ -102,8 +107,8 @@ params.Lg=1;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
-params.x=40;
-params.y=50;
+params.x=10;
+params.y=10;
 
 params.mu=1e1;
 params.lambda=5e-3;
@@ -117,8 +122,8 @@ params.G.precon=false;
 params.G.maxiter=40;
 params.normalize_sense=1;
 
-P_recon=LRT_recon(kspace,squeeze((sens)),params);
-% P_recon=LRT_recon(kspace_onecoil,squeeze((sens_onecoil)),params);
+% P_recon=LRT_recon(kspace,squeeze((sens)),params);
+P_recon=LRT_recon(kspace_onecoil,squeeze((sens_onecoil)),params);
 
 
 
