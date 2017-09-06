@@ -1,14 +1,14 @@
 clear; close all; clc
 if ispc
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
+    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05')
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
-    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13'])
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_09_05'])
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 %%
 clear MR
-MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
+MR=MRecon('lr_05092017_1952316_9_2_wipvfat2prepcsV4.raw')
 DTI=0;
 
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -39,7 +39,7 @@ size(K)
 Ktemp=squeeze(MR.Data); 
 
 %%
-kspace=K(32,2:end,2:end,:,:,:,:,:,:,:,:,:);
+kspace=K(80,2:end,2:end,:,:,:,:,:,:,:,:,:);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
 
@@ -95,8 +95,8 @@ params.Lg=2;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
-params.x=50;
-params.y=35;
+params.x=20;
+params.y=45;
 params.mu=0.1e2;
 params.lambda=5e-3;
 % sens(sens==0)=1e-2;
