@@ -5,9 +5,10 @@ else
     cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_05_knee'])
 end
 
-MR=MRecon('lr_05092017_1904106_14_2_wipsc18vfadtiV4.raw')
+MR=MRecon('lr_05092017_1805529_6_2_wiplrtkneedtit22mmV4.raw')
 %%
 MR.Parameter.DisplayParameterInGroup('EX_MSDE_all_pars')
+% MR.Parameter.DisplayParameterInGroup('EX_T2PREP_all_pars')
 
 DTI=1;
 
@@ -24,7 +25,7 @@ MR.Parameter.Parameter2Read.typ = 1;
 % load data
 disp('readdata')
 MR.ReadData;
-check_k0_intensity(MR,9,6); %optional
+% check_k0_intensity(MR,9,6); %optional
 MR.RandomPhaseCorrection;
 disp('corrections...')
 MR.RemoveOversampling;
@@ -41,11 +42,12 @@ Ktemp=squeeze(MR.Data);
 K=squeeze(K);
 
 K=fftshift(ifft(ifftshift(K,1),[],1),1); 
-
 size(K)
 
 %%
 kspace=K(40,1:end,1:end,:,:,:,:,:,:,:,:,:);
+kspace = permute(bart('cc -p 6',permute(kspace, [1 2 3 4 6 5])),[1 2 3 4 6 5]);
+
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
 
@@ -55,7 +57,7 @@ kspace=bsxfun(@times,kspace,che);
 kspace=squeeze(kspace);
 
 if DTI
-    par_dim1 = 9; par_dim2 = 6;
+    par_dim1 = 9; par_dim2 = 5;
     du = zeros(size(kspace,1),size(kspace,2),size(kspace,3),par_dim1,par_dim2);
     du_temp = zeros(size(Ktemp,1),size(Ktemp,2),size(Ktemp,3),size(Ktemp,4),par_dim1,par_dim2);
     for ii = 1:par_dim1
@@ -70,7 +72,8 @@ end
 figure(111); immontage4D(squeeze(abs(kspace(:,:,1,:,:))>0),[]);
 %%
 % a = sum(sum(kspace(:,:,:,:,:),4),5)./sum(sum(kspace(:,:,:,:,:)~=0,4),5);
-a=kspace(:,:,:,1,6);  %highest SNR volume
+
+a=kspace(:,:,:,1,5);  %highest SNR volume
 sens=bart('ecalib -S -m1 -c0.1',permute(a,[4 1 2 3]));
 % sens=sens+1e-7; % no zero vals in sense maps...
 
@@ -91,7 +94,7 @@ kspace_onecoil=kspace(:,:,coilnr,:,:);
 params=params_init();
 params.L3=3;
 params.L4=3;
-params.subspacedim1=6;
+params.subspacedim1=5;
 params.subspacedim2=1; 
 % [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp(:,:,:,2,:,:),params);
 
