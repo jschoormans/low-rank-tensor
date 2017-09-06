@@ -7,10 +7,11 @@
 % OUTPUT
 % MD map
 % FA map
+% eigen vectors
 %
 %(c) q.zhang . 2017 . AMC
 
-function [MD, FA] = DTI_fitting(DTI_data, g, b)
+function [MD, FA, Deigvec] = DTI_fitting(DTI_data, g, b)
 %% validate data
 
 [x, y, z, dir] = size(DTI_data);
@@ -65,6 +66,7 @@ MD=mean(abs(Deigval), 4);
 
 
 %% display
+try
 figure(71);
 imagesc(FA,[0 1]); title('FA'); axis off; axis equal;colorbar
 
@@ -76,4 +78,7 @@ subplot(131); Color1=Deigvec(:,:,:,1); imagesc(abs(Color1)); title('eigen vector
 subplot(132); Color2=Deigvec(:,:,:,2); imagesc(abs(Color2)); title('eigen vector #2'); axis off; axis equal
 subplot(133); Color3=Deigvec(:,:,:,3); imagesc(abs(Color3)); title('eigen vector #3'); axis off; axis equal
 drawnow;
+catch
+    disp('image display failed...');
+end
 end

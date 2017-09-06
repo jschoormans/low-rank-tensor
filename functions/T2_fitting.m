@@ -7,14 +7,18 @@
 %
 %(c) q.zhang . 2017 . AMC
 
-function [T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(T2PREP_data, T2PREP)
+function [T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(T2PREP_data, T2PREP,varargin)
 
 %% options
 drawROI=0; %1 means manually draw ROI, otherwize ROI determined by cut_off
 auto_loop_all_slice = 1; % 1 means loop over all slices. 0 means manually choose slice
 slice_id = 0;
-intensity_cut_off = 100;
-rsquare_cutoff = 0.8;
+if(nargin==3)
+    intensity_cut_off = varargin{1};
+else
+    intensity_cut_off = 100;
+end
+rsquare_cutoff = 0.5;
 T2_lower_bound=0;
 T2_upper_bound=800;
 %%

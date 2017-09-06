@@ -180,7 +180,7 @@ if(1)
     for t =1:T2prep_dim
         t
         DTI_data = abs(permute(DTI_T2_Data(:,:,:,t),[1 2 4 3]));
-        [MD(:,:,t), FA(:,:,t)] = DTI_fitting(DTI_data, g, b);
+        [MD(:,:,t), FA(:,:,t), eigvec(:,:,t)] = DTI_fitting(DTI_data, g, b);
     end
     
     figure(63);
