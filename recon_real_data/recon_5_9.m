@@ -1,20 +1,17 @@
 clear; close all; clc
 if ispc
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
-        cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
-
-%     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
+    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05\2017_09_05\lr_23248')
+%   addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
     cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_08_13'])
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 %%
 clear MR
-% MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
-MR=MRecon('lr_15082017_2116431_6_2_wip_vfa-t2prep_csV4.raw')
+MR=MRecon('lr_05092017_1952316_9_2_wipvfat2prepcsV4.raw')
 
 DTI=0;
-
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
 MR.Parameter.Recon.ArrayCompression='No';
@@ -38,7 +35,7 @@ disp('sortdata')
 
 %ifft in readout direction + select slice 
 MR.Data=fftshift(ifft(ifftshift(MR.Data,1),[],1),1);
-MR.Data=MR.Data(32,:);
+MR.Data=MR.Data(80,:);
 K= sortArray(MR);
 Kcc=bart('cc -p5',permute(K,[1 2 3 4 7 8 9 10 5 6]));
 Kcc=permute(Kcc,[1 2 3 4 9 10 5 6 7 8]);
