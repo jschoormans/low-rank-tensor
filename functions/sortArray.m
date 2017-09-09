@@ -24,7 +24,7 @@ kyunique=unique(ky);
 
 minkz=min(kz);
 maxkz=max(kz);
-nkz=length(minky:maxky);
+nkz=length(minkz:maxkz);
 kzunique=unique(kz);
 
 minchan=min(chan);
@@ -64,7 +64,7 @@ for ii=1:numel(p2unique)
 p2indextransform(p2unique(ii))=ii; %[0,1,2,3,4,]
 end
 
-D=sparse(nkx,nky,nkz,nchans,np1,np2);
+D=zeros(nkx,nky,nkz,nchans,np1,np2);
 
 kyindex=ky-minky+1;
 kzindex=kz-minkz+1;

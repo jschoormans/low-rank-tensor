@@ -87,6 +87,7 @@ if params.normalize_sense %find out how it should be done...
     sensvec=reshape(sens,[size(sens,1)*size(sens,2),size(sens,3)]);
     sens1_mag = reshape(vecnorm(reshape(sensvec, [], size(sens,3)).'), [size(sens,1),size(sens,2)]);
     sens_normalized = bsxfun(@rdivide, sens, sens1_mag);
+    sens_normalized(find(isnan(sens_normalized))) = 0;
 else sens_normalized=sens;
 end
 F=MCFopClass;

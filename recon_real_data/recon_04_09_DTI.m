@@ -1,6 +1,6 @@
 clear; close all; clc
 if ispc
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
+    cd('L:\basic\divi\Ima\parrec\Kerry\LRT_Data\2017_09_03')
 else
     cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_03']) %data is sorted in yesterday's folder
 end
