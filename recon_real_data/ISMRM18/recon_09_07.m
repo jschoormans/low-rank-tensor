@@ -1,23 +1,13 @@
 clear; close all; clc
 if ispc
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05')
-      cd('L:\basic\divi\Ima\parrec\Kerry\LRT_Data\2017_09_05_knee')
       cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_07\2017_09_07\lr_25504')
-
-%     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
     cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_09_05'])
     addpath(genpath('/opt/amc/bart/')); vars;
 end
 %%
 clear MR
-% MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
-% MR=MRecon('lr_15082017_2116431_6_2_wip_vfa-t2prep_csV4.raw')
-% MR=MRecon('lr_05092017_1952316_9_2_wipvfat2prepcsV4.raw')
-
-MR=MRecon('lr_05092017_2032554_12_2_wipvfat2prepcstransverseV4.raw')
+MR=MRecon('lr_07092017_1843065_5_2_wipvfat2prepcsvenc0V4.raw')
 DTI=0;
 
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);

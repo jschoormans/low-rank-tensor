@@ -1,10 +1,6 @@
 clear; close all; clc
 if ispc
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05')
       cd('L:\basic\divi\Ima\parrec\Kerry\LRT_Data\2017_09_05_knee')
-      cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_07\2017_09_07\lr_25504')
 
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
@@ -13,15 +9,13 @@ else
 end
 %%
 clear MR
-% MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
-% MR=MRecon('lr_15082017_2116431_6_2_wip_vfa-t2prep_csV4.raw')
-% MR=MRecon('lr_05092017_1952316_9_2_wipvfat2prepcsV4.raw')
-
 MR=MRecon('lr_05092017_2032554_12_2_wipvfat2prepcstransverseV4.raw')
 DTI=0;
 
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
 MR.Parameter.Parameter2Read.aver=[0:max(MR.Parameter.Labels.Index.aver)].'
+% MR.Parameter.Parameter2Read.aver=[0:6].'
+
 MR.Parameter.Recon.ArrayCompression='No';
 MR.Parameter.Recon.ACNrVirtualChannels=6;
 MR.Parameter.Parameter2Read.typ = 1;
@@ -43,9 +37,9 @@ disp('sortdata')
 
 %ifft in readout direction + select slice 
 MR.Data=fftshift(ifft(ifftshift(MR.Data,1),[],1),1);
-MR.Data=MR.Data(100,:);
+MR.Data=MR.Data(93,:); %maybe 93??
 K= sortArray(MR);
-Kcc=bart('cc -p5',permute(K,[1 2 3 4 7 8 9 10 5 6]));
+Kcc=bart('cc -p4',permute(K,[1 2 3 4 7 8 9 10 5 6]));
 Kcc=permute(Kcc,[1 2 3 4 9 10 5 6 7 8]);
 size(Kcc)
 %%
@@ -88,10 +82,12 @@ params.Imref=[];
 params.x=20;
 params.y=45;
 params.mu=0.1e2;
+params.automu=1;
+params.autolambda=1;
 params.lambda=5e-3;
 % sens(sens==0)=1e-2;
 
-params.niter=15; 
+params.niter=2; 
 params.increase_penalty_parameters=false;
 params.G.precon=true;
 params.G.maxiter=10;

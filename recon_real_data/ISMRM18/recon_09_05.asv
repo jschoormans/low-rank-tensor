@@ -1,10 +1,6 @@
 clear; close all; clc
 if ispc
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15')
-%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05')
       cd('L:\basic\divi\Ima\parrec\Kerry\LRT_Data\2017_09_05_knee')
-      cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_07\2017_09_07\lr_25504')
 
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
