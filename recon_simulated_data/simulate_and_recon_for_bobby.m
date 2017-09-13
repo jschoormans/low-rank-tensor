@@ -6,7 +6,7 @@ clear all; close all; clc;
 uf=0.02; % undersampling factor (excluding center)
 noiselevel=0.3;
 ncoils=5;
-complexsim=1;
+complexsim=0;
 center_for_all_frames=1;
 load('sense_map.mat'); %optional load external sense map
 
@@ -54,13 +54,13 @@ immontage4D(permute(real(sens), [4 1 2 3]),[]); title('true sense real')
 subplot(326)
 immontage4D(permute(angle(sens), [4 1 2 3]),[-pi pi]); title('true sense phase')
 
-figure(113)
-subplot(311)
-immontage4D(permute(abs(squeeze(sens_est)./sens),[4 1 2 3]),[0.9 1.1]); title('true sense abs')
-subplot(312)
-immontage4D(permute(real(squeeze(sens_est)./sens), [4 1 2 3]),[0.9 1.1]); title('true sense real')
-subplot(313)
-immontage4D(permute(angle(squeeze(sens_est)./sens), [4 1 2 3]),[-pi pi]); title('true sense phase'); colormap jet
+% figure(113)
+% subplot(311)
+% immontage4D(permute(abs(squeeze(sens_est)./sens),[4 1 2 3]),[0.9 1.1]); title('true sense abs')
+% subplot(312)
+% immontage4D(permute(real(squeeze(sens_est)./sens), [4 1 2 3]),[0.9 1.1]); title('true sense real')
+% subplot(313)
+% immontage4D(permute(angle(squeeze(sens_est)./sens), [4 1 2 3]),[-pi pi]); title('true sense phase'); colormap jet
 %%
 
 % P_recon=LRT_recon(du,squeeze(sens_est),params);

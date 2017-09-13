@@ -15,7 +15,7 @@ dim2_bigctr=6; % dimension number of fully sampled center (param dimension 1)
 
 bigctrsize=5;
 smallctrsize=2;
-DTI=1; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
+DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
 ETL = 60;
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
 nr_points =240; undersampling=nr_points./(ky*kz);
