@@ -8,7 +8,10 @@ ky = MR.Parameter.Labels.Index.ky;
 kz = MR.Parameter.Labels.Index.kz;
 dyn = MR.Parameter.Labels.Index.dyn;
 rf = MR.Parameter.Labels.Index.rf;
+
 aver= MR.Parameter.Labels.Index.aver;
+aver= repmat([0:199],8); aver=aver(:);
+aver=repmat(aver,[36]);aver=aver(:); 
 
 ky_read = ky(read_idx); ky_read = ky_read(1:coil_nr:end);
 kz_read = kz(read_idx); kz_read = kz_read(1:coil_nr:end);

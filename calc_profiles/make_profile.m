@@ -3,22 +3,22 @@
 fprintf('--------------------\n ')
 fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
-
+  
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=9; % TSE dimensions/DTI
-nDim2=6; % T2-prep 
-ky=79; 
-kz=74; 
+nDim1=200; % TSE dimensions/DTI
+nDim2=1; % T2-prep 
+ky=213; 
+kz=36; 
 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
-dim2_bigctr=6; % dimension number of fully sampled center (param dimension 1)
+dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 
-bigctrsize=5;
-smallctrsize=2;
+bigctrsize=0;
+smallctrsize=0;
 DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
 ETL = 60;
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
-nr_points =240; undersampling=nr_points./(ky*kz);
+nr_points =36; undersampling=nr_points./(ky*kz);
 % undersampling=0.05;    nr_points=ceil(undersampling*ky*kz);
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
@@ -81,15 +81,16 @@ for dim1=1:nDim1;
     end
 end
 clear m
-if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2]));
- figure(11); clf; immontage4D(mask,[]);
+if visualize;   
+%     figure(1); clf; imshow(reshape(permute(mask(:,:,1:max(2,size(mask,3)),1:max(2,size(mask,4))),[1 3 2 4]),[ky*2,kz*2]));
+ figure(11); clf; immontage4D(mask(:,:,1:3),[]);
 end
 
 %% order and save
 
 makefilename = @(x) [x,num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
         '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
-        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points)];
+        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points),'6'];
     
 
 if ~DTI

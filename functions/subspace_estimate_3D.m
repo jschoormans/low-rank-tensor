@@ -6,9 +6,9 @@ function [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estim
 fprintf('Estimating subspace from 3D kspace...\n')
 assert(ndims(kspace)==6,'dims') % kx ky kz nc param1 
 
-mask=squeeze(abs((kspace(floor(size(kspace,1)/2),:,:,1,:,:))))>0;
+mask=(abs((kspace(floor(size(kspace,1)/2),:,:,1,:,:))))>0;
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
-[Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(mask,params);
+[Kx1,Ky1,Kx2,Ky2]=findSharedKpoints(permute(mask,[2 3 5 6 1 4]),params);
 fprintf('# of shared ky-kz points of dim 1: %i \n',numel(Kx1))
 fprintf('# of shared ky-kz points of dim 2: %i \n',numel(Kx2))
 

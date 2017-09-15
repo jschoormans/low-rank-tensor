@@ -69,15 +69,15 @@ params=params_init();
 params.L3=3;
 params.L4=3;
 params.subspacedim1=1;
-params.subspacedim2=5; 
+params.subspacedim2=1; 
 params.scaleksp=false; 
 
 params.Lg=3;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
-params.x=50;
-params.y=35;
+params.x=20;
+params.y=20;
 params.mu=0.1e2;
 params.lambda=5e-3;
 % sens(sens==0)=1e-2;
