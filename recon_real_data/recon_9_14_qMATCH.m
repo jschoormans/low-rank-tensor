@@ -58,13 +58,13 @@ end
 k0_profile{file_iter} = datasorted;
 
 MR.Data=fftshift(ifft(ifftshift(MR.Data,1),[],1),1);
-MR.Data=MR.Data(84,:); %132 or 84
+MR.Data=MR.Data(86,:); %132 or 84
 
 aver_tem = MR.Parameter.Labels.Index.aver;
 aver_tem(read_data_ix) = aver(:);
 MR.Parameter.Labels.Index.aver=aver_tem; clear aver_tem;
 K= sortArray(MR);
-Kcc=bart('cc -p5',permute(K,[1 2 3 4 7 8 9 10 5 6]));
+Kcc=bart('cc -p2',permute(K,[1 2 3 4 7 8 9 10 5 6]));
 Kcc=permute(Kcc,[1 2 3 4 9 10 5 6 7 8]);
 size(Kcc)
 kspace(:,:,:,:,file_iter)=squeeze(Kcc);
@@ -73,7 +73,7 @@ size(kspace)
  
 kspace=permute(kspace,[6 1 2 3 4 5]);
 %%
-kspace_binned=reshape(kspace,[213,36,5,8,25,6]); 
+kspace_binned=reshape(kspace,[213,36,2,8,25,6]); 
 kspace_binned=mean(kspace_binned,4)./(eps+sum(abs(kspace_binned)~=0,4)); 
 kspace_binned=squeeze(kspace_binned);
 size(kspace_binned)
@@ -106,41 +106,43 @@ immontage4D(angle(sens),[-pi pi])
 
 %%
 params=params_init();
-params.L3=3;
-params.L4=3;
+params.L3=5;
+params.L4=5;
 params.subspacedim1=6;
 params.subspacedim2=6; 
 
 Ktemp=cat(4,k0_profile{1},k0_profile{2},k0_profile{3},k0_profile{4},k0_profile{5},k0_profile{6});
 size(Ktemp)
 Ktemp=permute(Ktemp,[1 5 6 3 2 4]);size(Ktemp)
-[nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp,params);
-params.nav_estimate_1=nav_estimate_1;
-params.nav_estimate_2=nav_estimate_2;
-params.eigenvals_1=eigenvals_1;
-params.eigenvals_2=eigenvals_2;
+
+if 1
+    [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp,params);
+    params.nav_estimate_1=nav_estimate_1;
+    params.nav_estimate_2=nav_estimate_2;
+    params.eigenvals_1=eigenvals_1;
+    params.eigenvals_2=eigenvals_2;
+end
 
 params.scaleksp=false; 
-
-params.Lg=3;
+params.Lg=5;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=20;
 params.y=35;
-params.mu=0.1e2;
-params.lambda=5e-1;
+params.mu=0.02e2;
+params.lambda=1.4e-1;
 params.automu=0;
-params.autolambda=1; 
+params.autolambda=0; 
+params.alpha=0.2; 
 
-params.niter=15; 
+params.niter=5; 
 params.increase_penalty_parameters=false;
-params.G.precon=true;
-params.G.maxiter=10;
+params.G.precon=false;
+params.G.maxiter=3;
 
-P_recon=LRT_recon(kspace(:,:,3,:,:),squeeze(sens(:,:,:,3)),params);
-%% visualize recon
+P_recon=LRT_recon(kspace(:,:,:,:,:),squeeze(sens(:,:,:,:)),params);
+
 figure(1000); immontage4D(squeeze(abs(permute(P_recon,[2 1 3 4 5]))),[]);
-
  
  

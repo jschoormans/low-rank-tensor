@@ -58,7 +58,7 @@ end
 k0_profile{file_iter} = datasorted;
 
 MR.Data=fftshift(ifft(ifftshift(MR.Data,1),[],1),1);
-MR.Data=MR.Data(84,:); %132 or 84
+MR.Data=MR.Data(86,:); %132 or 84
 
 aver_tem = MR.Parameter.Labels.Index.aver;
 aver_tem(read_data_ix) = aver(:);
@@ -106,43 +106,43 @@ immontage4D(angle(sens),[-pi pi])
 
 %%
 params=params_init();
-params.L3=4;
-params.L4=2;
+params.L3=5;
+params.L4=5;
 params.subspacedim1=6;
-params.subspacedim2=6; 
+params.subspacedim2=2; 
 
 Ktemp=cat(4,k0_profile{1},k0_profile{2},k0_profile{3},k0_profile{4},k0_profile{5},k0_profile{6});
 size(Ktemp)
 Ktemp=permute(Ktemp,[1 5 6 3 2 4]);size(Ktemp)
-% [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp,params);
-% params.nav_estimate_1=nav_estimate_1;
-% params.nav_estimate_2=nav_estimate_2;
-% params.eigenvals_1=eigenvals_1;
-% params.eigenvals_2=eigenvals_2;
 
-
+if 1
+    [nav_estimate_1,nav_estimate_2,eigenvals_1,eigenvals_2]= subspace_estimate_3D(Ktemp,params);
+    params.nav_estimate_1=nav_estimate_1;
+    params.nav_estimate_2=nav_estimate_2;
+    params.eigenvals_1=eigenvals_1;
+    params.eigenvals_2=eigenvals_2;
+end
 
 params.scaleksp=false; 
-
-params.Lg=3;
+params.Lg=5;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=20;
 params.y=35;
-params.mu=0.1e2;
-params.lambda=5e-3;
-% sens(sens==0)=1e-2;
-params.automu=1
-params.au
-params.niter=15; 
+params.mu=0.02e2;
+params.lambda=3.4e-1;
+params.automu=0;
+params.autolambda=1; 
+params.alpha=0.2; 
+
+params.niter=5; 
 params.increase_penalty_parameters=false;
-params.G.precon=true;
-params.G.maxiter=10;
+params.G.precon=false;
+params.G.maxiter=3;
 
-P_recon=LRT_recon(kspace,squeeze(sens),params);
-%% visualize recon
+P_recon=LRT_recon(kspace(:,:,:,:,:),squeeze(sens(:,:,:,:)),params);
+
 figure(1000); immontage4D(squeeze(abs(permute(P_recon,[2 1 3 4 5]))),[]);
-
  
  
