@@ -3,36 +3,44 @@
 fprintf('--------------------\n ')
 fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
-  
+
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=200; % TSE dimensions/DTI
-nDim2=1; % T2-prep 
-ky=213; 
-kz=36; 
+nDim1=20; % TSE dimensions/DTI
+nDim2=9; % T2-prep 
+ky=60; 
+kz=29; 
 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 
-bigctrsize=0;
-smallctrsize=0;
-DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
-ETL = 60;
+bigctrsize=5;
+smallctrsize=2;
+DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines) or VFA/DTI
+if(DTI)
+ETL = 20;
+end
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
-nr_points =36; undersampling=nr_points./(ky*kz);
-% undersampling=0.05;    nr_points=ceil(undersampling*ky*kz);
+%
+% nr_points =140; 
+% undersampling=nr_points./(ky*kz);
+
+% or
+undersampling=0.08;    
+nr_points=ceil(undersampling*ky*kz);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
 %%%%%%%00
 
 % waiting_time=(521-127)e-3; 
-% TR=5.21e-3         %TR in ms; 
+% TR=5.21e-3         %TR in ms;
 % TR_shot=nDim1*TR+waiting_time; 
-TR_shot=2000e-3;
+TR_shot=1000e-3;
 
 MC_maxiter=10000; 
 visualize=1;
-radialflag=1; %radial/linear
-linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
+radialflag=0; %radial/linear
+linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -81,16 +89,15 @@ for dim1=1:nDim1;
     end
 end
 clear m
-if visualize;   
-%     figure(1); clf; imshow(reshape(permute(mask(:,:,1:max(2,size(mask,3)),1:max(2,size(mask,4))),[1 3 2 4]),[ky*2,kz*2]));
- figure(11); clf; immontage4D(mask(:,:,1:3),[]);
+if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:2,1:2),[1 3 2 4]),[ky*2,kz*2]));
+ figure(11); clf; immontage4D(mask,[]);
 end
 
 %% order and save
 
 makefilename = @(x) [x,num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
         '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
-        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points),'6'];
+        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points)];
     
 
 if ~DTI

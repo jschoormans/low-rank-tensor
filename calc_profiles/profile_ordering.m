@@ -80,7 +80,7 @@ end
 if visualizeflag
 figure(2);clf
  %plot 100 TSE trains
-for i=1:nDim1:nDim1*1; 
+for i=1:nDim1:nDim1*100; 
     hold on 
     plot(profile_order(1,1:i),profile_order(2,1:i),'k.')
     plot(profile_order(1,i:i+60),profile_order(2,i:i+60),'r.')
