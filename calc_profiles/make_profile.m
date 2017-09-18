@@ -5,21 +5,29 @@ fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=7; % TSE dimensions/DTI
-nDim2=5; % T2-prep 
-ky=63; 
-kz=63; 
+nDim1=20; % TSE dimensions/DTI
+nDim2=9; % T2-prep 
+ky=60; 
+kz=29; 
 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
-dim2_bigctr=5; % dimension number of fully sampled center (param dimension 1)
+dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 
 bigctrsize=5;
 smallctrsize=2;
-DTI=1; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
+DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines) or VFA/DTI
+if(DTI)
 ETL = 20;
+end
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
-nr_points =140; undersampling=nr_points./(ky*kz);
-% undersampling=0.05;    nr_points=ceil(undersampling*ky*kz);
+%
+% nr_points =140; 
+% undersampling=nr_points./(ky*kz);
+
+% or
+undersampling=0.08;    
+nr_points=ceil(undersampling*ky*kz);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
 %%%%%%%00
@@ -27,12 +35,12 @@ fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,unders
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms;
 % TR_shot=nDim1*TR+waiting_time; 
-TR_shot=1800e-3;
+TR_shot=1000e-3;
 
 MC_maxiter=10000; 
 visualize=1;
-radialflag=1; %radial/linear
-linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
+radialflag=0; %radial/linear
+linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
