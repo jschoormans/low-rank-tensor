@@ -9,7 +9,10 @@
     y_idx = x;
 
     current_guess=G*C*Phi;
+    fprintf('l2-norm of current guess: %i \n',sum(abs(current_guess(:)).^2))
+    
     run fig9999_spatial_images.m
+    
     
     if ~isempty(I); 
 %     MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);

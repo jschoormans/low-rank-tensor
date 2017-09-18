@@ -1,12 +1,11 @@
 clear; close all; clc
 if ispc
-<<<<<<< HEAD
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
-        cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
+%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_13')
+%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15')
+%     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05')
+      cd('L:\basic\divi\Ima\parrec\Kerry\LRT_Data\2017_09_05_knee')
+      cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_07\2017_09_07\lr_25504')
 
-=======
-    cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_09_05')
->>>>>>> 35adaa284efffafa1eab4e0916de5857fde4ca9f
 %     addpath(genpath('L:\basic\divi\Projects\cosart\CS_simulations\tensor\low-rank-tensor'))
 else
     cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/LRT/Low_Rank_2017_09_05'])
@@ -14,13 +13,11 @@ else
 end
 %%
 clear MR
-<<<<<<< HEAD
 % MR=MRecon('lr_13082017_1741148_31_2_wip_sc23-vfa-t2prep_iV4.raw')
-MR=MRecon('lr_15082017_2116431_6_2_wip_vfa-t2prep_csV4.raw')
+% MR=MRecon('lr_15082017_2116431_6_2_wip_vfa-t2prep_csV4.raw')
+% MR=MRecon('lr_05092017_1952316_9_2_wipvfat2prepcsV4.raw')
 
-=======
-MR=MRecon('lr_05092017_1952316_9_2_wipvfat2prepcsV4.raw')
->>>>>>> 35adaa284efffafa1eab4e0916de5857fde4ca9f
+MR=MRecon('lr_05092017_2032554_12_2_wipvfat2prepcstransverseV4.raw')
 DTI=0;
 
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -46,17 +43,14 @@ disp('sortdata')
 
 %ifft in readout direction + select slice 
 MR.Data=fftshift(ifft(ifftshift(MR.Data,1),[],1),1);
-MR.Data=MR.Data(32,:);
+MR.Data=MR.Data(100,:);
 K= sortArray(MR);
 Kcc=bart('cc -p5',permute(K,[1 2 3 4 7 8 9 10 5 6]));
 Kcc=permute(Kcc,[1 2 3 4 9 10 5 6 7 8]);
 size(Kcc)
 %%
-<<<<<<< HEAD
 kspace=Kcc(1,1:end,1:end,:,:,:,:,:,:,:,:,:);
-=======
-kspace=K(80,2:end,2:end,:,:,:,:,:,:,:,:,:);
->>>>>>> 35adaa284efffafa1eab4e0916de5857fde4ca9f
+% kspace=K(80,2:end,2:end,:,:,:,:,:,:,:,:,:);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
 size(kspace)
 
