@@ -14,8 +14,8 @@ switch simulation_typ
         T1vals=[500 400 300 200 1000 500 400 300 200 1000].*1e-3; % in seconds
         T2vals=[20 30 40 50 50 55 50 60 70 10].*1e-3; % in seconds
         
-        T2prep=[10:10:97].*0.001; % in seconds
-        TI=1e-3.*[100:100:2000];
+        T2prep=[20,30,40,50,60,70].*0.001; % in seconds
+        TI=1e-3.*[50:82:2020];
         
         I=T2_T1_phantom(res,T2vals,T1vals,T2prep,TI,1,complexsim);
         
@@ -96,7 +96,7 @@ for ii=1:size(I,3)
     Q=[Q;J];
 end
 imshow(abs(Q),[0 1])
-xlabel('Prameter 1')
+xlabel('Parameter 1')
 ylabel('Prameter 2')
 clear Q J 
 %%  add coil sensitivity information 
@@ -112,7 +112,7 @@ params.undersampling=uf;
 
 params.ky=res; params.kz=res; 
 params.nDim1=size(I,3); params.nDim2=size(I,4); 
-params.bigctrsize=10;
+params.bigctrsize=5;
 
 mask= make_profile_function(params);
 mask=permute(mask,[1 2 5 3 4]); %such that dimensions are ok

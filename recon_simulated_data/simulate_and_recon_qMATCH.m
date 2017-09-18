@@ -3,9 +3,9 @@
 clear all; close all; clc;
 
 % 1: make data (most settings in other .m file for now)
-uf=0.12; % undersampling factor (excluding center)
+uf=288; % undersampling factor (excluding center)
 noiselevel=0.3;
-ncoils=5;
+ncoils=1;
 complexsim=1;
 center_for_all_frames=0;
 load('sense_map.mat'); %optional load external sense map
@@ -55,7 +55,7 @@ params.sparsity_transform='TV';
 params.Imref=I;
 params.x=95;
 params.y=60;
-params.increase_penalty_parameters=false;
+params.increase_penalty_parameters=true;
 params.inspectLg=true;
 params.subspacedim1=1;
 params.subspacedim2=1; 
