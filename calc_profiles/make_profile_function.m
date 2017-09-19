@@ -31,7 +31,7 @@ else
 undersampling=params.undersampling;    nr_points=ceil(undersampling*ky*kz);
 end
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
-%%%%%%%00
+%%%%%%%
 
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms; 
@@ -67,7 +67,7 @@ for dim1=1:nDim1;
     for dim2=1:nDim2;
         fprintf('Dim 1: %d, Dim 2: %d |',dim1,dim2)
         m=zeros(ky,kz); MC_niter=0;
-        if dim1==dim1_bigctr || dim2==dim2_bigctr;
+        if dim1==dim1_bigctr || dim2==dim2_bigctr; % to do make option every 8th 
             ctrsize=bigctrsize;
             nr_centerpoints=(2*ctrsize+1)^2; %number of k-points in the center squares; 
         else

@@ -15,7 +15,7 @@ params.smallctrsize=0;
 params.DTIflag=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines)
 params.ETL=69;
 params.visualize=1;
-params.radialflag=1; %radial/linear
+params.radialflag=0; %radial/linear
 params.linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 params.undersampling=[]; %
 params.vardens=1;
