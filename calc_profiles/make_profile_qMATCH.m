@@ -5,10 +5,10 @@ fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=100; % TSE dimensions/DTI
+nDim1=200; % TSE dimensions/DTI
 nDim2=1; % T2-prep 
-ky=210; 
-kz=60; 
+ky=212; 
+kz=36; 
 
 dim1_bigctr=4; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
@@ -35,12 +35,12 @@ fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,unders
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms;
 % TR_shot=nDim1*TR+waiting_time; 
-TR_shot=1000e-3;
+TR_shot=2000e-3;
 
 MC_maxiter=10000; 
 visualize=1;
 radialflag=0; %radial/linear
-linearflag=1; % 0 vertical ordering/ 1 horizontal ordering;
+linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -95,28 +95,20 @@ for dim1=1:nDim1;
     end
 end
 clear m
-if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:4,1:1),[1 3 2 4]),[ky*4,kz*1]).');
+if visualize;   figure(1); clf; imshow(reshape(permute(mask(:,:,1:12,1),[1 3 2 4]),[ky*12,kz]).');
     figure(11); clf; immontage4D(mask,[]);
 end
 
 %% order and save
 
 makefilename = @(x) [x,num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
-        '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
-        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points)];
+    '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
+    '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points)];
 
 
-if ~DTI
-    profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
-    filename=makefilename('LRT_VFA_T2p_'); 
-else
-    shot_per_frame = nr_points./ETL;
-    assert((round(shot_per_frame)==shot_per_frame),'Profiles in every dynamic must be acquired in integer no. of shots! Change nr_points or ETL!');
-    profile_order=profile_ordering_DTI_t2prep(mask,radialflag,linearflag,visualize,shot_per_frame);
-    filename=makefilename('LRT_DTI_T2p_'); 
-end
+profile_order=profile_ordering(mask,radialflag,linearflag,visualize);
+filename=makefilename('LRT_qMATCH_6_');
 
- 
 if ispc()
      cd('L:\basic\divi\Ima\parrec\Jasper\profiles_LRT')
 else

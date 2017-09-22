@@ -78,15 +78,16 @@ end
 
 %% visualize ordering 
 if visualizeflag
-figure(2);clf
- %plot 100 TSE trains
-for i=1:nDim1:nDim1*100; 
+ %plot 30 TSE trains
+for i=1:nDim1:nDim1*30; 
+    figure(2);clf
+
     hold on 
     plot(profile_order(1,1:i),profile_order(2,1:i),'k.')
-    plot(profile_order(1,i:i+60),profile_order(2,i:i+60),'r.')
+    plot(profile_order(1,i:i+nDim1-1),profile_order(2,i:i+nDim1-1),'bo-')
     hold off
-    xlim([-64 64])   
-    ylim([-64 64])
+    xlim([min(profile_order(1,:)) max(profile_order(1,:))])   
+    ylim([min(profile_order(2,:)) max(profile_order(2,:))])
     pause(0.1)
     drawnow;
 end 

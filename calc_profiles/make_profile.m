@@ -6,9 +6,9 @@ fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
 nDim1=20; % TSE dimensions/DTI
-nDim2=9; % T2-prep 
-ky=60; 
-kz=29; 
+nDim2=5; % T2-prep 
+ky=93; 
+kz=64; 
 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
@@ -25,7 +25,7 @@ end
 % undersampling=nr_points./(ky*kz);
 
 % or
-undersampling=0.08;    
+undersampling=0.04;    
 nr_points=ceil(undersampling*ky*kz);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -35,7 +35,7 @@ fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,unders
 % waiting_time=(521-127)e-3; 
 % TR=5.21e-3         %TR in ms;
 % TR_shot=nDim1*TR+waiting_time; 
-TR_shot=1000e-3;
+TR_shot=(528)*1e-3;
 
 MC_maxiter=10000; 
 visualize=1;

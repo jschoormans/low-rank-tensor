@@ -3,8 +3,8 @@
 clear all; close all; clc;
 
 % 1: make data (most settings in other .m file for now)
-uf=288; % undersampling factor (excluding center)
-noiselevel=0.3;
+uf=36*8*2; % undersampling factor (excluding center)
+noiselevel=0;
 ncoils=1;
 complexsim=1;
 center_for_all_frames=0;
@@ -48,7 +48,7 @@ immontage4D(permute(angle(squeeze(sens_est)./sens), [4 1 2 3]),[-pi pi]); title(
 %% 
 close all;
 params=params_init();
-params.Lg=2;
+params.Lg=5;
 params.L3=5;
 params.L4=4;
 params.sparsity_transform='TV';
@@ -56,14 +56,21 @@ params.Imref=I;
 params.x=95;
 params.y=60;
 params.increase_penalty_parameters=true;
-params.inspectLg=true;
+params.inspectLg=false;
 params.subspacedim1=1;
 params.subspacedim2=1; 
-params.G.precon=true;
+params.G.precon=false;
 params.G.maxiter = 10;
-params.scaleksp=1;
-
+params.scaleksp=0;
+params.autolambda=1
 % params.mu=1e3;
-% params.lambda=5e-4;
+params.lambda=5e-2;
 % P_recon=LRT_recon(du,squeeze(sens_est),params);
+
+params.normalize_sense=0
 P_recon=LRT_recon(du,squeeze(sens),params);
+%%
+% T2-fitting
+[T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(abs(squeeze(P_recon(:,:,1,[1 10],:))), [20,30,40,50,60,70],0.1);
+
+

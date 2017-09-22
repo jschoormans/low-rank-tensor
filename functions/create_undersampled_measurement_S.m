@@ -112,7 +112,7 @@ params.undersampling=uf;
 
 params.ky=res; params.kz=res; 
 params.nDim1=size(I,3); params.nDim2=size(I,4); 
-params.bigctrsize=5;
+params.bigctrsize=2;
 
 mask= make_profile_function(params);
 mask=permute(mask,[1 2 5 3 4]); %such that dimensions are ok
