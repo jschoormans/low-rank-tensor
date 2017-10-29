@@ -128,11 +128,14 @@ if visualizeflag
         figure(4);
         for frame = 1:size(profile_order,3);
             for k=1:size(profile_order,2)
-                im(profile_order(1,k,frame)+floor((1+ky)/2), profile_order(2,k,frame)+floor((1+kz)/2),1,frame) = mod(k,ETL)+1;
+                im(profile_order(1,k,frame)+floor((1+ky)/2), profile_order(2,k,frame)+floor((1+kz)/2),1,frame) = mod(k-1,ETL)+1;
             end
         end
         im = reshape(im, size(im,1),size(im,2),nDim1, nDim2);
-        immontage4D(im, []);colormap(jet(128)); colorbar; title('#rf');
+        immontage4D(im, []);colormap(jet(128)); colorbar; title('#rf'); title('ETL profile')
+        figure(5);
+        montage(permute(im(:,:,:,1),[1 2 4 3]),'displayrange',[]);colormap jet; title('ETL profile for the first volume')
+        
     end
     
     
