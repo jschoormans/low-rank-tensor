@@ -185,13 +185,13 @@ while (button ~= 27) %27 corresponds to key 'Esc'
         
         
         
-%         figure(48);
-%         pd=histfit_qw(T2_mono_all(T2_mono_all>0),50); title(['fitted mean: ',  num2str(pd.mu), ';  fitted std: ', num2str(pd.sigma)]);
-%         display(['Raw data: Mean: ',num2str(mean(T2_mono_all(T2_mono_all>0))),'  Median: ',num2str(median(T2_mono_all(T2_mono_all>0))),'  Std: ',num2str(std(T2_mono_all(T2_mono_all>0)))]);
-%         display(['Raw data: Mean-Std=', num2str(mean(T2_mono_all(T2_mono_all>0))-std(T2_mono_all(T2_mono_all>0))), ';  Mean+Std=', num2str(mean(T2_mono_all(T2_mono_all>0))+std(T2_mono_all(T2_mono_all>0))) ]);
-%         display(['Fitted data: Mean: ', num2str(pd.mu),'  Std: ', num2str(pd.sigma)]);
-%         display(['Fitted data: Mean-Std=', num2str(pd.mu-pd.sigma), ';  Mean+Std=', num2str(pd.mu+pd.sigma) ]);
-%         display(['Fitted data: Mean-3*Std=', num2str(pd.mu-3*pd.sigma), ';  Mean+3*Std=', num2str(pd.mu+3*pd.sigma) ]);
+        figure(48);
+        pd=histfit_qw(T2_mono_all(T2_mono_all>0),50); title(['fitted mean: ',  num2str(pd.mu), ';  fitted std: ', num2str(pd.sigma)]);
+        display(['Raw data: Mean: ',num2str(mean(T2_mono_all(T2_mono_all>0))),'  Median: ',num2str(median(T2_mono_all(T2_mono_all>0))),'  Std: ',num2str(std(T2_mono_all(T2_mono_all>0)))]);
+        display(['Raw data: Mean-Std=', num2str(mean(T2_mono_all(T2_mono_all>0))-std(T2_mono_all(T2_mono_all>0))), ';  Mean+Std=', num2str(mean(T2_mono_all(T2_mono_all>0))+std(T2_mono_all(T2_mono_all>0))) ]);
+        display(['Fitted data: Mean: ', num2str(pd.mu),'  Std: ', num2str(pd.sigma)]);
+        display(['Fitted data: Mean-Std=', num2str(pd.mu-pd.sigma), ';  Mean+Std=', num2str(pd.mu+pd.sigma) ]);
+        display(['Fitted data: Mean-3*Std=', num2str(pd.mu-3*pd.sigma), ';  Mean+3*Std=', num2str(pd.mu+3*pd.sigma) ]);
         %KERRY: histfit_qw is a revision of histfit. Add the function of export
         %fit resutls (min and sigma of normal distribution)
         
