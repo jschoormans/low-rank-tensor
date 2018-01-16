@@ -21,7 +21,7 @@ nsa = zeros(size(profile_reshaped, 1), 1);
 for k = 1 : size(profile_order, 3);
         profile_this_dynamic = profile_order(:,:,k)';
     for p = 1 : size(profile_order, 2);
-        
+        p
         ky_match = (profile_this_dynamic(1:p-1, 1) == profile_this_dynamic(p, 1));
         kz_match = (profile_this_dynamic(1:p-1, 2) == profile_this_dynamic(p, 2));
         

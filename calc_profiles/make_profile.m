@@ -5,28 +5,33 @@ fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=20; % TSE dimensions/DTI
-nDim2=5; % T2-prep 
-ky=93; 
-kz=64; 
+nDim1=50; % TSE dimensions/DTI
+nDim2=1; % T2-prep 
+ky=82; 
+kz=26; 
 
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 
-bigctrsize=5;
-smallctrsize=2;
+bigctrsize=4;
+smallctrsize=4;
 DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines) or VFA/DTI
 if(DTI)
 ETL = 20;
 end
 %%%%%%%  CHOOSE ONE OF BOTH OPTIONS
 %
-% nr_points =140; 
+% nr_points =250; 
 % undersampling=nr_points./(ky*kz);
 
 % or
-undersampling=0.04;    
+undersampling=0.1;    
 nr_points=ceil(undersampling*ky*kz);
+
+fully_sampling_flag=1
+if fully_sampling_flag; undersampling=1; 
+    nr_points=ceil(undersampling*ky*kz); end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
@@ -65,6 +70,8 @@ fprintf('Starting Monte Carlo simulation \n')
 for dim1=1:nDim1;
     for dim2=1:nDim2;
         fprintf('Dim 1: %d, Dim 2: %d |',dim1,dim2)
+        
+        if ~fully_sampling_flag;
         m=zeros(ky,kz); MC_niter=0;
         if dim1==dim1_bigctr || dim2==dim2_bigctr;
             ctrsize=bigctrsize;
@@ -84,7 +91,11 @@ for dim1=1:nDim1;
                 end
                 
             end
-        fprintf(' Monte Carlo iterations: %d \n',MC_niter)
+            fprintf(' Monte Carlo iterations: %d \n',MC_niter)
+
+        else %do full sampling
+            m=ones(ky,kz);
+        end
         mask(:,:,dim1,dim2)=m;
     end
 end

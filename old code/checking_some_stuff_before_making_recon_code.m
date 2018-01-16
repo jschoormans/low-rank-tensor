@@ -41,10 +41,10 @@ xlabel('echo times')
 ylabel('b-values')
 %% TUCKER DECOMPOSITION
 
-rank1=50
-rank2=50
-rank3=4
-rank4=4
+rank1=60
+rank2=60
+rank3=6
+rank4=6
 [F1,C,pctage,errormap]=tucker(I,[rank1,rank2,rank3,rank4]);
 
 

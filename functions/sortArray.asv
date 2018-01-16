@@ -70,7 +70,7 @@ kyindex=ky-minky+1;
 kzindex=kz-minkz+1;
 chanindex= chantransform(chan); % should be able to deal with eg chan=2,3,5,6
 np1index= p1indextransform(param1+1); % TO DO: CHANGE: 
-np2index=p2indextransform(param2+1);
+np2index=p2indextransform(param2+1); 
 
 fprintf('sorting MR.Data \n')
 fprintf('number of unique channels %d \n',nchans)
