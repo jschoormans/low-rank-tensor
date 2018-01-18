@@ -1,13 +1,11 @@
 clear; close all; clc
-cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2018_01_15_VFA')
+cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2018_01_18_VFA')
 % recon T2-VFA copied from: recon_10_31_modfrom_5_9.m
 
 
 %%
 clear MR
-% MR=MRecon('lr_15012018_1852004_3_2_wip_brin-vfa-t2prep-lowrankV4.raw')
-% MR=MRecon('lr_15012018_1930556_3_2_wip_brin-vfa-t2prep-lowrankV4.raw')
-MR=MRecon('lr_15012018_1941075_4_2_wip_brin-vfa-t2prep-lowrankV4.raw')
+MR=MRecon('lr_17012018_2053582_3_2_wip_brin-vfa-t2prep-lowrankV4.raw')
 
 DTI=0;
 MR.Parameter.Labels.Index.aver=(MR.Parameter.Labels.Index.rf);
@@ -16,6 +14,8 @@ MR.Parameter.Recon.ArrayCompression='No';
 MR.Parameter.Recon.ACNrVirtualChannels=6;
 MR.Parameter.Parameter2Read.typ = 1;
 MR.Parameter.Recon.ImmediateAveraging='No';
+MR.Parameter.Parameter2Read.chan=[10; 11];
+
 % MR.Parameter.Parameter2Read.chan=[34;35;36;37;44;45]
 % load data
 disp('readdata')
@@ -26,16 +26,17 @@ MR.RemoveOversampling;
 MR.PDACorrection; %???
 MR.DcOffsetCorrection;
 MR.MeasPhaseCorrection;
-
+MR2=MR.Copy; 
 %%
 disp('sortdata')
 % MR.SortData;
 
 %ifft in readout direction + select slice 
 MR.Data=fftshift(ifft(ifftshift(MR.Data,1),[],1),1);
-MR.Data=MR.Data(125,:);
+MR.Data=MR.Data(145,:);
 K= sortArray(MR);
-Kcc=bart('cc -p5',permute(K,[1 2 3 4 7 8 9 10 5 6]));
+% Kcc=bart('cc -p5',permute(K,[1 2 3 4 7 8 9 10 5 6]));
+Kcc=K; 
 Kcc=permute(Kcc,[1 2 3 4 9 10 5 6 7 8]);
 size(Kcc)
 %%
@@ -64,18 +65,18 @@ immontage4D(angle(sens),[-pi pi])
 
 %%
 params=params_init();
-params.L3=1;
-params.L4=1;
-params.subspacedim1=3;
-params.subspacedim2=3; 
+params.L3=2;
+params.L4=3;
+params.subspacedim1=1;
+params.subspacedim2=1; 
 params.scaleksp=false; 
 
-params.Lg=5;
+params.Lg=3;
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=45;
-params.y=120;
+params.y=140;
 params.mu=0.3e3;
 params.lambda=15e-2;
 % sens(sens==0)=1e-2;
@@ -114,9 +115,9 @@ plot(y3,x3,'g+'); hold off
 title('last echo, highest TE');
 subplot(222)
 hold on
-plot([60,50,40,30,20],squeeze(abs(P_recon(x1,y1,1,:,1))),'r')
-plot([60,50,40,30,20],squeeze(abs(P_recon(x2,y2,1,:,1))),'b')
-plot([60,50,40,30,20],squeeze(abs(P_recon(x3,y3,1,:,1))),'g')
+plot([70,50,30,20,10],squeeze(abs(P_recon(x1,y1,1,:,1))),'r')
+plot([70,50,30,20,10],squeeze(abs(P_recon(x2,y2,1,:,1))),'b')
+plot([70,50,30,20,10],squeeze(abs(P_recon(x3,y3,1,:,1))),'g')
 hold off
 title('T2prep dimension')
 ylabel('intensity'); xlabel('TE')

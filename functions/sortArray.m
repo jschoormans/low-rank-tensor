@@ -3,16 +3,18 @@ function D= sortArray(MR)
 % sorts based on dynamics, averages and channels... (other things would not be sorted
 % correctly as of now) 
 
+% idx=find((MR.Parameter.Labels.Index.typ==1).*(MR.Parameter.Labels.Index.chan==10));
+idx=find((MR.Parameter.Labels.Index.typ==1).*((MR.Parameter.Labels.Index.chan==10)+(MR.Parameter.Labels.Index.chan==11)));
 
-ky=MR.Parameter.Labels.Index.ky((MR.Parameter.Labels.Index.typ==1));
-kz=MR.Parameter.Labels.Index.kz(MR.Parameter.Labels.Index.typ==1);
-chan=MR.Parameter.Labels.Index.chan(MR.Parameter.Labels.Index.typ==1);
-param1=MR.Parameter.Labels.Index.dyn(MR.Parameter.Labels.Index.typ==1);
-param2=MR.Parameter.Labels.Index.aver(MR.Parameter.Labels.Index.typ==1);
+ky=MR.Parameter.Labels.Index.ky(idx);
+kz=MR.Parameter.Labels.Index.kz(idx);
+chan=MR.Parameter.Labels.Index.chan(idx);
+param1=MR.Parameter.Labels.Index.dyn(idx);
+param2=MR.Parameter.Labels.Index.aver(idx);
 
 MRD=MR.Data;
 
-assert(numel(chan)==length(MRD),'subsets of data not yet supported ')
+% assert(numel(chan)==length(MRD),'subsets of data not yet supported ')
 
 
 nkx=size(MR.Data,1);

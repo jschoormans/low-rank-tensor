@@ -70,21 +70,21 @@ for dim2=1:nDim2;
         index_piece_transform=s_index_angle((number_of_pieces*N)+index_piece);
         index_r=[index_r;index_piece_transform];
 
-        %         figure(10); plot(row(index_r),col(index_r))
-        
-        if ~center_to_end
-            kp(1,:,dim1)=row(index_r);
-            kp(2,:,dim1)=col(index_r);
-        end
+%         figure(10); plot(row(index_r),col(index_r))
+
+        kp(1,:,dim1)=row(index_r);
+        kp(2,:,dim1)=col(index_r);
+         
         % sort every block of alpha cols form low to high in rows
         %%%% which index numbers are the center ones??
         if center_to_end
-            [rowc,colc]=find(centermask);
-            rowc=rowc-floor((1+ky)/2);
-            colc=colc-floor((1+kz)/2);
-            
-            kp(1,:,dim1)=cat(1,row(index_r),rowc);
-            kp(2,:,dim1)=cat(1,col(index_r),colc);
+        [rowc,colc]=find(centermask);
+        rowc=rowc-floor((1+ky)/2);
+        colc=colc-floor((1+kz)/2);       
+        
+        
+        kp(1,:,dim1)=cat(1,kp(1,:,dim1),rowc.');
+        kp(2,:,dim1)=cat(1,kp(2,:,dim1),colc.');
 
         
         end
