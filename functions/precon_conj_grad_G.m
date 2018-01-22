@@ -45,7 +45,7 @@ figure(998);subplot(223);
 plot(log10(resvec./norm(b(:))),'r*-'); 
 xlabel('iterations'); ylabel('10log of relative residual')
 t=toc; 
-fprintf('t: %i seconds',t)
+fprintf('t: %4.2f seconds',t)
 fprintf('| relres %d | iters: %i | \n',relres,iter)
 
 end

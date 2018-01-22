@@ -13,7 +13,7 @@ kz=66;
 dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
 
-bigctrsize=3;
+bigctrsize=5;
 smallctrsize=3;
 DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines) or VFA/DTI
 if(DTI)
@@ -45,7 +45,7 @@ visualize=1;
 radialflag=0; %radial/linear
 linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 center_to_end=1; %option to acquire center of kspace at the end (reducing Eddy currents)
-vardens_option=1; 
+vardens_option=0; 
 modify_NSA_option=1; %option to remove excess NSA numbers for profile (decreases probability of mem error during scan)
 %%=========================================================================
 %%== Calculating parameters based on options given
@@ -122,7 +122,7 @@ end
 
 makefilename = @(x) [x,num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
         '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
-        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points)];
+        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points),'vdens',num2str(vardens_option)];
     
 
 if ~DTI

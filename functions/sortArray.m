@@ -4,7 +4,7 @@ function D= sortArray(MR)
 % correctly as of now) 
 
 % idx=find((MR.Parameter.Labels.Index.typ==1).*(MR.Parameter.Labels.Index.chan==10));
-idx=find((MR.Parameter.Labels.Index.typ==1).*((MR.Parameter.Labels.Index.chan==10)+(MR.Parameter.Labels.Index.chan==11)));
+idx=find((MR.Parameter.Labels.Index.typ==1));%.*((MR.Parameter.Labels.Index.chan==10)+(MR.Parameter.Labels.Index.chan==11)));
 
 ky=MR.Parameter.Labels.Index.ky(idx);
 kz=MR.Parameter.Labels.Index.kz(idx);
