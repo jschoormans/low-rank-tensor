@@ -46,6 +46,7 @@ radialflag=0; %radial/linear
 linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 center_to_end=1; %option to acquire center of kspace at the end (reducing Eddy currents)
 vardens_option=1; 
+modify_NSA_option=1; %option to remove excess NSA numbers for profile (decreases probability of mem error during scan)
 %%=========================================================================
 %%== Calculating parameters based on options given
 
@@ -144,7 +145,7 @@ if ispc()
 else
      cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Jasper/profiles_LRT']);
 end
-% savemask_LRT(profile_order,filename,visualize)
+savemask_LRT(profile_order,filename,visualize,modify_NSA_option)
 fprintf('Saved as %s \n',filename)
 fprintf('in folder: %s \n',pwd)
 fprintf('Finished! \n \n \n ')

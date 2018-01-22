@@ -56,7 +56,7 @@ for dim2=1:nDim2;
         % take blocks of N angle pieces (plus a residual) 
         rho_sorted=col(s_index_angle); 
         
-        N=15;
+        N=8;
         number_of_pieces=floor(nr_points/N);
         residual_N=mod(nr_points,N);
         
@@ -125,6 +125,7 @@ plot(sqrt((delta_x).^2+(delta_y).^2),'.');
 subplot(212);
 plot((delta_x),'r*'); hold on
 plot((delta_y),'b*'); hold off
+legend('jumps in x','jumps in y')
 title('kspace-jumps')
 
 
