@@ -1,4 +1,4 @@
- function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu,x,y,kspace_1,F,Psi,Ak)
+ function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu,x,y,kspace_1,F,Psi)
 % iter: iteration
 % MSE: (first iter use [])
 %I gold standard image
@@ -95,12 +95,11 @@ drawnow;
     
     %=== visualize in figure
     figure(3000);
-    subplot(221); cla; title('l2 norm - abs'); 
+    subplot(211); cla; title('l2 norm - abs'); 
     plot(abs(current_guess_k(idx_nonempty(1:sdu(1)))),'r'); hold on; plot(abs(kspace_1(idx_nonempty(1:sdu(1)))),'k+');
     hold off; legend('recon k-line','measured k-line');
-    
-    subplot(222); cla; title('l2 norm - phase'); 
-    plot(angle(current_guess_k(idx_nonempty(1:sdu(1)))),'r'); hold on; plot(angle(kspace_1(idx_nonempty(1:sdu(1)))),'k+');
+   subplot(211); cla; title('l2 norm - phase'); 
+    plot(abs(current_guess_k(idx_nonempty(1:sdu(1)))),'r'); hold on; plot(abs(kspace_1(idx_nonempty(1:sdu(1)))),'k+');
     hold off; legend('recon k-line','measured k-line');
     
     subplot(223); hold on; plot(iter,l2norm,'k*'); title('l2-norm ');

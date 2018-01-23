@@ -35,9 +35,12 @@ else
     mfun=[];
 end
 
-[x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
-% [x,flag,relres,iter,resvec]=cgs(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
-% [x,flag,relres,iter,resvec]=pcg(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
+% [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
+
+init=Psi'*A; % initual guess is based on A_k+1 ... (not explicitly mentioned in paper)
+init=zeros(size(G)); 
+[x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],init(:)); %add initial guess
+
 
 Gk=ResA(x);
 

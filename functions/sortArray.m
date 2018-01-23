@@ -3,9 +3,17 @@ function D= sortArray(MR)
 % sorts based on dynamics, averages and channels... (other things would not be sorted
 % correctly as of now) 
 
-% idx=find((MR.Parameter.Labels.Index.typ==1).*(MR.Parameter.Labels.Index.chan==10));
-idx=find((MR.Parameter.Labels.Index.typ==1));%.*((MR.Parameter.Labels.Index.chan==10)+(MR.Parameter.Labels.Index.chan==11)));
+% only use indices of typ 1, and the channels that have been read; kx that have been read; etc... 
 
+idx_typ=find(MR.Parameter.Labels.Index.typ==1);
+idx_chan=find(ismember(MR.Parameter.Labels.Index.chan,MR.Parameter.Parameter2Read.chan));
+idx_ky=find(ismember(MR.Parameter.Labels.Index.ky,MR.Parameter.Parameter2Read.ky));
+idx_kz=find(ismember(MR.Parameter.Labels.Index.kz,MR.Parameter.Parameter2Read.kz));
+idx_aver=find(ismember(MR.Parameter.Labels.Index.aver,MR.Parameter.Parameter2Read.aver));
+idx_dyn=find(ismember(MR.Parameter.Labels.Index.dyn,MR.Parameter.Parameter2Read.dyn));
+idx=intersect(intersect(idx_typ,idx_chan),intersect(intersect(idx_ky,idx_kz),intersect(idx_aver,idx_dyn)));
+
+% find labels values 
 ky=MR.Parameter.Labels.Index.ky(idx);
 kz=MR.Parameter.Labels.Index.kz(idx);
 chan=MR.Parameter.Labels.Index.chan(idx);

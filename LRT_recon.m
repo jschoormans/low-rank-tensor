@@ -127,18 +127,18 @@ mu=params.mu;
 lambda=params.lambda; 
 
 %initialize matrices
-if params.inspectLg
+if params.inspectLg %give temporary spatial rank (max rank)
 params.Lg=params.L3*params.L4;end
 
-[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+[Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 
-if params.inspectLg;
+if params.inspectLg; % option to check energies of spatial ranks before choosing rank
     C_energies=sum(abs(C).^2,2);
     C_energies=C_energies./max(C_energies(:));
     figure(11); plot(C_energies,'ko-');title('rank relative energies for C');
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
-    [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+    [Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 end
 
 
@@ -146,7 +146,7 @@ MSE=[];
 for iter=1:params.niter
     params.iter=iter; 
     fprintf('\n Outer iteration %i of %i \n',params.iter,params.niter)
-    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
+    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak);
     
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
