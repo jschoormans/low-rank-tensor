@@ -145,7 +145,9 @@ end
 MSE=[]; 
 for iter=1:params.niter
     params.iter=iter; 
-    fprintf('\n Outer iteration %i of %i \n',params.iter,params.niter)
+    fprintf('\n=== Outer iteration %i of %i === \n',params.iter,params.niter)
+    fprintf('alpha = %4.2f | beta = %4.2f \n',alpha,beta)
+
     MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak);
     
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15

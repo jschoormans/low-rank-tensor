@@ -7,14 +7,14 @@ fprintf('--------------------\n \n')
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
 nDim1=50; % TSE dimensions/DTI
 nDim2=5; % T2-prep 
-ky=249; 
-kz=66; 
+ky=109; 
+kz=109; 
 
-dim1_bigctr=1; % dimension number of fully sampled center (param dimension 1)
-dim2_bigctr=1; % dimension number of fully sampled center (param dimension 1)
+dim1_bigctr=4; % dimension number of fully sampled center (param dimension 1)
+dim2_bigctr=3; % dimension number of fully sampled center (param dimension 1)
 
-bigctrsize=5;
-smallctrsize=3;
+bigctrsize=3;
+smallctrsize=1;
 DTI=0; %1=DTI/T2prep - 0: VFA/T2prep (decides ordering of lines) or VFA/DTI
 if(DTI)
 ETL = 20;
@@ -22,7 +22,7 @@ end
 
 
 %%====  CHOOSE ONE OF BOTH OPTIONS
-nr_points =348; 
+nr_points =250; 
 undersampling=nr_points./(ky*kz);
 
 %%% Or
@@ -38,15 +38,16 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
-TR_shot=(528)*1e-3;
+TR_shot=(638)*1e-3;
 
 MC_maxiter=10000; 
 visualize=1;
 radialflag=0; %radial/linear
 linearflag=0; % 0 vertical ordering/ 1 horizontal ordering;
 center_to_end=1; %option to acquire center of kspace at the end (reducing Eddy currents)
-vardens_option=0; 
+vardens_option=1; 
 modify_NSA_option=1; %option to remove excess NSA numbers for profile (decreases probability of mem error during scan)
+
 %%=========================================================================
 %%== Calculating parameters based on options given
 
