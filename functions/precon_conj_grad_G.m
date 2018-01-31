@@ -5,17 +5,15 @@ tol=params.G.tol;
 maxiter=params.G.maxiter;
 
 L=Lambda(F,C,Phi,samplingmask);
-% a2PP=(alpha/2)*pinv(Psi)*Psi;
-a2PP=(alpha/2)*Psi'*Psi;
 
 %input data
 % b=(L'*d + (alpha/2)*pinv(Psi)*(A+Y./alpha));
-b=(L'*d + (alpha/2)*Psi'*(A+Y./alpha));
+b=(L'*d + (alpha/2)*(Psi'*(A+Y./alpha)));
 b=b(:);
 
 
 % try to reshape operator so we have proper matrix, vector calculations
-X= @(G) (L'*((L*G))) +a2PP*G;
+X= @(G) (L'*((L*G))) +(alpha/2)*(Psi'*(Psi*G));
 Res= @(x) reshape(x,[numel(G),1]);
 ResA= @(x) reshape(x,size(G));
 Aop = @(G) Res(X(ResA(G))); 
@@ -45,7 +43,7 @@ init=zeros(size(G));
 Gk=ResA(x);
 
 figure(998);subplot(223);
-plot(log10(resvec./norm(b(:))),'r*-'); 
+plot((log10(abs(resvec)./norm(b(:)))),'r*-'); 
 xlabel('iterations'); ylabel('10log of relative residual')
 t=toc; 
 fprintf('t: %4.2f seconds',t)

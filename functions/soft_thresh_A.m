@@ -5,7 +5,7 @@ function [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda_o,Psi,operatorsize,params)
 lambda=lambda_o; 
 
 if params.iter>1 || params.autolambda==0
-    T=Psi*G-Y./alpha;
+    T=(Psi*G)-Y./alpha;
     % l2 norm of T
     l2T=sqrt(sum(abs(T).^2,2));
     thr=(l2T>lambda/alpha);
@@ -27,7 +27,7 @@ else        %first iter and automu -
             fprintf('automu failed \n')
         end
         
-        T=Psi*G-Y./alpha;
+        T=(Psi*G)-Y./alpha;
         l2T=sqrt(sum(abs(T).^2,2));
         thr=(l2T>lambda/alpha);
         

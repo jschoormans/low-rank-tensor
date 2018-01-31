@@ -23,7 +23,7 @@ Aop = @(C) Res(X(ResA(C)));
 
 Ck=ResA(xpcg);
 figure(998);subplot(224);
-plot(log10(resvecpcg./norm(b(:))),'r*-'); 
+plot(log10(abs(resvecpcg)./norm(b(:))),'r*-'); 
 xlabel('iterations'); ylabel('10log of residual')
 drawnow; 
 

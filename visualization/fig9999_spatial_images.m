@@ -16,7 +16,7 @@ spatial_images_Ak=reshape(Psi'*Ak,[sdu(1) sdu(2) size(G,2)]);
 
 I3=[];
 for i=1:size(Ak,2);
-I3=    cat(2,I3,abs(spatial_images_Ak(:,:,i))./max(max(abs(spatial_images_Ak(:,:,i)))));
+I3=    cat(2,I3,abs(spatial_images_Ak(:,:,i))./(eps+max(max(abs(spatial_images_Ak(:,:,i))))));
 end
 
 figure(9999);
