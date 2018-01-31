@@ -6,9 +6,9 @@ fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
 nDim1=50; % TSE dimensions/DTI
-nDim2=5; % T2-prep 
-ky=109; 
-kz=109; 
+nDim2=7; % T2-prep 
+ky=249  ; 
+kz=66; 
 
 dim1_bigctr=4; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=3; % dimension number of fully sampled center (param dimension 1)
@@ -22,12 +22,12 @@ end
 
 
 %%====  CHOOSE ONE OF BOTH OPTIONS
-nr_points =250; 
-undersampling=nr_points./(ky*kz);
+% nr_points =250; 
+% undersampling=nr_points./(ky*kz);
 
 %%% Or
-% undersampling=0.1;    
-% nr_points=ceil(undersampling*ky*kz);
+undersampling=0.01*(pi/4);    
+nr_points=ceil(undersampling*ky*kz);
 
 fully_sampling_flag=0
 if fully_sampling_flag; undersampling=1; 
@@ -38,7 +38,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
-TR_shot=(638)*1e-3;
+TR_shot=(654)*1e-3;
 
 MC_maxiter=10000; 
 visualize=1;
@@ -65,7 +65,7 @@ else
 end
 total_time= TR_shot*nshots; %total time in seconds; 
 
-fprintf('Number of shots: %d, TSE number: %d, total time: %d seconds \n',nshots,nDim1,round(total_time))
+fprintf('Number of shots: %d, TSE number: %d, total time: %d seconds (%4.2f minutes) \n',nshots,nDim1,round(total_time),total_time/60)
 assert(dim1_bigctr <= nDim1,'dim1_bigctr should be in range [1, nDim1]')
 assert(dim2_bigctr <= nDim2,'dim1_bigctr should be in range [1, nDim1]')
 
@@ -123,7 +123,7 @@ end
 
 makefilename = @(x) [x,num2str(ky),'_',num2str(kz),'_',num2str(nDim1),'_',num2str(nDim2),...
         '_r',num2str(radialflag),'_l',num2str(linearflag),'_bCtr',num2str(bigctrsize),...
-        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_us',num2str(undersampling),'_nrpoints_',num2str(nr_points),'vdens',num2str(vardens_option)];
+        '(',num2str(dim1_bigctr),',',num2str(dim2_bigctr),')_sCtr',num2str(smallctrsize),'_nrp_',num2str(nr_points),'vd',num2str(vardens_option)];
     
 
 if ~DTI
