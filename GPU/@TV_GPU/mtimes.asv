@@ -1,7 +1,5 @@
 function res = mtimes(a,b)
 % res = mtimes(TV_GPU, x)
-% note: tried diff(X) --> just as fast as circshift
-% todo: vectorizing (removing loop) might make this faster
 ncols=size(b,2); 
 
 
@@ -26,8 +24,6 @@ if a.adjoint %TV'*x
         
         
     end
-    
-    
 else  %TV*x 
     % input vector b, output: TVx,TVy
     % reshape source vector
@@ -54,8 +50,5 @@ else  %TV*x
             
         end
         
-        
-        
     end
-
 end

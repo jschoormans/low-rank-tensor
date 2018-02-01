@@ -40,3 +40,5 @@ params.eigenvals_2=[];
 params.autolambda=0   ; 
 params.automu=0       ;             % automatically estimate mu on s.t. of first iter
 params.normalize_sense=1;           %automatically normalizes sense maps 
+
+params.GPU=1; 
