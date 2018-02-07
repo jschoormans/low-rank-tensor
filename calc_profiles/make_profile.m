@@ -6,9 +6,9 @@ fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
 nDim1=50; % TSE dimensions/DTI
-nDim2=7; % T2-prep 
-ky=249  ; 
-kz=66; 
+nDim2=6; % T2-prep 
+ky=430  ; 
+kz=129; 
 
 dim1_bigctr=4; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=3; % dimension number of fully sampled center (param dimension 1)
@@ -26,7 +26,7 @@ end
 % undersampling=nr_points./(ky*kz);
 
 %%% Or
-undersampling=0.01*(pi/4);    
+undersampling=0.0073*(pi/4);    
 nr_points=ceil(undersampling*ky*kz);
 
 fully_sampling_flag=0

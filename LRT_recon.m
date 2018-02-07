@@ -77,7 +77,7 @@ elseif strcmp(params.sparsity_transform,'TV')
     Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'cyclic');
     Psi=[Psi1;Psi2];
     else  % GPU TV operator 
-    Psi=TV_GPU(res1,res2,2);
+    Psi=TV_GPU(res1,res2,params.GPUoptions.TVoption);
     end
     operatorsize=[res1,res2*2];
 elseif strcmp(params.sparsity_transform,'TVOP')
