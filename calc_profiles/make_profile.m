@@ -5,10 +5,10 @@ fprintf('Making LRT profile \n')
 fprintf('--------------------\n \n')
 
 %%%%%%%%%%%% PARAMETERS TO CHANGE%%%%%%%%%%%%%%%%%%%%%%%
-nDim1=50; % TSE dimensions/DTI
-nDim2=6; % T2-prep 
-ky=430  ; 
-kz=129; 
+nDim1=40; % TSE dimensions/DTI
+nDim2=5; % T2-prep 
+ky=171; %48  ; 
+kz=42; %83; 
 
 dim1_bigctr=4; % dimension number of fully sampled center (param dimension 1)
 dim2_bigctr=3; % dimension number of fully sampled center (param dimension 1)
@@ -26,7 +26,7 @@ end
 % undersampling=nr_points./(ky*kz);
 
 %%% Or
-undersampling=0.0073*(pi/4);    
+undersampling=0.01*(pi/4);    
 nr_points=ceil(undersampling*ky*kz);
 
 fully_sampling_flag=0
@@ -38,7 +38,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('%i points per frame, an undersampling factor of %i \n',nr_points,undersampling)
-TR_shot=(654)*1e-3;
+TR_shot=(1491)*1e-3;
 
 MC_maxiter=10000; 
 visualize=1;
