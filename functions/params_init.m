@@ -43,3 +43,5 @@ params.normalize_sense=1;           %automatically normalizes sense maps
 
 params.GPU=1; 
 params.GPUoptions.TVoption=4; %default 4 for GPU 
+
+

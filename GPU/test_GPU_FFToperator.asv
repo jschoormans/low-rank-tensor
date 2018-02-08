@@ -70,38 +70,5 @@ end
 
 
 %%
-figure(2); clf; hold on; plot([2:2:80],t_bsxfun(t_bsxfun>0),'k-+'); plot([2:2:80],t_fft2(t_fft2>0),'r-+');
+figure(2); clf; hold on; plot(t_bsxfun(t_bsxfun>0),'k-+'); plot(t_fft2(t_fft2>0),'r-+');
 legend('bsxfun','fftshift')
-xlabel('N'); ylabel('time for whole FFT operation')
-
-%% IFFTMOD
-
-
-ll=40
-A=rand(ll,ll,100,20,5);
-x=gpuArray(A); 
-
-
-fprintf('improved with fft2\n ')
-%new improved with fft2 %0.43 s
-tic
-res_fft2 = fftshift(fftshift(ifft2(ifftshift(ifftshift(x,1),2)),1),2);
-toc
-
-temp=[1:ll]; temp=2*(mod(temp,2)-0.5).* 1i;
-temp=conj(temp); 
-fprintf('bsxfun \n')
-tic
-res=bsxfun(@mtimes,bsxfun(@mtimes,x,temp),temp.');
-res = ifft2(res);
-res_bsxfun=bsxfun(@mtimes,bsxfun(@mtimes,res,temp),temp.');
-toc
-
-
-figure(3); clf;hold on; 
-plot(imag(res_bsxfun(:,round(ll/2),1,1,1,1)),'k-')
-plot(imag(res_fft2(:,round(ll/2),1,1,1,1)),'r+')
-legend('bsxfun','ifftshift')
-
-sum(res_bsxfun(:)==res_fft2(:))
-numel(res_bsxfun)

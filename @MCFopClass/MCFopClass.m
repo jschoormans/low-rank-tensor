@@ -19,7 +19,6 @@ classdef MCFopClass < handle
             obj.adjoint = 0;
             obj.imsize=imsize;
             obj.dimsize=dimsize;
-            
         end
         
         function set_MCFop_adjoint(obj,a)
