@@ -42,6 +42,6 @@ params.automu=0       ;             % automatically estimate mu on s.t. of first
 params.normalize_sense=1;           %automatically normalizes sense maps 
 
 params.GPU=1; 
-params.GPUoptions.TVoption=4; %default 4 for GPU 
+params.TVoption=4;                  %default 4 for GPU (not sure if all options are compatible with CPU) 
 
 

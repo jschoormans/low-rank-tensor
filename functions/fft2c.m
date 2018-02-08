@@ -1,7 +1,7 @@
 
 function res = fft2c(x)
 fctr = size(x,1)*size(x,2);
-res = zeros(size(x));
+% res = zeros(size(x));
 
 % size_x = size(x);
 % x = reshape(x, size_x(1), size_x(2), []);

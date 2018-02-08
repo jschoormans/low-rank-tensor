@@ -72,13 +72,7 @@ if strcmp(params.sparsity_transform,'wavelet')
     Psi=opWavelet2(res1,res2,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
     operatorsize=[96,96]; % not sure - to do
 elseif strcmp(params.sparsity_transform,'TV')
-    if ~params.GPU
-    Psi1=opConvolve(res1,res2,[-1 1],[0 0],'cyclic');
-    Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'cyclic');
-    Psi=[Psi1;Psi2];
-    else  % GPU TV operator 
-    Psi=TV_GPU(res1,res2,params.GPUoptions.TVoption);
-    end
+    Psi=TV_GPU(res1,res2,params.TVoption);
     operatorsize=[res1,res2*2];
 elseif strcmp(params.sparsity_transform,'TVOP')
     Psi=TVOP;
