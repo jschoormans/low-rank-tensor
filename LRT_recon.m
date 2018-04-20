@@ -72,7 +72,7 @@ if strcmp(params.sparsity_transform,'wavelet')
     Psi=opWavelet2(res1,res2,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
     operatorsize=[96,96]; % not sure - to do
 elseif strcmp(params.sparsity_transform,'TV')
-    Psi=TV_GPU(res1,res2,params.TVoption);
+    Psi=TV_GPU(res1,res2,params.TVoption,params.GPUdouble);
     operatorsize=[res1,res2*2];
 elseif strcmp(params.sparsity_transform,'TVOP')
     Psi=TVOP;
@@ -94,7 +94,11 @@ else sens_normalized=sens;
 end
 F=MCFopClass;
 if params.GPU
-    set_MCFop_Params(F,gpuArray(single(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    if params.GPUdouble
+        set_MCFop_Params(F,gpuArray(double(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    else
+        set_MCFop_Params(F,gpuArray(single(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    end
 else
     set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
 end
@@ -102,7 +106,7 @@ end
 %4 zero-filled recon
 
 
-P0=F'*(kspace);             
+P0=F'*(kspace);
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 
 if params.scaleksp
@@ -152,15 +156,25 @@ end
 
 if params.GPU
     % convert all to singles (test)
-    G=single(G);
-    C=single(C);
-    Ak=single(Ak);
-    Bk=single(Bk);
-    Y=single(Y);
-    Z=single(Z);
-    kspace_1=single(kspace_1);
-    Phi=single(Phi);
-    
+    if ~params.GPUdouble
+        G=single(G);
+        C=single(C);
+        Ak=single(Ak);
+        Bk=single(Bk);
+        Y=single(Y);
+        Z=single(Z);
+        kspace_1=single(kspace_1);
+        Phi=single(Phi);
+    else
+        G=double(G);
+        C=double(C);
+        Ak=double(Ak);
+        Bk=double(Bk);
+        Y=double(Y);
+        Z=double(Z);
+        kspace_1=double(kspace_1);
+        Phi=double(Phi);
+    end
     % define GPU Arrays 
     G=gpuArray(G);
     C=gpuArray(C);

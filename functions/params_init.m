@@ -44,4 +44,4 @@ params.normalize_sense=1;           %automatically normalizes sense maps
 params.GPU=1; 
 params.TVoption=4;                  %default 4 for GPU (not sure if all options are compatible with CPU) 
 params.visualization=1;             % make figures; 
-
+params.GPUdouble=0                  %switches single matrices to double (for P-100)                     

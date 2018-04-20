@@ -1,4 +1,4 @@
-function  res = TV_GPU(dim1,dim2,option)
+function  res = TV_GPU(dim1,dim2,option,doubleoption)
 % 2D Total variation operator that works on the GPU 
 
 res.dim1=dim1;
@@ -15,6 +15,7 @@ zx=zeros(1,dim2); zx(1,1)=1;  zx(1,2)=-1;
 zFx=fftn(zx); zFy=fftn(zy);
 res.zFx=zFx; res.zFy=zFy; 
 
+res.doubleoption=doubleoption; %1=double, 0=single 
 
 res = class(res,'TV_GPU');
 

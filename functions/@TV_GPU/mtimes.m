@@ -6,6 +6,7 @@ ncols=size(b,2);
 % further optimization by removing the for loop for pagefun???
 
 % TV*x - where x is a vector of size [res1,res2]
+
 if a.adjoint %TV'*x
     
     if a.option>3 %dont use loop options
@@ -13,8 +14,8 @@ if a.adjoint %TV'*x
         if a.option==4
             rest=reshape(b,[a.dim1,a.dim2,2,ncols]);
             res1=pagefun(@plus,...
-                pagefun(@min,rest(:,:,1,:),gpuShift(rest(:,:,1,:),[0 -1])),...
-                pagefun(@min,rest(:,:,2,:),gpuShift(rest(:,:,2,:),[-1 0])));
+                pagefun(@min,rest(:,:,1,:),gpuShift(rest(:,:,1,:),[0 -1],a.doubleoption)),...
+                pagefun(@min,rest(:,:,2,:),gpuShift(rest(:,:,2,:),[-1 0],a.doubleoption)));
             res=reshape(res1,a.dim1*a.dim2,ncols);
         end
         
@@ -34,7 +35,7 @@ if a.adjoint %TV'*x
                 res(:,coliter)=res1(:);
             elseif a.option==3 %option 3GPU circshift
                 rest=reshape(b(:,coliter),[a.dim1,a.dim2,2]);
-                res1=rest(:,:,1)-gpuShift(rest(:,:,1),[0 -1])+rest(:,:,2)-gpuShift(rest(:,:,2),[-1 0]);
+                res1=rest(:,:,1)-gpuShift(rest(:,:,1),[0 -1],a.doubleoption)+rest(:,:,2)-gpuShift(rest(:,:,2),[-1 0],a.doubleoption);
                 res(:,coliter)=res1(:);
                 
             end
@@ -52,10 +53,10 @@ else  %TV*x
         if a.option>3 %dont use loop options
         
         if a.option==4
-           rest=reshape(b,[a.dim1,a.dim2,ncols]);
+            rest=reshape(b,[a.dim1,a.dim2,ncols]);
             
-            res(:,:,1,:)=pagefun(@min,rest,gpuShift(rest,[0 1]));
-            res(:,:,2,:)=pagefun(@min,rest,gpuShift(rest,[1 0]));
+            res(:,:,1,:)=pagefun(@min,rest,gpuShift(rest,[0 1],a.doubleoption));
+            res(:,:,2,:)=pagefun(@min,rest,gpuShift(rest,[1 0],a.doubleoption));
             res=reshape(res,[a.dim1*a.dim2*2,ncols]);
         end
         else
@@ -84,8 +85,8 @@ else  %TV*x
             res(:,coliter)=[res1(:);res2(:)];
             
         elseif a.option==3 %option 3: gpuShift 
-            res1=rest-gpuShift(rest,[0 1]);
-            res2=rest-gpuShift(rest,[1 0]);
+            res1=rest-gpuShift(rest,[0 1],a.doubleoption);
+            res2=rest-gpuShift(rest,[1 0],a.doubleoption);
             res(:,coliter)=[res1(:);res2(:)];
 
         end
