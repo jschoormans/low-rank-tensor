@@ -93,7 +93,11 @@ if params.normalize_sense %find out how it should be done...
 else sens_normalized=sens;
 end
 F=MCFopClass;
-set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
+if params.GPU
+    set_MCFop_Params(F,gpuArray(single(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+else
+    set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
+end
 
 %4 zero-filled recon
 
@@ -110,6 +114,7 @@ end
 
 kspace_1=reshape(kspace,unfoldedKsize);
 
+if params.visualization==1
 figure(21); subplot(211);   imshow(abs(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('zero filled recon of one frame')
 figure(21); subplot(212);   imshow(angle(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('phase of zero filled recon of one frame')
 figure(22);subplot(311);    immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
@@ -122,6 +127,7 @@ figure(23); subplot(212); cla;hold on; plot(params.eigenvals_1./max(params.eigen
     plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
 title('eigenvalues for the two subspaces (1=red,2-blue)');
 drawnow;
+end;
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 
@@ -137,7 +143,7 @@ params.Lg=params.L3*params.L4;end
 if params.inspectLg; % option to check energies of spatial ranks before choosing rank
     C_energies=sum(abs(C).^2,2);
     C_energies=C_energies./max(C_energies(:));
-    figure(11); plot(C_energies,'ko-');title('rank relative energies for C');
+    if params.visualization;    figure(11); plot(C_energies,'ko-');title('rank relative energies for C'); end
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
     [Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
@@ -145,6 +151,16 @@ end
 
 
 if params.GPU
+    % convert all to singles (test)
+    G=single(G);
+    C=single(C);
+    Ak=single(Ak);
+    Bk=single(Bk);
+    Y=single(Y);
+    Z=single(Z);
+    kspace_1=single(kspace_1);
+    Phi=single(Phi);
+    
     % define GPU Arrays 
     G=gpuArray(G);
     C=gpuArray(C);
@@ -152,8 +168,8 @@ if params.GPU
     Bk=gpuArray(Bk);
     Y=gpuArray(Y);
     Z=gpuArray(Z);
-    kspace_1G=gpuArray(kspace_1);
-    PhiG=gpuArray(Phi);
+    kspace_1=gpuArray(kspace_1);
+    Phi=gpuArray(Phi);
 end
 
 MSE=[]; 
@@ -162,7 +178,8 @@ for iter=1:params.niter
     fprintf('\n=== Outer iteration %i of %i === \n',params.iter,params.niter)
     fprintf('alpha = %4.2f | beta = %4.2f \n',alpha,beta)
 
-    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak);
+    if params.visualization;
+    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak); end
     
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
@@ -176,6 +193,10 @@ for iter=1:params.niter
     if params.increase_penalty_parameters
     alpha=alpha*1.5; beta=beta*1.5; end;   
 end
+
+% after last iteration
+if params.visualization;
+    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak); end
 
 P_recon=G*C*Phi;
 P_recon=reshape(P_recon,imagesize);

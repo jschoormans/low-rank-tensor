@@ -36,16 +36,17 @@ end
 % [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
 
 % init=Psi'*A; % initual guess is based on A_k+1 ... (not explicitly mentioned in paper)
-% init=zeros(size(G)); 
+% init=zeros(size(G),'gpuArray');  %%%TEMPT EMPT EMPTE
 init=G;
 [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],init(:)); %add initial guess
 
 
 Gk=ResA(x);
 
+if params.visualization
 figure(998);subplot(223);
 plot((log10(abs(resvec)./norm(b(:)))),'r*-'); 
-xlabel('iterations'); ylabel('10log of relative residual')
+xlabel('iterations'); ylabel('10log of relative residual'); end
 t=toc; 
 fprintf('t: %4.2f seconds',t)
 fprintf('| relres %d | iters: %i | \n',relres,iter)

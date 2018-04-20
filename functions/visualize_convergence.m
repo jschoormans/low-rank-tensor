@@ -8,12 +8,12 @@
     x_idx = y;
     y_idx = x;
 
-    current_guess=G*C*Phi;
+    current_guess=G*(C*Phi);
     
     
     calc_l_norms(F,Psi,current_guess,kspace_1,sdu,iter)
     
-    run fig9999_spatial_images.m
+    run fig9999_spatial_images.m; 
     
     
     if ~isempty(I); 

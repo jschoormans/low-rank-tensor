@@ -1,9 +1,0 @@
-% recon scan 16 (high res) 
-load('..\benchmark-data.mat')
-% load
-params.GPU=0;
-
-tic()
-P_recon=LRT_recon(kspaceinput(:,1:128,:,:,:),squeeze(sens(:,:,1:128,:)),params);
-
-fprintf('Benchmark - time LRT_recon : %4.2f',toc)

@@ -43,5 +43,7 @@ fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 Bk=thr.*(abs(CZb)-mub).*((CZb)./(abs(CZb)+eps));
 
 title_text = sprintf('s.t. C: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
-figure(998);subplot(222); spy(thr); title(title_text); 
+
+if params.visualization
+figure(998);subplot(222); spy(thr); title(title_text); end
 end

@@ -56,5 +56,7 @@ st=thr.*((l2T-(lambda/alpha))./(l2T+eps)); %soft thresholding
 Ak=repmat(st,[1 size(T,2)]).*T;
 
 title_text = sprintf('s.t. A: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
-figure(998);subplot(221); spy(reshape(thr,[operatorsize])); title(title_text); 
+
+if params.visualization
+figure(998);subplot(221); spy(reshape(thr,[operatorsize])); title(title_text); end
 end
