@@ -32,7 +32,11 @@ unfoldedIsize=[size(kspace,1)*size(kspace,2),size(kspace,4)*size(kspace,5)];    
 unfoldedKsize=[size(kspace,1)*size(kspace,2)*size(kspace,3),size(kspace,4)*size(kspace,5)];     %coils separate
 
 %%
-% FIND MASK
+
+if params.GPU; 
+    kspace=gpuArray(kspace); 
+end
+
 mask=squeeze(kspace(:,:,1,:,:))~=0;
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -90,9 +94,7 @@ if strcmp(params.sparsity_transform,'wavelet')
     Psi=opWavelet2(res1,res2,'Daubechies'); %wavelet operator (uses SPOT toolbox (+ other dependencies maybe?)
     operatorsize=[96,96]; % not sure - to do
 elseif strcmp(params.sparsity_transform,'TV')
-    Psi1=opConvolve(res1,res2,[-1 1],[0 0],'cyclic');
-    Psi2=opConvolve(res1,res2,[-1 1]',[0 0],'cyclic');
-    Psi=[Psi1;Psi2];
+    Psi=TV_GPU(res1,res2,params.TVoption,params.GPUdouble);
     operatorsize=[res1,res2*2];
 elseif strcmp(params.sparsity_transform,'TVOP')
     Psi=TVOP;
@@ -113,13 +115,21 @@ if params.normalize_sense %find out how it should be done...
 else sens_normalized=sens;
 end
 F=MCFopClass;
-% Modified by Bobby 16-01-2018
-% set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
- set_MCFop_Params(F,(sens_normalized),[res1,res2],[size(kspace,4),size(kspace,5)]);
+
+if params.GPU
+    if params.GPUdouble
+        set_MCFop_Params(F,gpuArray(double(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    else
+        set_MCFop_Params(F,gpuArray(single(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    end
+else
+    set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
+end
+
 %4 zero-filled recon
 
 
-P0=F'*(kspace);             
+P0=F'*(kspace);
 P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 
 if params.scaleksp
@@ -131,19 +141,22 @@ end
 
 kspace_1=reshape(kspace,unfoldedKsize);
 
-% line 118 to 128 once indented on 15-11-2017, unindented 30-11-2017
-figure(21); subplot(211); imshow(abs(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('zero filled recon of one frame')
-figure(21); subplot(212);  imshow(angle(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('phase of zero filled recon of one frame')
-figure(22);subplot(311); immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
-figure(22); subplot(312);  immontage4D(squeeze(abs(P0)));
-figure(22); subplot(313); immontage4D(squeeze(angle(P0)),[-pi pi]);
+
+if params.visualization==1
+figure(21); subplot(211);   imshow(abs(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('zero filled recon of one frame')
+figure(21); subplot(212);   imshow(angle(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('phase of zero filled recon of one frame')
+figure(22);subplot(311);    immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
+figure(22); subplot(312);   immontage4D(squeeze(abs(P0)));
+figure(22); subplot(313);   immontage4D(squeeze(angle(P0)),[-pi pi]);
+
 set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
-figure(23); subplot(221); plot(abs(params.nav_estimate_1)); colorbar
-figure(23); subplot(222); plot(abs(params.nav_estimate_2)); colorbar
-figure(23); subplot(212); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
+figure(23); subplot(221); cla;plot(abs(params.nav_estimate_1)); colorbar
+figure(23); subplot(222); cla;plot(abs(params.nav_estimate_2)); colorbar
+figure(23); subplot(212); cla;hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
     plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
 title('eigenvalues for the two subspaces (1=red,2-blue)');
 drawnow;
+end;
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 
@@ -151,31 +164,69 @@ mu=params.mu;
 lambda=params.lambda; 
 
 %initialize matrices
-if params.inspectLg
+if params.inspectLg %give temporary spatial rank (max rank)
 params.Lg=params.L3*params.L4;end
 
-[Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+[Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 
-if params.inspectLg;
+if params.inspectLg; % option to check energies of spatial ranks before choosing rank
     C_energies=sum(abs(C).^2,2);
     C_energies=C_energies./max(C_energies(:));
-    figure(11); plot(C_energies,'ko-');title('rank relative energies for C');
+    if params.visualization;    figure(11); plot(C_energies,'ko-');title('rank relative energies for C'); end
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
-    [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+    [Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 end
 
+
+if params.GPU
+    % convert all to singles (test)
+    if ~params.GPUdouble
+        G=single(G);
+        C=single(C);
+        Ak=single(Ak);
+        Bk=single(Bk);
+        Y=single(Y);
+        Z=single(Z);
+        kspace_1=single(kspace_1);
+        Phi=single(Phi);
+    else
+        G=double(G);
+        C=double(C);
+        Ak=double(Ak);
+        Bk=double(Bk);
+        Y=double(Y);
+        Z=double(Z);
+        kspace_1=double(kspace_1);
+        Phi=double(Phi);
+    end
+    % define GPU Arrays 
+    G=gpuArray(G);
+    C=gpuArray(C);
+    Ak=gpuArray(Ak);
+    Bk=gpuArray(Bk);
+    Y=gpuArray(Y);
+    Z=gpuArray(Z);
+    kspace_1=gpuArray(kspace_1);
+    Phi=gpuArray(Phi);
+end
 
 MSE=[]; 
 for iter=1:params.niter
     params.iter=iter; 
-    fprintf('\n Outer iteration %i of %i \n',params.iter,params.niter)
-    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
+
+    fprintf('\n=== Outer iteration %i of %i === \n',params.iter,params.niter)
+    fprintf('alpha = %4.2f | beta = %4.2f \n',alpha,beta)
+
+    if params.visualization;
+    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak); end
+    
+
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
-    Yk=Y+alpha*(Ak-Psi*Gk);
+    Yk=Y+alpha*(Ak-(Psi*Gk));
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
@@ -183,6 +234,10 @@ for iter=1:params.niter
     if params.increase_penalty_parameters
     alpha=alpha*1.5; beta=beta*1.5; end;   
 end
+
+% after last iteration
+if params.visualization;
+    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak); end
 
 P_recon=G*C*Phi;
 P_recon=reshape(P_recon,imagesize);

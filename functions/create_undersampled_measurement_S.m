@@ -9,6 +9,23 @@ res=128;
 
 %chose simulation m
 switch simulation_typ
+    case 'qMATCH'
+        %>>>>>>>>>>>>>> generate VFA TSE & T2 weighted phantoms<<<<<<<<<<<<<<<<<<<<
+        T1vals=[500 400 300 200 1000 500 400 300 200 1000].*1e-3; % in seconds
+        T2vals=[20 30 40 50 50 55 50 60 70 10].*1e-3; % in seconds
+        
+        T2prep=[20,30,40,50,60,70].*0.001; % in seconds
+        TI=1e-3.*[50:82:2020];
+        
+        I=T2_T1_phantom(res,T2vals,T1vals,T2prep,TI,1,complexsim);
+        
+        if complexsim
+            fprintf('adding 8pi phase gradient over image \n')
+            phase_gradient=exp(-1i*linspace(0,8*pi,res));
+            I=bsxfun(@times,I,phase_gradient);
+        end
+    
+    
     case 'DWI_n_T2W'
         %>>>>>>>>>>>>>>> generate Diffusion & T1 (T2?) weigthed phantoms<<<<<<<<<<<
         ADCvals=[1:5].*1e-3;
@@ -79,55 +96,28 @@ for ii=1:size(I,3)
     Q=[Q;J];
 end
 imshow(abs(Q),[0 1])
-xlabel('Prameter 1')
+xlabel('Parameter 1')
 ylabel('Prameter 2')
 clear Q J 
 %%  add coil sensitivity information 
-[Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils,sens_external);
+[Ic,sens]=addcoilsensitvity_to_simulated(I,ncoils);
 
 %% to k space 
 d=fftshift(fftshift(fft(fft(ifftshift(ifftshift(Ic,2),1),[],1),[],2),1),2)./sqrt(res*res);
 figure(2); imshow(abs(d(:,:,1,1)),[]); axis off; title('k-space')
 
 %% make undersampling mask  (independent of coil dimensions!)
-mask=rand(size(I))>(1-uf); %undersampling
+params = initprofile_params()
+params.undersampling=uf;
 
-% add center for subspace estimae
-ctr=20;
-ctrcoords=floor(res/2)-ctr: floor(res/2)+ctr; 
-ll=length(ctrcoords);
-mask(ctrcoords,ctrcoords,1,:)=ones(ll,ll,1,size(I,4));
-mask(ctrcoords,ctrcoords,:,1)=ones(ll,ll,size(I,3),1);
+params.ky=res; params.kz=res; 
+params.nDim1=size(I,3); params.nDim2=size(I,4); 
+params.bigctrsize=2;
 
-% for all measurements
-if center_for_all_frames
-ctrcoordsall=floor(res/2)-3: floor(res/2)+3; 
-mask(ctrcoordsall,ctrcoordsall,:,:)=ones(7,7,size(I,3),size(I,4));
-end
-
-figure(3); Q=[];
-for ii=1:size(I,3)
-    J=[];
-    for jj=1:size(I,4)
-        J=[J,abs(mask(:,:,ii,jj))];
-    end
-    Q=[Q;J];
-end
-imshow(abs(Q),[0 1]);axis off;  clear Q J 
-
-%>>>>>>>>>>simulate 0 frames of sampling mask<<<<<<<<<<<<
-mask(1:3,:,:,:) = 0;
-mask(end-2:end,:,:,:) = 0;
-mask(:,1:3,:,:) = 0;
-mask(:,end-2:end,:,:) = 0;
-%>>>>>>>>>>>>>>>>end<<<<<<<<<<<<<<<<<<<<<<<<<
-mask=repmat(mask,[1 1 1 1 ncoils]);
-mask=permute(mask,[1 2 5 3 4]);
-
-% mask(:,:,:,1,1) = ones(size(mask(:,:,:,1,1)));
+mask= make_profile_function(params);
+mask=permute(mask,[1 2 5 3 4]); %such that dimensions are ok
 %% make undersampled measurement; 
-du=mask.*d; 
-% clear d 
+du=bsxfun(@times,mask,d); 
 
 %add noise
 if noiselevel>0

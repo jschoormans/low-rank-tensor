@@ -1,4 +1,4 @@
- function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu,x,y)
+ function MSE=visualize_convergence(iter,MSE,G,C,Phi,I,sdu,x,y,kspace_1,F,Psi,Ak)
 % iter: iteration
 % MSE: (first iter use [])
 %I gold standard image
@@ -10,8 +10,13 @@
     x_idx=x;
     y_idx=y;
 
-    current_guess=G*C*Phi;
-    run fig9999_spatial_images.m
+    current_guess=G*(C*Phi);
+    
+    
+    calc_l_norms(F,Psi,current_guess,kspace_1,sdu,iter)
+    
+    run fig9999_spatial_images.m; 
+    
     
     if ~isempty(I); 
 %     MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);
@@ -74,4 +79,35 @@
     title(['DIM4: phase pixel value of x=', num2str(x),' y=',num2str(y)])
 
 drawnow;
-end
+ end
+
+ %===================================
+ 
+ function     calc_l_norms(F,Psi,current_guess,kspace_1,sdu,iter)
+
+     %==== Calculate l2-norm
+    current_guess_k=F*current_guess;
+    idx_nonempty=find(abs(kspace_1)>0);
+    l2norm=sqrt(sum(abs(current_guess_k(idx_nonempty)-kspace_1(idx_nonempty)).^2));
+    
+    %==== Calculate l1-norm
+    l1norm=sum(sum(abs(Psi*current_guess)));
+    
+    fprintf('l2-norm: %4.2f | l1-norm: %4.2f \n',l2norm, l1norm)
+    
+    %=== visualize in figure
+    figure(3000);
+    subplot(221); cla; title('l2 norm - abs'); 
+    plot(abs(current_guess_k(idx_nonempty(1:sdu(1)))),'r'); hold on; plot(abs(kspace_1(idx_nonempty(1:sdu(1)))),'k+');
+    hold off; legend('recon k-line','measured k-line');
+    
+    subplot(222); cla; title('l2 norm - phase'); 
+    plot(angle(current_guess_k(idx_nonempty(1:sdu(1)))),'r'); hold on; plot(angle(kspace_1(idx_nonempty(1:sdu(1)))),'k+');
+    hold off; legend('recon k-line','measured k-line');
+    
+    subplot(223); hold on; plot(iter,l2norm,'k*'); title('l2-norm ');
+    subplot(224); hold on; plot(iter,l1norm,'k*'); title('l1-norm ')
+
+
+ end
+ 

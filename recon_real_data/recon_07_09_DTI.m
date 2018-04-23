@@ -10,11 +10,15 @@ MR=MRecon('lr_07092017_1815258_2_2_wipsc18dtit2prepcsV4.raw')
 =======
     cd('L:\basic\divi\Ima\parrec\Jasper\LRT\Low_Rank_2017_08_15\')
 else
-    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_07/knee']) %data is sorted in yesterday's folder
+    cd(['/home/',getenv('USER'),'/lood_storage/divi/Ima/parrec/Kerry/LRT_Data/2017_09_07/']) %data is sorted in yesterday's folder
 end
 
+<<<<<<< HEAD
+MR=MRecon('lr_07092017_1922006_8_2_wipsc18dtit2prepcsV4.raw')
+=======
 MR=MRecon('lr_07092017_2128474_7_2_wiplrtkneedtit22mmV4.raw')
 >>>>>>> c3ad55bff67914f8d4782fff73d87136110af38d
+>>>>>>> ab2ac7045a9826326118e69dbb1703a0c4c87d41
 %%
 DTI=1;
 
@@ -56,10 +60,14 @@ size(K)
 
 %%
 <<<<<<< HEAD
+kspace=K(66,1:end,1:end,:,:,:,:,:,:,:,:,:);
+=======
+<<<<<<< HEAD
 kspace=K(30,1:end,1:end,:,:,:,:,:,:,:,:,:);
 =======
 kspace=K(50,1:end,1:end,:,:,:,:,:,:,:,:,:);
 >>>>>>> c3ad55bff67914f8d4782fff73d87136110af38d
+>>>>>>> ab2ac7045a9826326118e69dbb1703a0c4c87d41
 %coil compression; 5th dimension must be zeros.
 kspace = permute(bart('cc -p 6',permute(kspace, [1 2 3 4 6 5])),[1 2 3 4 6 5]);
 imshow(squeeze(abs(kspace(1,:,:,1,1))),[0 1e-2])
@@ -72,10 +80,14 @@ kspace=squeeze(kspace);
 
 if DTI
 <<<<<<< HEAD
+    par_dim1 = 9; par_dim2 = 5;
+=======
+<<<<<<< HEAD
     par_dim1 = 9; par_dim2 = 6;
 =======
     par_dim1 = 7; par_dim2 = 5;
 >>>>>>> c3ad55bff67914f8d4782fff73d87136110af38d
+>>>>>>> ab2ac7045a9826326118e69dbb1703a0c4c87d41
     du = zeros(size(kspace,1),size(kspace,2),size(kspace,3),par_dim1,par_dim2);
     du_temp = zeros(size(Ktemp,1),size(Ktemp,2),size(Ktemp,3),size(Ktemp,4),par_dim1,par_dim2);
     for ii = 1:par_dim1
@@ -107,7 +119,7 @@ subplot(313)
 immontage4D(angle(sens),[-pi pi])
 
 %% 3,4, ok, 2 too noisy
-coilnr=[3]
+coilnr=[1]
 sens_onecoil=sens(:,:,:,coilnr);
 kspace_onecoil=kspace(:,:,coilnr,:,:);
 
@@ -131,12 +143,19 @@ params.subspacedim2=1;
 <<<<<<< HEAD
 params.Lg=3;
 =======
+<<<<<<< HEAD
+params.Lg=3;
+=======
 params.Lg=5;
 >>>>>>> c3ad55bff67914f8d4782fff73d87136110af38d
+>>>>>>> ab2ac7045a9826326118e69dbb1703a0c4c87d41
 params.inspectLg=false;
 params.sparsity_transform='TV';
 params.Imref=[];
 params.x=40;
+<<<<<<< HEAD
+params.y=50;
+=======
 <<<<<<< HEAD
 params.y=50;
 
@@ -146,6 +165,7 @@ params.automu=0;
 params.autolambda=0;
 =======
 params.y=40;
+>>>>>>> ab2ac7045a9826326118e69dbb1703a0c4c87d41
 
 params.mu=1e2;
 params.lambda=5e-2;
@@ -201,6 +221,8 @@ if(1)
     
     %%
     %T2 fitting
+<<<<<<< HEAD
+=======
     TEs = [10 20 40 60 80 100];
 <<<<<<< HEAD
     for d =1:DTI_dim
@@ -208,7 +230,9 @@ if(1)
         data = DTI_T2_Data(:,:,d,:);
         [T2_mono_all_allslice(:,:,d), T2_mono_all_rgb_allslice(:,:,:,d), rsquare_mono_all_allslice(:,:,d)] = T2_fitting(data, TEs);
 =======
+>>>>>>> ab2ac7045a9826326118e69dbb1703a0c4c87d41
     TEs = [10 30 50 70 90];
+%     TEs = [10 30 50 70 90];
 
     for d =1:DTI_dim
         d
@@ -265,7 +289,7 @@ if(1)
     figure(63);
     montage(permute(MD,[1 2 4 3]),'displayrange',[]); colormap jet; colorbar; title('MD');
     figure(64);
-    montage(permute(FA,[1 2 4 3]),'displayrange',[0 0.5]);  colorbar; title('FA'); colormap hot;
+    montage(permute(FA,[1 2 4 3]),'displayrange',[0 0.7]);  colorbar; title('FA'); colormap hot;
     figure(65);montage(permute(squeeze(eigvec(:,:,:,:,1)),[1 2 4 3]));  colorbar; title('eigenvector #1');
     figure(66);montage(permute(squeeze(eigvec(:,:,:,:,2)),[1 2 4 3]));  colorbar; title('eigenvector #2');
     figure(67);montage(permute(squeeze(eigvec(:,:,:,:,3)),[1 2 4 3]));  colorbar; title('eigenvector #3');

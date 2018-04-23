@@ -52,6 +52,9 @@ params.automu=0       ;             % automatically estimate mu on s.t. of first
 params.normalize_sense=1;           %automatically normalizes sense maps 
 
 params.hadamard = 0;                % Whether or not to exploit Hadamard sparsity
-params.visualize = 0; % does not work yet in parameter_optimization
 
 params.nullbackground = 0;
+params.GPU=1; 
+params.TVoption=4;                  %default 4 for GPU (not sure if all options are compatible with CPU) 
+params.visualization=1;             % make figures; 
+params.GPUdouble=0                  %switches single matrices to double (for P-100)                     

@@ -14,7 +14,7 @@ function I=VFA_TSE_T2_T1_phantom(N,T2vals,T1vals,T2prep, TEes, ETL, varargin )
 %%
 assert(length(T2vals)==length(T1vals)); %want same number of bvals as T1vals (= number of phantoms)
 
-if nargin>5
+if nargin>
     visualize = varargin{1};
     complexsim=varargin{2};
 else

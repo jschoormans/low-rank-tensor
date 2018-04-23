@@ -26,15 +26,16 @@ Aop = @(C) Res(X(ResA(C)));
 [xpcg,flag,relres,iter,resvecpcg]=cgs(Aop,b,tol,maxiter,[],[],C(:)); %seems fastest
 
 Ck=ResA(xpcg);
-% line 26 to 29 removed for now 15-11-2017, 30-11-2017 added
-if params.visualize == 1;
-    figure(998);subplot(224);
-    plot(log10(resvecpcg./norm(b(:))),'r*-'); 
-    xlabel('iterations'); ylabel('10log of residual')
-    drawnow; 
-end
+
+
+if params.visualization
+figure(998);subplot(224);
+plot(log10(abs(resvecpcg)./norm(b(:))),'r*-'); 
+xlabel('iterations'); ylabel('10log of residual')
+drawnow; end
+
 t=toc; 
-fprintf('t: %i seconds',t)
+fprintf('t: %4.2f seconds',t)
 fprintf('| relres %d | iters: %i | \n',relres,iter)
 
 end

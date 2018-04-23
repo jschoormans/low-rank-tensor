@@ -50,7 +50,7 @@ fprintf('ranks 6 6 4 assumed here! B visualisation removed for now \n')
 % subplot(247);imshow(squeeze(abs(Bkres(:,:,2))),[]);colorbar;title('Second Bk (mag)');
 % subplot(248);imshow(squeeze(angle(Bkres(:,:,2))),[]);colorbar;title('Second Bk (phase)');
 
-if params.visualize == 1;
+if params.visualization == 1;
     title_text = sprintf('s.t. C: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
     figure(998);subplot(222); spy(thr); title(title_text); % removed for now 15-11-2017, added 30-11.
 end

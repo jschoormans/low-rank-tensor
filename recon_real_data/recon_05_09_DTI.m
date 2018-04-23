@@ -6,6 +6,7 @@ else
 end
 
 MR=MRecon('lr_05092017_1805529_6_2_wiplrtkneedtit22mmV4.raw')
+MR=MRecon('lr_05092017_2032554_12_2_wipvfat2prepcstransverseV4.raw')
 %%
 MR.Parameter.DisplayParameterInGroup('EX_MSDE_all_pars')
 % MR.Parameter.DisplayParameterInGroup('EX_T2PREP_all_pars')

@@ -3,16 +3,26 @@ function D= sortArray(MR)
 % sorts based on dynamics, averages and channels... (other things would not be sorted
 % correctly as of now) 
 
+% only use indices of typ 1, and the channels that have been read; kx that have been read; etc... 
 
-ky=MR.Parameter.Labels.Index.ky((MR.Parameter.Labels.Index.typ==1));
-kz=MR.Parameter.Labels.Index.kz(MR.Parameter.Labels.Index.typ==1);
-chan=MR.Parameter.Labels.Index.chan(MR.Parameter.Labels.Index.typ==1);
-param1=MR.Parameter.Labels.Index.dyn(MR.Parameter.Labels.Index.typ==1);
-param2=MR.Parameter.Labels.Index.aver(MR.Parameter.Labels.Index.typ==1);
+idx_typ=find(MR.Parameter.Labels.Index.typ==1);
+idx_chan=find(ismember(MR.Parameter.Labels.Index.chan,MR.Parameter.Parameter2Read.chan));
+idx_ky=find(ismember(MR.Parameter.Labels.Index.ky,MR.Parameter.Parameter2Read.ky));
+idx_kz=find(ismember(MR.Parameter.Labels.Index.kz,MR.Parameter.Parameter2Read.kz));
+idx_aver=find(ismember(MR.Parameter.Labels.Index.aver,MR.Parameter.Parameter2Read.aver));
+idx_dyn=find(ismember(MR.Parameter.Labels.Index.dyn,MR.Parameter.Parameter2Read.dyn));
+idx=intersect(intersect(idx_typ,idx_chan),intersect(intersect(idx_ky,idx_kz),intersect(idx_aver,idx_dyn)));
+
+% find labels values 
+ky=MR.Parameter.Labels.Index.ky(idx);
+kz=MR.Parameter.Labels.Index.kz(idx);
+chan=MR.Parameter.Labels.Index.chan(idx);
+param1=MR.Parameter.Labels.Index.dyn(idx);
+param2=MR.Parameter.Labels.Index.aver(idx);
 
 MRD=MR.Data;
 
-assert(numel(chan)==length(MRD),'subsets of data not yet supported ')
+% assert(numel(chan)==length(MRD),'subsets of data not yet supported ')
 
 
 nkx=size(MR.Data,1);
@@ -51,14 +61,14 @@ for ii=1:numel(chanunique)
 chantransform(chanunique(ii))=ii; %[0,1,2,3,4,]
 end
 
-%input chan number, outputs index of chan in inuqie chan list
+%input param1 number, outputs index of param1 in inuqie param1 list
 p1indextransform=zeros(numel(p1unique),1);
 for ii=1:numel(p1unique)
 p1indextransform(p1unique(ii))=ii; %[0,1,2,3,4,]
 end
 
 
-%input chan number, outputs index of chan in inuqie chan list
+%input param2 number, outputs index of param2 in inuqie param2 list
 p2indextransform=zeros(numel(p2unique),1);
 for ii=1:numel(p2unique)
 p2indextransform(p2unique(ii))=ii; %[0,1,2,3,4,]
@@ -70,7 +80,7 @@ kyindex=ky-minky+1;
 kzindex=kz-minkz+1;
 chanindex= chantransform(chan); % should be able to deal with eg chan=2,3,5,6
 np1index= p1indextransform(param1+1); % TO DO: CHANGE: 
-np2index=p2indextransform(param2+1); 
+np2index=p2indextransform(param2+1);
 
 fprintf('sorting MR.Data \n')
 fprintf('number of unique channels %d \n',nchans)

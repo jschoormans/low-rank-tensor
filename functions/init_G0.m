@@ -11,7 +11,7 @@ Phi=kron(nav_estimate_2,nav_estimate_1).';      %from subspaces Phi= kron(G^4,G^
 
 X=P*Phi'; 
 % [U,S,V] = svds(X,L1);
-[U,S,V] = svd(X); 
+[U,S,V] = svd(X,'econ'); 
 %Added by Bobby 24-01-2018
 eigenvals_initG=diag(S);  %output for evaluation
 figure(1234); hold on; plot(eigenvals_initG./max(eigenvals_initG(:)),'r'); plot(L1,eigenvals_initG(L1)./max(eigenvals_initG(:)),'ro');hold off;

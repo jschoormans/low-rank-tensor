@@ -11,16 +11,16 @@ L=Lambda_hadam(F,C,Phi,samplingmask,params);
 end
 
 % a2PP=(alpha/2)*pinv(Psi)*Psi;
-a2PP=(alpha/2)*Psi'*Psi;
+%a2PP=(alpha/2)*Psi'*Psi;
 
 %input data
 % b=(L'*d + (alpha/2)*pinv(Psi)*(A+Y./alpha));
-b=(L'*d + (alpha/2)*Psi'*(A+Y./alpha));
+b=(L'*d + (alpha/2)*(Psi'*(A+Y./alpha)));
 b=b(:);
 
 
 % try to reshape operator so we have proper matrix, vector calculations
-X= @(G) (L'*((L*G))) +a2PP*G;
+X= @(G) (L'*((L*G))) +(alpha/2)*(Psi'*(Psi*G));
 Res= @(x) reshape(x,[numel(G),1]);
 ResA= @(x) reshape(x,size(G));
 Aop = @(G) Res(X(ResA(G))); 
@@ -40,20 +40,23 @@ else
     mfun=[];
 end
 
-[x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
-% [x,flag,relres,iter,resvec]=cgs(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
-% [x,flag,relres,iter,resvec]=pcg(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
+% [x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],G(:)); %add initial guess
+
+% init=Psi'*A; % initual guess is based on A_k+1 ... (not explicitly mentioned in paper)
+% init=zeros(size(G),'gpuArray');  %%%TEMPT EMPT EMPTE
+init=G;
+[x,flag,relres,iter,resvec]=bicgstab(Aop,b,tol,maxiter,mfun,[],init(:)); %add initial guess
+
 
 Gk=ResA(x);
 
-if params.visualize == 1;
-% line 45 to 47 removed for now 15-11-2017, added 30-11
-    figure(998);subplot(223);
-    plot(log10(resvec./norm(b(:))),'r*-'); 
-    xlabel('half-iterations'); ylabel('10log of relative residual')
-end
+
+if params.visualization
+figure(998);subplot(223);
+plot((log10(abs(resvec)./norm(b(:)))),'r*-'); 
+xlabel('iterations'); ylabel('10log of relative residual'); end
 t=toc; 
-fprintf('t: %i seconds',t)
+fprintf('t: %4.2f seconds',t)
 fprintf('| relres %d | iters: %i | \n',relres,iter)
 
 end

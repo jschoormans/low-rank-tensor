@@ -5,7 +5,7 @@ function [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda_o,Psi,operatorsize,params)
 lambda=lambda_o; 
 
 if params.iter>1 || params.autolambda==0
-    T=Psi*G-Y./alpha;
+    T=(Psi*G)-Y./alpha;
     % l2 norm of T
     l2T=sqrt(sum(abs(T).^2,2));
     thr=(l2T>lambda/alpha);
@@ -27,7 +27,7 @@ else        %first iter and automu -
             fprintf('automu failed \n')
         end
         
-        T=Psi*G-Y./alpha;
+        T=(Psi*G)-Y./alpha;
         l2T=sqrt(sum(abs(T).^2,2));
         thr=(l2T>lambda/alpha);
         
@@ -63,7 +63,7 @@ fprintf('dimension 64 82 and rank 6 assumed here! A visualisation removed for no
 % subplot(243);imshow(squeeze(abs(Akres(:,:,2))),[]);colorbar;title('Second Ak (mag)');
 % subplot(244);imshow(squeeze(angle(Akres(:,:,2))),[]);colorbar;title('Second Ak (phase)');
 
-if params.visualize == 1;
+if params.visualization == 1;
     title_text = sprintf('s.t. A: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
     figure(998);subplot(221); spy(reshape(thr,[operatorsize]));title(title_text); % removed for now 15-11-2017, unindented 30-11-2017
 end
