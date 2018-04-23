@@ -143,8 +143,8 @@ kspace_1=reshape(kspace,unfoldedKsize);
 
 
 if params.visualization==1
-figure(21); subplot(211);   imshow(abs(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('zero filled recon of one frame')
-figure(21); subplot(212);   imshow(angle(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('phase of zero filled recon of one frame')
+figure(21); subplot(211);   imshow(abs(P0(:,:,1,params.columns(1),params.rows(1))),[]); axis off; title('zero filled recon of one frame')
+figure(21); subplot(212);   imshow(angle(P0(:,:,1,params.columns(1),params.rows(1))),[]); axis off; title('phase of zero filled recon of one frame')
 figure(22);subplot(311);    immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
 figure(22); subplot(312);   immontage4D(squeeze(abs(P0)));
 figure(22); subplot(313);   immontage4D(squeeze(angle(P0)),[-pi pi]);

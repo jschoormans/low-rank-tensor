@@ -31,7 +31,7 @@
     figure(999);
     
     subplot(221);
-    imshow(abs(cgr(:,:,1,8,2)),[]);
+    imshow(abs(cgr(:,:,1,4,2)),[]);
     hold on 
     plot(x,y,'r+','MarkerSize',10)
     hold off
@@ -46,7 +46,7 @@
         title('Gold standard')
     else
         subplot(223);
-        imshow(angle(cgr(:,:,1,8,2)),[-pi pi]);
+        imshow(angle(cgr(:,:,1,4,2)),[-pi pi]);
         hold on
         plot(x,y,'r+','MarkerSize',10)
         hold off
@@ -70,10 +70,10 @@
     title(['DIM3: phase pixel value of x=', num2str(x),' y=',num2str(y)])
     
     h2=subplot(326);
-    plot(squeeze(angle(cgr(x_idx,y_idx,1,7,:))),'g')
+    plot(squeeze(angle(cgr(x_idx,y_idx,1,4,:))),'g')
     if ~isempty(I)
         hold on
-        plot(angle(squeeze(I(x_idx,y_idx,7,:))),'--k')
+        plot(angle(squeeze(I(x_idx,y_idx,4,:))),'--k')
         hold off
     end
     title(['DIM4: phase pixel value of x=', num2str(x),' y=',num2str(y)])
