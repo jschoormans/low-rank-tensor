@@ -4,7 +4,12 @@ samplingmask=abs(d)>0;
 tol=params.G.tol;
 maxiter=params.G.maxiter;
 
+if params.hadamard==0
 L=Lambda(F,C,Phi,samplingmask);
+else
+L=Lambda_hadam(F,C,Phi,samplingmask,params);
+end
+
 % a2PP=(alpha/2)*pinv(Psi)*Psi;
 a2PP=(alpha/2)*Psi'*Psi;
 
@@ -41,9 +46,12 @@ end
 
 Gk=ResA(x);
 
-figure(998);subplot(223);
-plot(log10(resvec./norm(b(:))),'r*-'); 
-xlabel('iterations'); ylabel('10log of relative residual')
+if params.visualize == 1;
+% line 45 to 47 removed for now 15-11-2017, added 30-11
+    figure(998);subplot(223);
+    plot(log10(resvec./norm(b(:))),'r*-'); 
+    xlabel('half-iterations'); ylabel('10log of relative residual')
+end
 t=toc; 
 fprintf('t: %i seconds',t)
 fprintf('| relres %d | iters: %i | \n',relres,iter)

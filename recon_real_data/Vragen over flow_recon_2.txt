@@ -1,0 +1,44 @@
+1. Waarom hebben alle indices voor PDACorrection weer waarde 0? Vindt er derhalve
+   geen PDACorrection plaats, en waarom niet? (isequal=1, dus idd gebeurt er niks).
+
+2. Waarom staat er 'remove stupid checkerboard pattern' terwijl hier juist
+   een checkerboard wordt toegevoegd? En Waarom wordt hij toegevoegd?
+   Ik zie dat het meer spiraalvormig wordt.
+
+3. Wat stelt a voor? (line 38).
+
+4. Waarom subspacedim1 = 2 en dim2=8? (zelf uitzoeken wat die ookweer doen)
+   Ik snap wat ze doen! Alleen kan de keuze ervan geen kwaad/verschillende uitkomst geven?
+   Also, waarom staat bij hun definitie: "dimension along which to take f.s. values"?
+   Het geeft toch niet een dimensie aan, maar de index van de dimensie van de variabele
+   die op dat moment níet wordt genavigate.
+   EDIT: Oei, nog steeds een foutmelding. Weet ik wel zeker dat subspacedim1 is wat hij is?
+   EDIT: Het klopt dat er een fout in staat! In de visualisatie moeten de dims andersom!
+
+5. Wat gebeurt er allemaal bij het construeren van die K? Er wordt in x-richting alleen punt 32 gepakt.
+   Gaat dat niet fout als je uiteindelijk in LRT_Recon Kx1 en Kx2 berekent? In LRT wordt juist uitgegaan van x
+   en y i.p.v. y en z.
+
+
+6. Het gaat fout in line 111 van LRT_Recon. Is dat omdat dim1 en dim2 nu respectievelijk
+   op de 4e en 5e plaats staan, terwijl eerder (in lines 48,54) ze andersom stonden?
+      EDIT: Het klopt dat er een fout in staat! In de visualisatie moeten de dims andersom!
+
+na het weer uitzoeken hoe lrt_recon werkt:
+
+7. In subspace_estimator_multicoil staat bij if ndims(kspace)==4, % kx ky nc param
+   en bij ndims==3 % kx ky param. Wat bedoelen jullie met kx ky nc param?
+   Want dat is in ieder geval niet wat er in 'kspace'-array staat, want daar staat
+   1 het aantal lijnen dat gesampled wordt als navigator per coil, 2  het aantal coils
+   en 3 de grootte van de dimensie (bijv. 24 cardiac frames).
+
+8. In LRT_recon en de paper, wat is in godsnaam F, en hoe creëren ze hem? (uit MCFopClass)
+
+9. Het lijkt er dus op dat in de x-richting niet wordt gekeken, maar slechts op één punt (zie line 28 van file flow_recon_2).
+   Is dat wel wat we willen?
+
+10. Het is er na bartrecon niet echt beter op geworden toch?
+
+11. In de plot van figure 1003 moet toch niet bij de assen dim3 en dim4 staan? Dat is toch meer een herschikking van de 24 
+    cardiac frames, waarin de flow in de x-richting wordt laten zien?
+

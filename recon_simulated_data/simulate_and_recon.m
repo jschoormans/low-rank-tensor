@@ -1,3 +1,5 @@
+addpath(genpath('/opt/amc/bart-0.4.01')); vars
+%%
 % recon simulation
 % draft reconstruction code 
 clear all; close all; clc;
@@ -37,7 +39,7 @@ params.G.maxiter = 10;
 % a =d(:,:,:,1,1);
 % sens_est=bart('ecalib -m1 -c0',permute(a,[4 1 2 3]));
 % sens_est=sens_est+1e-7; % no zero vals in sense maps...
-
+% 
 % sens_est = bart('caldir 40',permute(a,[4 1 2 3]));
 sens_est=sens;
 figure(112)

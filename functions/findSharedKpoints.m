@@ -9,4 +9,6 @@ assert(sum(Cdim2(:))>0,'no shared k-space points found for parameter dim 2!')
 
 [Kx1,Ky1]=find(Cdim1);
 [Kx2,Ky2]=find(Cdim2);
+
+
 end

@@ -1,8 +1,7 @@
-function P_recon=LRT_recon(kspace,sens,params)
+function [P_recon,goldstandardscaled,C,G,nav_estimate_1,nav_estimate_2]=LRT_recon_step2(kspace,sens,params)
 % 4D Low-Rank Tensor reconstruction 
 
-% recon is run as: P_recon=LRT_recon(kspace,sens,params)
-% params is a struct- should be made with params_init
+% recon is run as: P_recon=LRT_recon_hadam(kspace,sens)
 
 % inputs:
 % kspace: undersampled kspace with dimensions (x,y,coils,param1,param2)
@@ -21,8 +20,10 @@ fprintf('       Amsterdam 2017      \n \n')
 
 
 %%
-% assert(params.Lg<=params.L3*params.L4,'reduce spatial rank!'); 
-
+assert(params.Lg<=params.L3*params.L4,'reduce spatial rank!'); 
+close all
+sens=sens+1e-4;
+sens=squeeze(sens);
 assert(~xor(isempty(params.nav_estimate_1),isempty(params.nav_estimate_2)),'Input either both or no subspaces!')
 res1=size(kspace,1);
 res2=size(kspace,2);
@@ -34,6 +35,19 @@ unfoldedKsize=[size(kspace,1)*size(kspace,2)*size(kspace,3),size(kspace,4)*size(
 %%
 % FIND MASK
 mask=squeeze(kspace(:,:,1,:,:))~=0;
+
+if params.hadamard == 1;
+% do hadamard of kspace
+
+% we have to use kspace_nav further on because we need a different
+    % quantity below. Todo: use matrixform as operator.
+    kspace_nav(:,:,:,:,1)=kspace(:,:,:,:,1)+kspace(:,:,:,:,2)+kspace(:,:,:,:,3)+kspace(:,:,:,:,4);
+    kspace_nav(:,:,:,:,2)=kspace(:,:,:,:,1)+kspace(:,:,:,:,2)-kspace(:,:,:,:,3)-kspace(:,:,:,:,4);
+    kspace_nav(:,:,:,:,3)=kspace(:,:,:,:,1)-kspace(:,:,:,:,2)+kspace(:,:,:,:,3)-kspace(:,:,:,:,4);
+    kspace_nav(:,:,:,:,4)=kspace(:,:,:,:,1)-kspace(:,:,:,:,2)-kspace(:,:,:,:,3)+kspace(:,:,:,:,4);
+    kspace_nav=0.5*kspace_nav;
+else kspace_nav = kspace;
+end
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 % Changed by Bobby on 18-12-2017 to add columns and rows in navigation.
@@ -47,7 +61,7 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
         
         % 2: estimate subspaces (1): generalized for non-square shared k-points
         for iter=1:length(Kx1)
-            nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,params.columns(column))));
+            nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace_nav(Kx1(iter),Ky1(iter),:,:,params.columns(column))));
     %         if iter == 2000;
     %             break
     %         end
@@ -62,7 +76,7 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
         
          % 2: estimate subspaces (2): generalized for non-square shared k-points
         for iter=1:length(Kx2)
-            nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,params.rows(row),:)));
+            nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace_nav(Kx2(iter),Ky2(iter),:,params.rows(row),:)));
     %         if iter == 2000;
     %             break
     %         end
@@ -100,6 +114,8 @@ elseif strcmp(params.sparsity_transform,'TVOP')
 elseif strcmp(params.sparsity_transform,'I')
     Psi=opEye(res1*res2);
     operatorsize=[res1,res2]; % not sure - to do 
+elseif strcmp(params.sparsity_transform,'HADAM')
+    6
 
 else
     error('sparsity_transform not recognized')
@@ -119,31 +135,50 @@ F=MCFopClass;
 %4 zero-filled recon
 
 
-P0=F'*(kspace);             
-P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
-
+P0=F'*(kspace);   
+fprintf('test even of scaling goed gaat \n')
 if params.scaleksp
     [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
     params.Imref=params.Imref./scaling; %scale ref image with same scaling;
+    goldstandardscaled=params.Imref;
     P0=F'*(kspace);             
-    P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 end 
+fprintf('test nu even hoe de scaling is en of 0.1 goeie keus is. \n')
+if params.nullbackground;
+P0 = (abs(P0)>0.08).*P0;
+kspace = F*(P0);
+end
+
+if params.hadamard == 1; % we have to use P0_2 further on because we need a different
+    % quantity below. Todo: use matrixform as operator.
+    P0_2(:,:,:,:,1)=P0(:,:,:,:,1)+P0(:,:,:,:,2)+P0(:,:,:,:,3)+P0(:,:,:,:,4);
+    P0_2(:,:,:,:,2)=P0(:,:,:,:,1)+P0(:,:,:,:,2)-P0(:,:,:,:,3)-P0(:,:,:,:,4);
+    P0_2(:,:,:,:,3)=P0(:,:,:,:,1)-P0(:,:,:,:,2)+P0(:,:,:,:,3)-P0(:,:,:,:,4);
+    P0_2(:,:,:,:,4)=P0(:,:,:,:,1)-P0(:,:,:,:,2)-P0(:,:,:,:,3)+P0(:,:,:,:,4);
+    P0_2=0.5*P0_2;
+else P0_2 = P0;
+end
+
+
+P1_0=reshape(P0_2,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 
 kspace_1=reshape(kspace,unfoldedKsize);
 
+if params.visualize;
 % line 118 to 128 once indented on 15-11-2017, unindented 30-11-2017
-figure(21); subplot(211); imshow(abs(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('zero filled recon of one frame')
-figure(21); subplot(212);  imshow(angle(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('phase of zero filled recon of one frame')
-figure(22);subplot(311); immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
-figure(22); subplot(312);  immontage4D(squeeze(abs(P0)));
-figure(22); subplot(313); immontage4D(squeeze(angle(P0)),[-pi pi]);
-set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
-figure(23); subplot(221); plot(abs(params.nav_estimate_1)); colorbar
-figure(23); subplot(222); plot(abs(params.nav_estimate_2)); colorbar
-figure(23); subplot(212); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
-    plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
-title('eigenvalues for the two subspaces (1=red,2-blue)');
-drawnow;
+    figure(21); subplot(211); imshow(abs(P0_2(:,:,1,8,2)),[]); axis off; title('zero filled recon of one frame')
+    figure(21); subplot(212);  imshow(angle(P0_2(:,:,1,8,2)),[]); axis off; title('phase of zero filled recon of one frame')
+    figure(22);subplot(311); immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
+    figure(22); subplot(312);  immontage4D(squeeze(abs(P0_2)));
+    figure(22); subplot(313); immontage4D(squeeze(angle(P0_2)),[-pi pi]);
+    set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
+    figure(23); subplot(221); plot(abs(params.nav_estimate_1)); colorbar
+    figure(23); subplot(222); plot(abs(params.nav_estimate_2)); colorbar
+    figure(23); subplot(212); hold on; plot(params.eigenvals_1./max(params.eigenvals_1(:)),'r'); plot(params.L3,params.eigenvals_1(params.L3)./max(params.eigenvals_1(:)),'ro');...
+        plot(params.eigenvals_2./max(params.eigenvals_2(:)),'b');plot(params.L4,params.eigenvals_2(params.L4)./max(params.eigenvals_2(:)),'bo') ;hold off;
+    title('eigenvalues for the two subspaces (1=red,2-blue)');
+    drawnow;
+end
 %% ALGO 
 alpha=params.alpha;
 beta=params.beta; 
@@ -165,12 +200,14 @@ if params.inspectLg;
     [Phi,G,C,A,B,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 end
 
-
+Ak_and_Bks = cell(2,params.niter);
 MSE=[]; 
 for iter=1:params.niter
     params.iter=iter; 
     fprintf('\n Outer iteration %i of %i \n',params.iter,params.niter)
-    MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
+    if params.visualize == 1;
+        MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y);
+    end
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
@@ -180,10 +217,23 @@ for iter=1:params.niter
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
 
+    Ak_and_Bks{1,iter} = Ak;
+    Ak_and_Bks{2,iter} = Bk;
+    
     if params.increase_penalty_parameters
     alpha=alpha*1.5; beta=beta*1.5; end;   
 end
 
 P_recon=G*C*Phi;
 P_recon=reshape(P_recon,imagesize);
+
+P_recon = squeeze(P_recon);
+
+if params.hadamard == 1;
+    % Prepare transform from hadamard to image domain and resort back.
+    psi_hadam = 0.5*[[1,1,1,1];[1,1,-1,-1];[1,-1,1,-1];[1,-1,-1,1]];
+    reshape_p_1 = [size(P_recon,1)*size(P_recon,2)*size(P_recon,3),size(P_recon,4)];
+    P_recon = reshape(((psi_hadam*((reshape(P_recon,reshape_p_1)).')).'),size(P_recon));
+    %
+end
 

@@ -46,7 +46,7 @@ end
 
 
 
-
+ 
 
 fprintf('soft-thresholding A: ')
 fprintf('lambda/alpha: %1.2e  |',(lambda/alpha))
@@ -55,6 +55,16 @@ fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 st=thr.*((l2T-(lambda/alpha))./(l2T+eps)); %soft thresholding
 Ak=repmat(st,[1 size(T,2)]).*T;
 
-title_text = sprintf('s.t. A: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
-figure(998);subplot(221); spy(reshape(thr,[operatorsize])); title(title_text); 
+%visualise Ak this iteration (mag and phase, first two).
+fprintf('dimension 64 82 and rank 6 assumed here! A visualisation removed for now \n')
+% Akres=reshape(Ak,[64 82 6]);
+% figure(12321);subplot(241);imshow(squeeze(abs(Akres(:,:,1))),[]);colorbar;title('First Ak (mag)');
+% subplot(242);imshow(squeeze(angle(Akres(:,:,1))),[]);colorbar;title('First Ak (phase)');
+% subplot(243);imshow(squeeze(abs(Akres(:,:,2))),[]);colorbar;title('Second Ak (mag)');
+% subplot(244);imshow(squeeze(angle(Akres(:,:,2))),[]);colorbar;title('Second Ak (phase)');
+
+if params.visualize == 1;
+    title_text = sprintf('s.t. A: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
+    figure(998);subplot(221); spy(reshape(thr,[operatorsize]));title(title_text); % removed for now 15-11-2017, unindented 30-11-2017
+end
 end

@@ -42,6 +42,16 @@ fprintf('thresholding %1.2f  percent \n',(100*(sum(~thr(:))./numel(thr))))
 
 Bk=thr.*(abs(CZb)-mub).*((CZb)./(abs(CZb)+eps));
 
-title_text = sprintf('s.t. C: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
-figure(998);subplot(222); spy(thr); title(title_text); 
+%visualise Bk this iteration (mag and phase, first two).
+fprintf('ranks 6 6 4 assumed here! B visualisation removed for now \n')
+% Bkres=reshape(Bk,[6 6 4]);
+% figure(12321);subplot(245);imshow(squeeze(abs(Bkres(:,:,1))),[]);colorbar;title('First Bk (mag)');
+% subplot(246);imshow(squeeze(angle(Bkres(:,:,1))),[]);colorbar;title('First Bk (phase)');
+% subplot(247);imshow(squeeze(abs(Bkres(:,:,2))),[]);colorbar;title('Second Bk (mag)');
+% subplot(248);imshow(squeeze(angle(Bkres(:,:,2))),[]);colorbar;title('Second Bk (phase)');
+
+if params.visualize == 1;
+    title_text = sprintf('s.t. C: %d data points thresholded (%1.2f%%).',sum(~thr(:)), (100*(sum(~thr(:))./numel(thr))));
+    figure(998);subplot(222); spy(thr); title(title_text); % removed for now 15-11-2017, added 30-11.
+end
 end

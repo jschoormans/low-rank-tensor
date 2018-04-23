@@ -5,8 +5,10 @@
 % sdu: size of tensor [x y te b]
 % x,y": coordinates of pixel to track
 
-    x_idx = y;
-    y_idx = x;
+%     x_idx = y; % ?
+%     y_idx = x; % ?
+    x_idx=x;
+    y_idx=y;
 
     current_guess=G*C*Phi;
     run fig9999_spatial_images.m
@@ -24,11 +26,11 @@
     figure(999);
     
     subplot(221);
-    imshow(abs(cgr(:,:,1,1,1)),[]);
+    imshow(abs(cgr(:,:,1,8,2)),[]);
     hold on 
     plot(x,y,'r+','MarkerSize',10)
     hold off
-    title('image at current iteration')
+    title('abs image (P) at current iteration')
     
     if ~isempty(I)
         subplot(223);
@@ -39,11 +41,11 @@
         title('Gold standard')
     else
         subplot(223);
-        imshow(angle(cgr(:,:,1,1,1)),[-pi pi]);
+        imshow(angle(cgr(:,:,1,8,2)),[-pi pi]);
         hold on
         plot(x,y,'r+','MarkerSize',10)
         hold off
-        title('image at current iteration (end,end)')
+        title('angle image (P) at current iteration (end,end)')
     end
     
     subplot(322)
@@ -54,22 +56,22 @@
         end
         
     h1=subplot(324);
-    plot(squeeze(abs(cgr(x_idx,y_idx,1,:,1))),'g')
+    plot(squeeze(angle(cgr(x_idx,y_idx,1,:,2))),'g')
     if ~isempty(I)
         hold on
-        plot(abs(squeeze(I(x_idx,y_idx,:,1))),'--k')
+        plot(angle(squeeze(I(x_idx,y_idx,:,2))),'--k')
         hold off
     end
-    title(['DIM3: pixel value of x=', num2str(x),' y=',num2str(y)])
+    title(['DIM3: phase pixel value of x=', num2str(x),' y=',num2str(y)])
     
     h2=subplot(326);
-    plot(squeeze(abs(cgr(x_idx,y_idx,1,1,:))),'g')
+    plot(squeeze(angle(cgr(x_idx,y_idx,1,7,:))),'g')
     if ~isempty(I)
         hold on
-        plot(abs(squeeze(I(x_idx,y_idx,1,:))),'--k')
+        plot(angle(squeeze(I(x_idx,y_idx,7,:))),'--k')
         hold off
     end
-    title(['DIM4: pixel value of x=', num2str(x),' y=',num2str(y)])
+    title(['DIM4: phase pixel value of x=', num2str(x),' y=',num2str(y)])
 
 drawnow;
 end

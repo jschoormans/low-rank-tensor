@@ -10,7 +10,7 @@ end
 figure(9999);
 subplot(211)
 imshow(I1,[])
-title('abs spatial images')
+title('abs spatial images (G I think)')
 
 subplot(212)
 imshow(I2,[-pi pi])
