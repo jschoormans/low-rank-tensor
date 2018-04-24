@@ -114,9 +114,6 @@ elseif strcmp(params.sparsity_transform,'TVOP')
 elseif strcmp(params.sparsity_transform,'I')
     Psi=opEye(res1*res2);
     operatorsize=[res1,res2]; % not sure - to do 
-elseif strcmp(params.sparsity_transform,'HADAM')
-    6
-
 else
     error('sparsity_transform not recognized')
 end

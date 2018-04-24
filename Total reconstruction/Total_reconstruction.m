@@ -17,17 +17,16 @@ clc
 % slice 7. Also check if location of combinecoils matters. Also try to do
 % the way Eva and Lucas do it, uncombining coils after cs and recombining
 % afterwards.
-perform = 1;
-retro_us = 0;
+retro_us = 1;
 noCSorLRT = 0;
 doLRT = 1; % Decides whether LRT and/or CS should be applied. 1 = yes
-doCS = 1;
+doCS = 0;
 writeparrec = 0;
 useperfectsensemaps = 0;
 fixfoldover = 0;
 
 % define folders and files
-RP.name            = '17_04_2018_Flowphantomfully_y128z128c24_lrt_normalsensemaps20_nous_lambdamu0.8483opt_testtransformdomainrolePsi';
+RP.name            = '24_04_2018_Flowphantomfully_y128z128c24_lrt_normalsensemaps20_masky6z6c10_lambdamu0.8483opt_testGPUnohadam';
 % RP.name            =econ_singleScript_hadam '06_02_2018_FlowPhantomFully_from2017_11_28_y64z64c24_3D_hadamardtransform_fullnavigator_withmasky1z1C20_rank6.6.4_2Dslice26';
 % RP.data_dir        = '/home/barunderkamp/lood_storage/divi/Projects/4dflow_lrt/data/Ja_272623';
 RP.data_dir        = '/home/barunderkamp/lood_storage/divi/Projects/4dflow_lrt/data/2017_11_28_FlowPhantomFully';
@@ -89,8 +88,7 @@ mrecon.GridData;
 % % Apply (retrospective) undersampling mask with different mask for each
 % cardiac frame.
 
-% if retro_us;
-if ~perform;
+if retro_us;
 % voeg toe: geen mask doen als fully sampled (perform, dus geen cs of lrt)
 mrecon.Data = permute(mrecon.Data,[2,3,1,4:10]); % This to multiply mask by y-z planes.
 seed = 1;
@@ -302,7 +300,24 @@ sens=bart('ecalib -r 20 -m1 -S -I',permute(a,[4 1 2 3]));
 fprintf('neem wel dezelfde -r calibration region grootte als bij CS!')
 else sens=perfect_sensemaps(:,:,:,:,i);
 end
-[P_recon,goldstandardscaled,C,G1,G2,G3] = LRT_recon_step1(kspace,sens);
+params=params_init(kspace);
+% [P_recon,goldstandardscaled,C,G1,G2,G3] = LRT_recon_step1(kspace,sens);
+[P_recon,goldstandardscaled] = LRT_recon(kspace,sens,params);
+
+% visualization originally from LRT_recon_step1:
+% visualize recon %IS DIFFERENT THAN IN RECON??
+% figure(1000); immontage4D(squeeze(abs(P_recon)),[]); % line 30 to 40 once indented on 15-11-2017
+% figure(1001); immontage4D(squeeze(angle(P_recon)),[-pi pi]);
+% figure(1002); imshow(angle(P_recon(:,:,1,1,1)),[-pi pi]);
+% %
+% cplkdiff=squeeze((P_recon(:,:,:,:,1))./(P_recon(:,:,:,:,4)));
+% 
+%   figure(1003); immontage4D(reshape(angle(cplkdiff),[192 192 6 4]),[-pi/8 pi/8])
+% %   figure(1003); immontage4D(reshape(angle(cplkdiff),[160 160 6 5]),[-pi/8 pi/8])
+% 
+% % cplkdiff=squeeze((P_recon(:,:,:,:,1))./(P_recon(:,:,:,:,4)));
+% %   figure(1003); immontage4D(reshape(angle(cplkdiff),[160 160 6 5]),[-pi/8 pi/8])
+
 
 % stack all slices to 3d dataset
 p = ndims(P_recon)+1;

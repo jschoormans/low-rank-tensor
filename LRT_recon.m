@@ -1,4 +1,4 @@
-function P_recon=LRT_recon(kspace,sens,params)
+function [P_recon,goldstandardscaled]=LRT_recon(kspace,sens,params)
 % 4D Low-Rank Tensor reconstruction 
 
 % recon is run as: P_recon=LRT_recon(kspace,sens,params)
@@ -22,7 +22,10 @@ fprintf('       Amsterdam 2017      \n \n')
 
 %%
 % assert(params.Lg<=params.L3*params.L4,'reduce spatial rank!'); 
-
+close all
+% sens=sens+1e-4; removed to see effect (Jaspers version does not have
+% this step)
+sens=squeeze(sens);
 assert(~xor(isempty(params.nav_estimate_1),isempty(params.nav_estimate_2)),'Input either both or no subspaces!')
 res1=size(kspace,1);
 res2=size(kspace,2);
@@ -39,6 +42,19 @@ end
 
 mask=squeeze(kspace(:,:,1,:,:))~=0;
 
+if params.hadamard == 1;
+% do hadamard of kspace
+
+% we have to use kspace_nav further on because we need a different
+    % quantity below. Todo: use matrixform as operator.
+    kspace_nav(:,:,:,:,1)=kspace(:,:,:,:,1)+kspace(:,:,:,:,2)+kspace(:,:,:,:,3)+kspace(:,:,:,:,4);
+    kspace_nav(:,:,:,:,2)=kspace(:,:,:,:,1)+kspace(:,:,:,:,2)-kspace(:,:,:,:,3)-kspace(:,:,:,:,4);
+    kspace_nav(:,:,:,:,3)=kspace(:,:,:,:,1)-kspace(:,:,:,:,2)+kspace(:,:,:,:,3)-kspace(:,:,:,:,4);
+    kspace_nav(:,:,:,:,4)=kspace(:,:,:,:,1)-kspace(:,:,:,:,2)-kspace(:,:,:,:,3)+kspace(:,:,:,:,4);
+    kspace_nav=0.5*kspace_nav;
+else kspace_nav = kspace;
+end
+
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
 % Changed by Bobby on 18-12-2017 to add columns and rows in navigation.
 if isempty(params.nav_estimate_1)                  % subspace estimation 
@@ -51,7 +67,7 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
         
         % 2: estimate subspaces (1): generalized for non-square shared k-points
         for iter=1:length(Kx1)
-            nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace(Kx1(iter),Ky1(iter),:,:,params.columns(column))));
+            nav_parameter_dim1=cat(1,nav_parameter_dim1,(kspace_nav(Kx1(iter),Ky1(iter),:,:,params.columns(column))));
     %         if iter == 2000;
     %             break
     %         end
@@ -66,7 +82,7 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
         
          % 2: estimate subspaces (2): generalized for non-square shared k-points
         for iter=1:length(Kx2)
-            nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace(Kx2(iter),Ky2(iter),:,params.rows(row),:)));
+            nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace_nav(Kx2(iter),Ky2(iter),:,params.rows(row),:)));
     %         if iter == 2000;
     %             break
     %         end
@@ -102,7 +118,6 @@ elseif strcmp(params.sparsity_transform,'TVOP')
 elseif strcmp(params.sparsity_transform,'I')
     Psi=opEye(res1*res2);
     operatorsize=[res1,res2]; % not sure - to do 
-
 else
     error('sparsity_transform not recognized')
 end
@@ -135,19 +150,37 @@ P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the s
 if params.scaleksp
     [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
     params.Imref=params.Imref./scaling; %scale ref image with same scaling;
+    goldstandardscaled = params.Imref;
     P0=F'*(kspace);             
-    P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 end 
+
+fprintf('test nu even hoe de scaling is en of 0.1 goeie keus is. \n')
+if params.nullbackground;
+P0 = (abs(P0)>0.08).*P0;
+kspace = F*(P0);
+end
+
+if params.hadamard == 1; % we have to use P0_2 further on because we need a different
+    % quantity below. Todo: use matrixform as operator.
+    P0_2(:,:,:,:,1)=P0(:,:,:,:,1)+P0(:,:,:,:,2)+P0(:,:,:,:,3)+P0(:,:,:,:,4);
+    P0_2(:,:,:,:,2)=P0(:,:,:,:,1)+P0(:,:,:,:,2)-P0(:,:,:,:,3)-P0(:,:,:,:,4);
+    P0_2(:,:,:,:,3)=P0(:,:,:,:,1)-P0(:,:,:,:,2)+P0(:,:,:,:,3)-P0(:,:,:,:,4);
+    P0_2(:,:,:,:,4)=P0(:,:,:,:,1)-P0(:,:,:,:,2)-P0(:,:,:,:,3)+P0(:,:,:,:,4);
+    P0_2=0.5*P0_2;
+else P0_2 = P0;
+end
+
+P1_0=reshape(P0_2,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
 
 kspace_1=reshape(kspace,unfoldedKsize);
 
 
 if params.visualization==1
-figure(21); subplot(211);   imshow(abs(P0(:,:,1,params.columns(1),params.rows(1))),[]); axis off; title('zero filled recon of one frame')
-figure(21); subplot(212);   imshow(angle(P0(:,:,1,params.columns(1),params.rows(1))),[]); axis off; title('phase of zero filled recon of one frame')
+figure(21); subplot(211);   imshow(abs(P0_2(:,:,1,params.columns(1),params.rows(1))),[]); axis off; title('zero filled recon of one frame')
+figure(21); subplot(212);   imshow(angle(P0_2(:,:,1,params.columns(1),params.rows(1))),[]); axis off; title('phase of zero filled recon of one frame')
 figure(22);subplot(311);    immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
-figure(22); subplot(312);   immontage4D(squeeze(abs(P0)));
-figure(22); subplot(313);   immontage4D(squeeze(angle(P0)),[-pi pi]);
+figure(22); subplot(312);   immontage4D(squeeze(abs(P0_2)));
+figure(22); subplot(313);   immontage4D(squeeze(angle(P0_2)),[-pi pi]);
 
 set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
 figure(23); subplot(221); cla;plot(abs(params.nav_estimate_1)); colorbar
@@ -241,4 +274,13 @@ if params.visualization;
 
 P_recon=G*C*Phi;
 P_recon=reshape(P_recon,imagesize);
+P_recon = squeeze(P_recon);
+
+if params.hadamard == 1;
+    % Prepare transform from hadamard to image domain and resort back.
+    psi_hadam = 0.5*[[1,1,1,1];[1,1,-1,-1];[1,-1,1,-1];[1,-1,-1,1]];
+    reshape_p_1 = [size(P_recon,1)*size(P_recon,2)*size(P_recon,3),size(P_recon,4)];
+    P_recon = reshape(((psi_hadam*((reshape(P_recon,reshape_p_1)).')).'),size(P_recon));
+    %
+end
 

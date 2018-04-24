@@ -3,7 +3,7 @@ function params= params_init(kspace)
 % possible to change these before running recon
 
 params.sizes.kspace = size(kspace);
-vel_enc_directions = 1;
+vel_enc_directions = 4;
 
 params.inspectLg=false;              % option to dynamically choose spatial rank based on first guess of C
 params.increase_penalty_parameters=true; %option to increase alpha and beta inside the loop
@@ -57,4 +57,4 @@ params.nullbackground = 0;
 params.GPU=1; 
 params.TVoption=4;                  %default 4 for GPU (not sure if all options are compatible with CPU) 
 params.visualization=1;             % make figures; 
-params.GPUdouble=0                  %switches single matrices to double (for P-100)                     
+params.GPUdouble=1;                 %switches single matrices to double (for P-100)                     
