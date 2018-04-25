@@ -52,7 +52,7 @@ params.automu=0       ;             % automatically estimate mu on s.t. of first
 params.normalize_sense=1;           %automatically normalizes sense maps 
 
 params.hadamard = 0;                % Whether or not to exploit Hadamard sparsity
-
+params.indepvenccols = 1;           % If you change this, also change in beginning 'Total_reconstruction'
 params.nullbackground = 0;
 params.GPU=1; 
 params.TVoption=4;                  %default 4 for GPU (not sure if all options are compatible with CPU) 

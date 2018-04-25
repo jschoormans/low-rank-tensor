@@ -25,7 +25,6 @@ fprintf('       Amsterdam 2017      \n \n')
 close all
 % sens=sens+1e-4; removed to see effect (Jaspers version does not have
 % this step)
-sens=squeeze(sens);
 assert(~xor(isempty(params.nav_estimate_1),isempty(params.nav_estimate_2)),'Input either both or no subspaces!')
 res1=size(kspace,1);
 res2=size(kspace,2);
@@ -74,22 +73,26 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
         end
     end
     [nav_estimate_1,params.eigenvals_1]= subspace_estimator_multicoil(squeeze(nav_parameter_dim1),params.L3);
-    
+    params.nav_estimate_1=nav_estimate_1;
+    params.params.eigenvals_1=params.eigenvals_1;
     %add rows here
-    for row = 1:size(params.rows,2);
-        [Kx2,Ky2]=findSharedKpoints_param2(mask,params.rows(row));
-        fprintf('# of shared ky-kz points of dim 2: %i \n',numel(Kx2))
-        
-         % 2: estimate subspaces (2): generalized for non-square shared k-points
-        for iter=1:length(Kx2)
-            nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace_nav(Kx2(iter),Ky2(iter),:,params.rows(row),:)));
-    %         if iter == 2000;
-    %             break
-    %         end
+    if ~params.indepvenccols;
+        for row = 1:size(params.rows,2);
+            [Kx2,Ky2]=findSharedKpoints_param2(mask,params.rows(row));
+            fprintf('# of shared ky-kz points of dim 2: %i \n',numel(Kx2))
+
+             % 2: estimate subspaces (2): generalized for non-square shared k-points
+            for iter=1:length(Kx2)
+                nav_parameter_dim2=cat(1,nav_parameter_dim2,(kspace_nav(Kx2(iter),Ky2(iter),:,params.rows(row),:)));
+        %         if iter == 2000;
+        %             break
+        %         end
+            end
         end
-    end
     [nav_estimate_2,params.eigenvals_2]= subspace_estimator_multicoil2(squeeze(nav_parameter_dim2),params.L4);
-    
+    params.nav_estimate_2=nav_estimate_2;
+    params.params.eigenvals_2=params.eigenvals_2;
+    end
     %Added by Bobby 16-01-2018 to test with subspace from 'tucker'
 %     nav_estimate_1 = [];
 %     nav_estimate_2 = [];
@@ -97,10 +100,6 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
 %     nav_estimate_1 = facmats.facmats{3};
 %     nav_estimate_2 = facmats.facmats{4};
     
-    params.nav_estimate_1=nav_estimate_1;
-    params.nav_estimate_2=nav_estimate_2;
-    params.params.eigenvals_1=params.eigenvals_1;
-    params.params.eigenvals_2=params.eigenvals_2;
 else
         fprintf('Subspaces user-defined...\n')
 end
@@ -145,8 +144,6 @@ end
 
 
 P0=F'*(kspace);
-P1_0=reshape(P0,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
-
 if params.scaleksp
     [kspace,scaling]= scaleksp(kspace,P0); % scale kspace to ensure consistency over params;
     params.Imref=params.Imref./scaling; %scale ref image with same scaling;
@@ -171,7 +168,6 @@ else P0_2 = P0;
 end
 
 P1_0=reshape(P0_2,unfoldedIsize); %1-unfolding of zero filled recon (what is the shape of this matrix?)
-
 kspace_1=reshape(kspace,unfoldedKsize);
 
 
@@ -200,7 +196,7 @@ lambda=params.lambda;
 if params.inspectLg %give temporary spatial rank (max rank)
 params.Lg=params.L3*params.L4;end
 
-[Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+[Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params);  
 
 if params.inspectLg; % option to check energies of spatial ranks before choosing rank
     C_energies=sum(abs(C).^2,2);
@@ -208,7 +204,7 @@ if params.inspectLg; % option to check energies of spatial ranks before choosing
     if params.visualization;    figure(11); plot(C_energies,'ko-');title('rank relative energies for C'); end
     fprintf('relE %f: \n',C_energies)
     params.Lg=input('Choose spatial rank: ');
-    [Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
+    [Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params);  
 end
 
 

@@ -24,6 +24,7 @@ doCS = 0;
 writeparrec = 0;
 useperfectsensemaps = 0;
 fixfoldover = 0;
+indepvenccolslrt = 1; % if you change this, also change in params_init
 
 % define folders and files
 RP.name            = '24_04_2018_Flowphantomfully_y128z128c24_lrt_normalsensemaps20_masky6z6c10_lambdamu0.8483opt_testGPUnohadam';
@@ -120,14 +121,8 @@ mrecon.DivideFlowSegments; % after thorough search, found out this has to preced
 mrecon.CombineCoils; % in CS done by BART
 % tmp = bsxfun(@times,create_checkerboard([1,size(tmp,2),size(tmp,3)]),tmp); % apply checkerboard 
 
-
-
-
-
 % mrecon.EPIPhaseCorrection ook erbij??
 %TEMPORARY
-
-
 
 % mrecon.CombineCoils; % in CS done by BART
 mrecon.RemoveOversampling;
@@ -266,74 +261,54 @@ if doLRT
 %     for i = [1:size(tmp,1)] % Loop over all 2D-slices;
     for i = [26];
         close all
-%     K=tmpforLRT(i,:,:,:,:,:,:,:,:,:,:,:);
-    K=tmp(i,:,:,:,:,:,:,:,:,:,:,:);
-    
-    % oke dit werkt niet voor LRT, want dan wordt de mask verspreid tot
-    % alle punten.
-    fprintf('shift werkt niet voor LRT want mask wordt verspreid tot alle punten')
-% K_cs=fft(((fft((circshift((sqrt(size(K_cs,3)).*(ifft((sqrt(size(K_cs,2)).*(ifft(K_cs,[],2))),[],3))),[0,-1,-1])),[],2))./sqrt(size(K_cs,2))),[],3)./sqrt(size(K_cs,3));
-
-    
-% remove stupid checkerboard pattern
-% che=create_checkerboard([160,160,1]);
-che=create_checkerboard([1,size(K,2),size(K,3)]); % 
-
-K=bsxfun(@times,K,che);
-
-% % apply coil compresseion to 8 coils
-% % usage: cc [-p d] [-M] [-r ...] [-A] [-S ...] [-G ...] [-E ...] <kspace> <coeff>|<proj_kspace>
-% cmdcc = 'cc -p 8 -E';        
-% [T,K] = evalc('bart(cmdcc,K)');
-
-% EVA'S WAY (AS IN CS):
-% % estimate sensitivity maps
-% % usage: ecalib [-t f] [-c f] [-k ...] [-r ...] [-m d] [-S] [-W] [-I] [-1] [-v f] [-a] or: caldir [cal_size]  
-% cmdsens = 'ecalib -r20 -m1 -S -I';
-% [T,sensemapforLRT] = evalc('bart(cmdsens, sum(K(:,:,:,:,1,:,1,1,1,1),6)./sum(K(:,:,:,:,1,:,1,1,1,1)~=0,6) )');
-
-%ORIGINAL WAY (AS IN FLOW_RECON_2):
-kspace = squeeze(K);
-if ~useperfectsensemaps;
-a = sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
-sens=bart('ecalib -r 20 -m1 -S -I',permute(a,[4 1 2 3]));
-fprintf('neem wel dezelfde -r calibration region grootte als bij CS!')
-else sens=perfect_sensemaps(:,:,:,:,i);
-end
-params=params_init(kspace);
-% [P_recon,goldstandardscaled,C,G1,G2,G3] = LRT_recon_step1(kspace,sens);
-[P_recon,goldstandardscaled] = LRT_recon(kspace,sens,params);
-
-% visualization originally from LRT_recon_step1:
-% visualize recon %IS DIFFERENT THAN IN RECON??
-% figure(1000); immontage4D(squeeze(abs(P_recon)),[]); % line 30 to 40 once indented on 15-11-2017
-% figure(1001); immontage4D(squeeze(angle(P_recon)),[-pi pi]);
-% figure(1002); imshow(angle(P_recon(:,:,1,1,1)),[-pi pi]);
-% %
-% cplkdiff=squeeze((P_recon(:,:,:,:,1))./(P_recon(:,:,:,:,4)));
-% 
-%   figure(1003); immontage4D(reshape(angle(cplkdiff),[192 192 6 4]),[-pi/8 pi/8])
-% %   figure(1003); immontage4D(reshape(angle(cplkdiff),[160 160 6 5]),[-pi/8 pi/8])
-% 
-% % cplkdiff=squeeze((P_recon(:,:,:,:,1))./(P_recon(:,:,:,:,4)));
-% %   figure(1003); immontage4D(reshape(angle(cplkdiff),[160 160 6 5]),[-pi/8 pi/8])
-
-
-% stack all slices to 3d dataset
-p = ndims(P_recon)+1;
-
-if i == 26
-% if i == 1
-    P_reconstack = P_recon;
-else
-    P_reconstack = cat(p,P_reconstack,P_recon);
-end
-%
+        for vencdir = [1:4];
+            if ~indepvenccolslrt;
+                if vencdir ~= 4;
+                    continue
+                end
+            K=tmp(i,:,:,:,:,:,:,:,:,:,:,:);
+            else
+            L = tmp(:,:,:,:,:,:,:,:,:,vencdir);
+            K = L(i,:,:,:,:,:);
+            end
+            che=create_checkerboard([1,size(K,2),size(K,3)]); % 
+            K=bsxfun(@times,K,che);
+            %ORIGINAL WAY (AS IN FLOW_RECON_2):
+            kspace = squeeze(K);          
+            if ~useperfectsensemaps;
+                % For independent velocity encoding directions, dimension 5
+                % has size 1. So the extra sum is unnecessary, but this
+                % expression works anyhow.
+            a = sum(sum(kspace,4),5)./sum(sum(kspace~=0,4),5);
+            sens=bart('ecalib -r 20 -m1 -S -I',permute(a,[4 1 2 3]));
+            fprintf('neem wel dezelfde -r calibration region grootte als bij CS!')
+            % Option to use perfect (gold standard) sense maps, but gave
+            % bad results last time. Don't use.
+            else sens=perfect_sensemaps(:,:,:,:,i);
+            end
+            params=params_init(kspace);
+            [P_recon,goldstandardscaled] = LRT_recon(kspace,squeeze(sens),params);
+            P_recon = squeeze(P_recon);
+            if indepvenccolslrt;
+                l = ndims(P_recon)+1;
+                if vencdir==1;
+                    rowstack = P_recon;
+                else
+                    rowstack = cat(l,rowstack,P_recon);
+                end
+            else
+                rowstack = P_recon;
+            end
+        end
+        p = ndims(rowstack)+1;
+        if i == 1
+            P_reconstack = rowstack;
+        else
+            P_reconstack = cat(p,P_reconstack,rowstack);
+        end
     end
     % Permute x-stacks to traditional 1st index
-
     P_reconstack = permute(P_reconstack, [p,1:p-1]);
-    %
 
     % save P_reconstack (after doing complex division) Fix this. -> fixed?
     
