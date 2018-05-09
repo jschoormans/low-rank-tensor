@@ -19,7 +19,7 @@ Aop = @(C) Res(X(ResA(C)));
 % [x2,flag,relres,iter,resvec2]=bicgstab(Aop,b,tol,maxiter);
 % [x2,flag,relres,iter,resvec2]=pcg(Aop,b,tol,maxiter);
 % [x2,flag,relres,iter,resvec2]=cgs(Aop,b,tol,maxiter); %seems fastest
-[xpcg,flag,relres,iter,resvecpcg]=cgs(Aop,b,tol,maxiter,[],[],C(:)); %seems fastest
+[xpcg,flag,relres,iter,resvecpcg]=cgs(Aop,b,tol,maxiter,[],[],[]); %seems fastest
 
 Ck=ResA(xpcg);
 

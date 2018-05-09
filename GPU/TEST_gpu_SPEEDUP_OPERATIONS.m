@@ -97,7 +97,7 @@ tGPU0(ncoils)=toc
 
 tic
 
-TVyGPU2=pagefun(@min,B,gpuShift(B,[1 0]));
+TVyGPU2=pagefun(@min,B,gpuShift(B,[1 0])); %%% @MIN IS WRONG!!!
 
 tGPU2(ncoils)=toc
 

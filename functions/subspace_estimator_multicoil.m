@@ -19,13 +19,21 @@ elseif ndims(kspace)==2 %assume kx*ky*nx, param (already Casorati matrix)
     S=kspace; 
 end  
     
+
+S=S.'; %transpose matrix
+
 % calculate singular value decomposition
-[left_1,eigen_1,right_1]=svd(S.','econ');
+[left_1,eigen_1,right_1]=svd(S,'econ');
 eigenvals=diag(eigen_1);  %output for evaluation
 
 %navigator estimate are first L left singular vectors
 nav_estimate=left_1(:,1:L);
 
+if 0 %temp try eigen value decomp instead
+    [E1,E2]=eig(S*S');
+    eigenvals=abs(diag(gather(E2)));
+    nav_estimate=E1(:,1:L);
+end
 
 
 end

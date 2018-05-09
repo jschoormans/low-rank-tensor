@@ -4,7 +4,7 @@ G=a.G;
 Phi=a.Phi;
 
 if a.adjoint %L'(d) ===> C
-    res=G'*((F'*(b))*Phi'); % not totally sure about this operator.
+    res=pinv(G)*((F'*(b))*Phi'); % not totally sure about this operator. - changed 9-5-2018
 else %L*C= F G C Phi
     res = F*(G*b*Phi);
     res=res.*a.mask;

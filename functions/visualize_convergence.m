@@ -9,8 +9,6 @@
     y_idx = x;
 
     current_guess=G*(C*Phi);
-    
-    
     calc_l_norms(F,Psi,current_guess,kspace_1,sdu,iter)
     
     run fig9999_spatial_images.m; 
@@ -104,7 +102,7 @@ drawnow;
     hold off; legend('recon k-line','measured k-line');
     
     subplot(223); hold on; plot(iter,l2norm,'k*'); title('l2-norm ');
-    subplot(224); hold on; plot(iter,l1norm,'k*'); title('l1-norm ')
+    subplot(224); hold on; plot(iter,sum(l1norm(:)),'k*'); title('l1-norm ')
 
 
  end

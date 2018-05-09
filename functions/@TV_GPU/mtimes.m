@@ -14,8 +14,8 @@ if a.adjoint %TV'*x
         if a.option==4
             rest=reshape(b,[a.dim1,a.dim2,2,ncols]);
             res1=pagefun(@plus,...
-                pagefun(@min,rest(:,:,1,:),gpuShift(rest(:,:,1,:),[0 -1],a.doubleoption)),...
-                pagefun(@min,rest(:,:,2,:),gpuShift(rest(:,:,2,:),[-1 0],a.doubleoption)));
+                pagefun(@minus,rest(:,:,1,:),gpuShift(rest(:,:,1,:),[0 -1],a.doubleoption)),...
+                pagefun(@minus,rest(:,:,2,:),gpuShift(rest(:,:,2,:),[-1 0],a.doubleoption)));
             res=reshape(res1,a.dim1*a.dim2,ncols);
         end
         
@@ -55,8 +55,8 @@ else  %TV*x
         if a.option==4
             rest=reshape(b,[a.dim1,a.dim2,ncols]);
             
-            res(:,:,1,:)=pagefun(@min,rest,gpuShift(rest,[0 1],a.doubleoption));
-            res(:,:,2,:)=pagefun(@min,rest,gpuShift(rest,[1 0],a.doubleoption));
+            res(:,:,1,:)=pagefun(@minus,rest,gpuShift(rest,[0 1],a.doubleoption));
+            res(:,:,2,:)=pagefun(@minus,rest,gpuShift(rest,[1 0],a.doubleoption));
             res=reshape(res,[a.dim1*a.dim2*2,ncols]);
         end
         else
