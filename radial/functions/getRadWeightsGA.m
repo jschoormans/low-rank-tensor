@@ -17,7 +17,7 @@ wmax=nx*(pi/2)./nspokes;
 wvec=abs(2*(0:nx-1)/nx-1);
 
 wmat(:,:,ii)=wvec'*wmean*wmax*nspokes;
-wmat(nx/2+1,:,ii)=ones(1,nspokes).*(pi/(4*nspokes));
+wmat(round(nx/2+1),:,ii)=ones(1,nspokes).*(pi/(4*nspokes));
 wmatf(:,anglesindex,ii)=wmat(:,:,ii);
 end
 end

@@ -1,4 +1,4 @@
-function [P_recon,params]=LRT_recon_radial(kspace,sens,params,F)
+function [P_recon,params]=LRT_recon_test(kspace,sens,params)
 % 4D Low-Rank Tensor reconstruction 
 
 % recon is run as: P_recon=LRT_recon(kspace,sens,params)
@@ -23,16 +23,12 @@ fprintf('       Amsterdam 2017      \n \n')
 %%
 assert(params.Lg<=params.L3*params.L4,'reduce spatial rank!'); 
 assert(~xor(isempty(params.nav_estimate_1),isempty(params.nav_estimate_2)),'Input either both or no subspaces!')
-res1=params.nx;;
-res2=params.nx;
-res3=1;
-dim1=size(kspace,3)
-dim2=size(kspace,4)
-nch=size(kspace,2);
+res1=size(kspace,1);
+res2=size(kspace,2);
 tensorsize=size(kspace);
-imagesize=[res1,res2,res3,dim1,dim2]
-unfoldedIsize=[res1*res2*res3,dim1*dim2];                %coil combined
-unfoldedKsize=[size(kspace,1),dim1*dim2];     %coils separate
+imagesize=tensorsize; imagesize(3)=1; 
+unfoldedIsize=[size(kspace,1)*size(kspace,2),size(kspace,4)*size(kspace,5)];                %coil combined
+unfoldedKsize=[size(kspace,1)*size(kspace,2)*size(kspace,3),size(kspace,4)*size(kspace,5)];     %coils separate
 
 %%
 
@@ -40,7 +36,6 @@ if params.GPU;
     kspace=gpuArray(kspace); 
 end
 
-%{
 mask=squeeze(kspace(:,:,1,:,:))~=0;
 
 % >>>>>>>>>>>>>>>>>>>>RECON FROM HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -71,7 +66,6 @@ if isempty(params.nav_estimate_1)                  % subspace estimation
 else
         fprintf('Subspaces user-defined...\n')
 end
-%}
 
 % 3: initialize other operators
 if strcmp(params.sparsity_transform,'wavelet')
@@ -98,8 +92,16 @@ if params.normalize_sense %find out how it should be done...
     sens_normalized(find(isnan(sens_normalized))) = 0;
 else sens_normalized=sens;
 end
-
-
+F=MCFopClass;
+if params.GPU
+    if params.GPUdouble
+        set_MCFop_Params(F,gpuArray(double(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    else
+        set_MCFop_Params(F,gpuArray(single(sens_normalized)),[res1,res2],[tensorsize(4),tensorsize(5)]);
+    end
+else
+    set_MCFop_Params(F,(sens_normalized),[res1,res2],[tensorsize(4),tensorsize(5)]);
+end
 
 %4 zero-filled recon
 
@@ -119,7 +121,7 @@ kspace_1=reshape(kspace,unfoldedKsize);
 if params.visualization==1
 figure(21); subplot(211);   imshow(abs(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('zero filled recon of one frame')
 figure(21); subplot(212);   imshow(angle(P0(:,:,1,params.subspacedim2,params.subspacedim1)),[]); axis off; title('phase of zero filled recon of one frame')
-% figure(22);subplot(311);    immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
+figure(22);subplot(311);    immontage4D(mask,[0 1]); xlabel('Parameter 1'); ylabel('Parameter 2');
 figure(22); subplot(312);   immontage4D(squeeze(abs(P0)));
 figure(22); subplot(313);   immontage4D(squeeze(angle(P0)),[-pi pi]);
 set(0,'DefaultAxesColorOrder',jet(max([size(params.nav_estimate_1,2), size(params.nav_estimate_2,2)]))); 
@@ -150,7 +152,6 @@ if params.inspectLg; % option to check energies of spatial ranks before choosing
     params.Lg=input('Choose spatial rank: ');
     [Phi,G,C,Ak,Bk,Y,Z]= init_G0(P1_0,Psi,params.nav_estimate_1,params.nav_estimate_2,params.Lg);  
 end
-
 
 if params.GPU
     % convert all to singles (test)
@@ -197,12 +198,7 @@ for iter=1:params.niter
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
     Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
-
-%     a_relax=1.5;
-%     Gk=a_relax*(Psi*Gk) - (1 - a_relax)*Y; Gk=Psi'*Gk; %relaxation experiment
-%     Ck=a_relax*Ck - (1 - a_relax)*Z; %relaxation experiment
-
-    Yk=Y+alpha*(Ak-(Psi*Gk));
+    Yk=Y+alpha*((Psi*Gk)-Ak);
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration

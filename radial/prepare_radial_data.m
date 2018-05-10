@@ -34,7 +34,7 @@ I=DCE_cardiac_phantom(res,nframes,period);
 % instead of 'binnned timebins'--> more exact
 I_sorted=reshape(I,[res res 1 1 period nframes/period]);
 %% kspace trajectory
-spokesperframe=23; 
+spokesperframe=11; 
 traj=bart(['traj -x',num2str(res),' -y',num2str(nframes*spokesperframe),' -r -G']);
 
 traj_sorted=permute(traj,[1 2 3]); 
