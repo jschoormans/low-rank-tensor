@@ -196,9 +196,9 @@ for iter=1:params.niter
     
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
-    Gk=precon_conj_grad_G(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
-    Ck=precon_conj_grad_C(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
-    Yk=Y+alpha*((Psi*Gk)-Ak);
+    Gk=conj_grad_G_new(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
+    Ck=conj_grad_C_new(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
+    Yk=Y+alpha*(Ak-(Psi*Gk));
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration

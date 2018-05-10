@@ -8,7 +8,7 @@ L=Lambda(F,C,Phi,samplingmask);
 
 %input data
 % b=(L'*d + (alpha/2)*pinv(Psi)*(A+Y./alpha));
-b=(L'*d + (alpha/2)*(Psi'*(A+Y./alpha)));
+b=(L'*d + (alpha/2)*(Psi'*(A-Y./alpha)));
 b=b(:);
 
 
