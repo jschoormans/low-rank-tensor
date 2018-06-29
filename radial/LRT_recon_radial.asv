@@ -195,8 +195,8 @@ for iter=1:params.niter
     
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
-    Gk=conj_grad_G_new(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
-    Ck=conj_grad_C_new(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
+    Gk=precon_conj_grad_G_new(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
+    Ck=precon_conj_grad_C_new(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
 
 %     a_relax=1.5;
 %     Gk=a_relax*(Psi*Gk) - (1 - a_relax)*Y; Gk=Psi'*Gk; %relaxation experiment

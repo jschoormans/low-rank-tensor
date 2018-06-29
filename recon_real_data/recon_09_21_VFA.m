@@ -66,7 +66,8 @@ params.G.maxiter=20
 params.niter=20;
 
 coil=2
-P_recon=LRT_recon(kspace(:,:,:,:,:),squeeze(sens(:,:,:,:)),params);
+P_recon=LRT_recon_test(kspace(:,:,:,:,:),squeeze(sens(:,:,:,:)),params);
+
 % visualize recon
 figure(1000); immontage4D(squeeze(abs(P_recon)),[]);
 %%
@@ -109,11 +110,11 @@ title('echo dimension')
 ylabel('intensity'); xlabel('echo number')
 
 %% T2 FITTING 
-T2PREP_data=((P_recon(:,:,1,:,1)));
+T2PREP_data=gather((P_recon(:,:,1,:,1)));
 size(T2PREP_data)
 T2PREP=[70:-10:30];
 [T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(T2PREP_data, T2PREP,0.02)
 
-figure(3000); imshow(T2_mono_all_allslice,[10 120]); colormap parula 
+figure(3000);clf; imshow(T2_mono_all_allslice,[10 120]); colormap parula 
 colorbar; title('T2 map LRT')
 figure(3001); hist(T2_mono_all_allslice((T2_mono_all_allslice>0)),200); title('T2 values')

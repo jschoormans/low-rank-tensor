@@ -20,6 +20,7 @@ ResA= @(x) reshape(x,size(A));
 b=[col(d(:));col(sqrt(alpha/2)*(A+Y./alpha))];
 init=col(G);;
 
+
 [x,flag,relres,iter,resvec]=lsqr(@afun2,b,tol,maxiter,[],[],init); %add initial guess
     function y= afun2(x,transp_flag)
         if strcmp(transp_flag,'notransp')

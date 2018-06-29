@@ -48,7 +48,7 @@ immontage4D(permute(angle(squeeze(sens_est)./sens), [4 1 2 3]),[-pi pi]); title(
 %% 
 close all;
 params=params_init();
-params.Lg=5;
+params.Lg=15;
 params.L3=5;
 params.L4=4;
 params.sparsity_transform='TV';
@@ -60,15 +60,19 @@ params.inspectLg=false;
 params.subspacedim1=1;
 params.subspacedim2=1; 
 params.G.precon=false;
-params.G.maxiter = 10;
+params.G.maxiter = 50;
+params.C.maxiter = 50;
+params.alpha=1;
+params.beta=1;
 params.scaleksp=0;
-params.autolambda=1
-% params.mu=1e3;
-params.lambda=5e-2;
+params.autolambda=0
+params.niter=50
+params.mu=0.4;
+params.lambda=5e-1;
 % P_recon=LRT_recon(du,squeeze(sens_est),params);
 
 params.normalize_sense=0
-P_recon=LRT_recon(du,squeeze(sens),params);
+P_recon=LRT_recon_test(du,squeeze(sens),params);
 %%
 % T2-fitting
 [T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(abs(squeeze(P_recon(:,:,1,[1 10],:))), [20,30,40,50,60,70],0.1);

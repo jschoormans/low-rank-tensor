@@ -194,15 +194,46 @@ for iter=1:params.niter
     if params.visualization;
     MSE=visualize_convergence(params.iter,MSE,G,C,Phi,params.Imref,imagesize,params.x,params.y,kspace_1,F,Psi,Ak); end
     
+    Aold=Ak; Bold=Bk;
     [Ak,lambda]=soft_thresh_A(G,Y,alpha,lambda,Psi,operatorsize,params);                     %15
     [Bk,mu]=soft_thresh_B(C,Z,mu,beta,params);                              %16
+    
+    %new addition:
+    Y=Y+alpha*(Ak-(Psi*G));
+    Z=Z+beta.*(Bk-C);  
+    
     Gk=conj_grad_G_new(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
     Ck=conj_grad_C_new(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
     Yk=Y+alpha*(Ak-(Psi*Gk));
     Zk=Z+beta.*(Bk-Ck);
     
     G=Gk; C=Ck; Y=Yk; Z=Zk; %update iteration
+    
+    % temp norms
+    rnorm1(iter)=norm(Ak-(Psi*G));
+    rnorm2(iter)=norm(Bk-C);
+    
+    snorm1(iter)=norm(-(alpha/2)*(Ak-Aold));
+    snorm2(iter)=norm(-(beta/2)*(Bk-Bold));
 
+    
+    [obj(iter),l2(iter),l1(iter),l12(iter)]=objective(kspace_1,F,G,C,Phi,Ak,Bk,lambda,mu);
+    
+    figure(2000);
+    subplot(311); hold on; 
+    semilogy(obj,'k.-');
+    semilogy(l1,'r.');
+    semilogy(l2,'g.');
+    semilogy(l12,'b.'); hold off; 
+    title('objective'); xlabel('iterations');
+    legend('total objective','l1','l2','l12')
+    subplot(323); semilogy(rnorm1,'k.-'); title('r-norm 1'); xlabel('iterations'); 
+    subplot(324); semilogy(rnorm2,'k.-'); title('r-norm 2'); xlabel('iterations'); drawnow; 
+    subplot(325); semilogy(snorm1,'k.-'); title('s-norm 1'); xlabel('iterations'); 
+    subplot(326); semilogy(snorm2,'k.-'); title('s-norm 2'); xlabel('iterations'); drawnow; 
+
+    
+    
     if params.increase_penalty_parameters
     alpha=alpha*1.5; beta=beta*1.5; end;   
 end
@@ -213,4 +244,23 @@ if params.visualization;
 
 P_recon=G*C*Phi;
 P_recon=reshape(P_recon,imagesize);
+end
+
+function [obj,l2,l1,l12]=objective(d,F,G,C,Phi,A,B,lambda,mu)
+l2=norm(d-F*(G*(C*Phi)));
+l1=mu*l1norm(B);
+l12=lambda*l12norm(A);
+obj=l2+l1+l12;
+end
+
+function l=l1norm(B)
+l=sum(abs(B(:)));
+end
+
+function l=l12norm(A)
+l=sum((sum(abs(A).^2,2)).^(1/2)); % col or row??
+end
+
+
+
 

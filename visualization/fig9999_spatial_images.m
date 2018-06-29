@@ -8,8 +8,6 @@ I2=    cat(2,I2,angle(spatial_images(:,:,i)));
 end
 
 
-
-
 %% plot spatial images for Ak 
 
 spatial_images_Ak=reshape(Psi'*Ak,[sdu(1) sdu(2) size(G,2)]);

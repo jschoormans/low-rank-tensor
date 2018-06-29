@@ -149,12 +149,13 @@ params.automu=1;
 params.autolambda=1; 
 params.alpha=5; 
 
-params.niter=8; 
+params.niter=12; 
 params.increase_penalty_parameters=false;
 params.G.precon=false;
-params.G.maxiter=10;
+params.G.maxiter=50;
+params.Lg=10
 coil=2
-P_recon=LRT_recon(kspace(:,:,coil,:,:),squeeze(sens(:,:,:,coil)),params);
+P_recon=LRT_recon_test(kspace(:,:,:,:,:),squeeze(sens(:,:,:,:)),params);
 
 figure(1000); immontage4D(squeeze(abs(permute(P_recon,[2 1 3 4 5]))),[]);
 
