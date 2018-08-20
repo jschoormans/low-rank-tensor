@@ -17,7 +17,7 @@
     if ~isempty(I); 
 %   MSE(iter)=sqrt(sum(abs(current_guess(:)-I(:)).^2))./numel(I);
 %   %mean-squared error
-    MSE(iter)=norm(abs(current_guess(:)-I(:)),'fro')^2/norm(abs(I(:)),'fro')^2; % relative error
+    MSE(iter)=norm(abs(gather(current_guess(:))-I(:)),'fro')^2/norm(abs(I(:)),'fro')^2; % relative error
     
     else
         MSE=[];

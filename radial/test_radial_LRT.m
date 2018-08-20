@@ -66,14 +66,13 @@ params.subspacedim2=1;
 
 params.visualization=1
 params.Lg=9
-params.L4=3
+params.L4=4
 params.L3=6
-params.G.maxiter=3
 params.inspectLg=0;
 params.niter=12;
 params.G.precon=0
-params.G.maxiter=10
-params.C.maxiter=10
+params.G.maxiter=30
+params.C.maxiter=30
 params.lambda=0.5;
 params.alpha=20
 params.beta=20

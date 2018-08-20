@@ -68,13 +68,13 @@ params.scaleksp=0;
 params.autolambda=0
 params.niter=50
 params.mu=0.4;
-params.lambda=5e-1;
+params.lambda=5e-0;
 % P_recon=LRT_recon(du,squeeze(sens_est),params);
 
 params.normalize_sense=0
 P_recon=LRT_recon_test(du,squeeze(sens),params);
 %%
 % T2-fitting
-[T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(abs(squeeze(P_recon(:,:,1,[1 10],:))), [20,30,40,50,60,70],0.1);
+[T2_mono_all_allslice, T2_mono_all_rgb_allslice, rsquare_mono_all_allslice] = T2_fitting(abs(squeeze(gather(P_recon(:,:,1,[1 10],:)))), [20,30,40,50,60,70],0.1);
 
 

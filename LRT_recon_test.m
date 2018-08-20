@@ -202,8 +202,8 @@ for iter=1:params.niter
     Y=Y+alpha*(Ak-(Psi*G));
     Z=Z+beta.*(Bk-C);  
     
-    Gk=conj_grad_G_new(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);       %17
-    Ck=conj_grad_C_new(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);           %18
+    Gk=conj_grad_G_aug18(G,C,Ak,Y,alpha,Psi,kspace_1,Phi,F,params);          %17
+    Ck=conj_grad_C_new(Gk,C,Bk,Z,beta,kspace_1,Phi,F,params);                   %18
     Yk=Y+alpha*(Ak-(Psi*Gk));
     Zk=Z+beta.*(Bk-Ck);
     
