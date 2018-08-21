@@ -72,6 +72,8 @@ params.lambda=5e-0;
 % P_recon=LRT_recon(du,squeeze(sens_est),params);
 
 params.normalize_sense=0
+
+params.G.CGoption=2; 
 P_recon=LRT_recon_test(du,squeeze(sens),params);
 %%
 % T2-fitting
